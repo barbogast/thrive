@@ -94,3 +94,21 @@ function pixelToFlatHex(point: PixelPosition): AxialPosition {
     ((-1 / 3) * point.x + (Math.sqrt(3) / 3) * point.y) / config().tileRadius
   return hexRound({ q, r })
 }
+
+export type Direction = 0 | 1 | 2 | 3 | 4 | 5
+const directions: AxialPosition[] = [
+  { q: 1, r: 0 },
+  { q: 1, r: -1 },
+  { q: 0, r: -1 },
+  { q: -1, r: 0 },
+  { q: -1, r: 1 },
+  { q: 0, r: 1 },
+]
+export function getNeighbor(
+  // https://www.redblobgames.com/grids/hexagons/#neighbors-axial
+  origin: AxialPosition,
+  direction: Direction,
+): AxialPosition {
+  const dir = directions[direction]
+  return { q: origin.q + dir.q, r: origin.r + dir.r }
+}
