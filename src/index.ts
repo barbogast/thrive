@@ -76,51 +76,53 @@ function getSquareBoard(): Tile[] {
   return tiles
 }
 
-function getHexagonBoard(size: number): Tile[] {
-  if (size % 2 !== 1) {
-    throw new Error('getHexagonBoard() must not be called with uneven numbers')
+function getHexagonBoard(size: '3' | '5'): Tile[] {
+  const positions = {
+    '3': [
+      { q: -1, r: 0 },
+      { q: -1, r: 1 },
+
+      { q: 0, r: -1 },
+      { q: 0, r: 0 },
+      { q: 0, r: 1 },
+
+      { q: 1, r: -1 },
+      { q: 1, r: 0 },
+    ],
+    '5': [
+      { q: -2, r: 0 },
+      { q: -2, r: 1 },
+      { q: -2, r: 2 },
+
+      { q: -1, r: -1 },
+      { q: -1, r: 0 },
+      { q: -1, r: 1 },
+      { q: -1, r: 2 },
+
+      { q: 0, r: -2 },
+      { q: 0, r: -1 },
+      { q: 0, r: 0 },
+      { q: 0, r: 1 },
+      { q: 0, r: 2 },
+
+      { q: 1, r: -2 },
+      { q: 1, r: -1 },
+      { q: 1, r: 0 },
+      { q: 1, r: 1 },
+
+      { q: 2, r: -2 },
+      { q: 2, r: -1 },
+      { q: 2, r: 0 },
+    ],
   }
-
-  const positions: AxialPosition[] = []
-  const side = Math.trunc(size / 2)
-  console.log({ side }, side * -1)
-
-  for (let i = side * -1; i <= side; i++) {
-    console.log({ i })
-
-    const rowLength = size - Math.abs(i) - 1
-    const halfRow = Math.trunc(rowLength / 2)
-    console.log({ size, i, rowLength })
-
-    for (let j = -halfRow; j <= halfRow; j++) {
-      console.log('push', { i, j })
-
-      positions.push({ q: i, r: j })
-    }
-  }
-  console.log(positions)
-
-  return positions.map((p) => ({
+  return positions[size].map((p) => ({
     position: axialToOffset(p),
     color: getColor(),
   }))
-
-  const rows = [1, 3, 1]
-  const tiles = []
-
-  let i = 0
-  for (const rowLength of rows) {
-    for (let x = 0; x < rowLength; x++) {
-      tiles.push({ position: { row: x, col: i }, color: getColor() })
-      console.log(x, i)
-    }
-    i++
-  }
-  return tiles
 }
 
 function init() {
-  for (const tile of getHexagonBoard()) {
+  for (const tile of getHexagonBoard('3')) {
     drawAtCoordinate(tile)
   }
 
