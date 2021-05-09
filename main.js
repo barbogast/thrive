@@ -63,20 +63,12 @@ function drawAll(tiles) {
 init();
 
 function drawAtCoordinate(info) {
-  const totalOffsetX = 100;
-  const totalOffsetY = 100;
-  const distance = 5;
+  const { x, y, color } = info;
+  const distance = 0;
 
-  const isOffset = info.y % 2 !== 0;
-
-  let pxX, pxY;
-  pxX = (r * 3 + distance * 2) * info.x + totalOffsetX;
-  pxY = ((Math.sqrt(3) * r) / 2 + distance / 2) * info.y + totalOffsetY;
-
-  if (isOffset) {
-    pxX += r * 1.5 + distance;
-  }
-  drawHexagon(pxX, pxY, info.color, `${info.x}|${info.y}`);
+  const height = Math.sqrt(3) * r;
+  const isOffset = info.x % 2 !== 0 ? (r * 2) / 2 : 0;
+  drawHexagon(x * height, y * (r * 2 + distance) + isOffset, color, `${x - y}\n${y}`);
 }
 
 function drawHexagon(x, y, color, label) {
@@ -89,7 +81,7 @@ function drawHexagon(x, y, color, label) {
     new Konva.RegularPolygon({
       sides: 6,
       rotation: 30,
-      radius: r,
+      radius: r + 1,
       fill: color,
       stroke: 'black',
       strokeWidth: 1,
