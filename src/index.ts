@@ -37,7 +37,6 @@ var stage = new Konva.Stage({
 
 var layer = new Konva.Layer()
 
-const a = (2 * Math.PI) / 6
 const r = 30
 
 function getColor() {
@@ -51,20 +50,6 @@ function getColor() {
   ]
   return colors[Math.floor(Math.random() * colors.length)]
 }
-
-function regularPolygonPoints(sideCount: number, radius: number) {
-  var sweep = (Math.PI * 2) / sideCount
-  var cx = radius
-  var cy = radius
-  var points = []
-  for (var i = 0; i < sideCount; i++) {
-    var x = cx + radius * Math.cos(i * sweep)
-    var y = cy + radius * Math.sin(i * sweep)
-    points.push({ x: x, y: y })
-  }
-  return points
-}
-const hexagonPoints = regularPolygonPoints(6, r)
 
 function getSquareBoard(): Tile[] {
   const tiles = []
@@ -128,7 +113,6 @@ function init() {
 
   stage.add(layer)
 
-  // draw the image
   layer.draw()
   layer.on('click', (...args) => {
     console.log('lick', args)
