@@ -15,6 +15,12 @@ type AxialPosition = {
   r: number
 }
 
+type CubePosition = {
+  x: number
+  y: number
+  z: number
+}
+
 type Tile = {
   position: OffsetPosition
   color: string
@@ -48,6 +54,19 @@ function axialToOffset({ q, r }: AxialPosition): OffsetPosition {
       col: r,
     }
   }
+}
+
+function cubeToAxial(cube: CubePosition): AxialPosition {
+  var q = cube.x
+  var r = cube.z
+  return { q, r }
+}
+
+function axialToCube(pos: AxialPosition): CubePosition {
+  var x = pos.q
+  var z = pos.r
+  var y = -x - z
+  return { x, y, z }
 }
 
 var stage = new Konva.Stage({
@@ -129,6 +148,37 @@ function getHexagonBoard(size: '3' | '5'): Tile[] {
   }))
 }
 
+function cubeRound(cube: CubePosition): CubePosition {
+  // https://www.redblobgames.com/grids/hexagons/#rounding
+  var rx = Math.round(cube.x)
+  var ry = Math.round(cube.y)
+  var rz = Math.round(cube.z)
+
+  var x_diff = Math.abs(rx - cube.x)
+  var y_diff = Math.abs(ry - cube.y)
+  var z_diff = Math.abs(rz - cube.z)
+
+  if (x_diff > y_diff && x_diff > z_diff) {
+    rx = -ry - rz
+  } else if (y_diff > z_diff) {
+    ry = -rx - rz
+  } else {
+    rz = -rx - ry
+  }
+
+  return { x: rx, y: ry, z: rz }
+}
+
+function hexRound(pos: AxialPosition): AxialPosition {
+  // https://www.redblobgames.com/grids/hexagons/#rounding
+  return cubeToAxial(cubeRound(axialToCube(pos)))
+}
+
+function pixelToFlatHex(point: PixelPosition): AxialPosition {
+  var q = ((2 / 3) * point.x) / TILE_RADIUS
+  var r = ((-1 / 3) * point.x + (Math.sqrt(3) / 3) * point.y) / TILE_RADIUS
+  return hexRound({ q, r })
+}
 function init() {
   for (const tile of getHexagonBoard('5')) {
     drawAtCoordinate(tile)
