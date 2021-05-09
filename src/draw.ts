@@ -7,20 +7,20 @@ import { Tile } from './types'
 function getCoordinates(row: number, col: number) {
   const left = 250
   const top = 250
-  const distance = 0
+
   const r = config().tileRadius
   if (config().flatTopped) {
     const height = Math.sqrt(3) * r
-    const isOffset = row % 2 !== 0 ? (r * 2) / 2 : 0
+    const isOffset = row % 2 !== 0 ? r : 0
     return {
       x: left + row * height,
-      y: top + col * (r * 2 + distance) + isOffset,
+      y: top + col * (r * 2) + isOffset,
     }
   } else {
     const height = Math.sqrt(3) * r
-    const isOffset = col % 2 !== 0 ? (r * 2) / 2 : 0
+    const isOffset = col % 2 !== 0 ? r : 0
     return {
-      x: left + row * (r * 2 + distance) + isOffset,
+      x: left + row * (r * 2) + isOffset,
       y: top + left + col * height,
     }
   }
