@@ -80,18 +80,30 @@ function drawAtCoordinate(info) {
 }
 
 function drawHexagon(x, y, color, label) {
-  const hexagon = new Konva.RegularPolygon({
+  var group = new Konva.Group({
     x,
     y,
-    sides: 6,
-    rotation: 30,
-    radius: r,
-    fill: color,
-    stroke: 'black',
-    strokeWidth: 1,
-    id: 'asdf' + x + y,
   });
-  layer.add(hexagon);
+
+  group.add(
+    new Konva.RegularPolygon({
+      sides: 6,
+      rotation: 30,
+      radius: r,
+      fill: color,
+      stroke: 'black',
+      strokeWidth: 1,
+      id: 'asdf' + x + y,
+    })
+  );
+  group.add(
+    new Konva.Text({
+      text: label,
+      fontSize: 8,
+      fontFamily: 'Arial',
+    })
+  );
+  layer.add(group);
 }
 
 var scaleBy = 1.05;
