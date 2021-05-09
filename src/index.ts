@@ -20,6 +20,10 @@ type Tile = {
   color: string
 }
 
+function offsetToAxial({ row, col }: OffsetPosition): AxialPosition {
+  return { q: row, r: col - (row - (row & 1)) / 2 }
+}
+
 var stage = new Konva.Stage({
   container: 'container', // id of container <div>
   width: 500,
@@ -113,12 +117,11 @@ function drawAtCoordinate(info: Tile) {
   const height = Math.sqrt(3) * r
   const isOffset = row % 2 !== 0 ? (r * 2) / 2 : 0
 
-  const axialX = row
-  const axialY = col - (row - (row & 1)) / 2
+  const axial = offsetToAxial(info.position)
   drawHexagon(
     { x: row * height, y: col * (r * 2 + distance) + isOffset },
     color,
-    `r: ${axialX}\nc: ${axialY}`,
+    `r: ${axial.q}\nc: ${axial.r}`,
   )
 }
 
