@@ -1,3 +1,5 @@
+import Konva from 'konva'
+
 var stage = new Konva.Stage({
   container: 'container', // id of container <div>
   width: 500,
