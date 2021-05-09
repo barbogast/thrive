@@ -76,10 +76,34 @@ function getSquareBoard(): Tile[] {
   return tiles
 }
 
-function getHexagonBoard(): Tile[] {
-  // return [
-  //   { y: 0, x: 1, color: getColor() }
-  // ];
+function getHexagonBoard(size: number): Tile[] {
+  if (size % 2 !== 1) {
+    throw new Error('getHexagonBoard() must not be called with uneven numbers')
+  }
+
+  const positions: AxialPosition[] = []
+  const side = Math.trunc(size / 2)
+  console.log({ side }, side * -1)
+
+  for (let i = side * -1; i <= side; i++) {
+    console.log({ i })
+
+    const rowLength = size - Math.abs(i) - 1
+    const halfRow = Math.trunc(rowLength / 2)
+    console.log({ size, i, rowLength })
+
+    for (let j = -halfRow; j <= halfRow; j++) {
+      console.log('push', { i, j })
+
+      positions.push({ q: i, r: j })
+    }
+  }
+  console.log(positions)
+
+  return positions.map((p) => ({
+    position: axialToOffset(p),
+    color: getColor(),
+  }))
 
   const rows = [1, 3, 1]
   const tiles = []
