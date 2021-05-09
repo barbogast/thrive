@@ -98,11 +98,11 @@ function pixelToFlatHex(point: PixelPosition): AxialPosition {
 export type Direction = 0 | 1 | 2 | 3 | 4 | 5
 const directions: AxialPosition[] = [
   { q: 1, r: 0 },
-  { q: 1, r: -1 },
-  { q: 0, r: -1 },
-  { q: -1, r: 0 },
-  { q: -1, r: 1 },
   { q: 0, r: 1 },
+  { q: -1, r: 1 },
+  { q: -1, r: 0 },
+  { q: 0, r: -1 },
+  { q: 1, r: -1 },
 ]
 export function getNeighbor(
   // https://www.redblobgames.com/grids/hexagons/#neighbors-axial
@@ -111,4 +111,20 @@ export function getNeighbor(
 ): AxialPosition {
   const dir = directions[direction]
   return { q: origin.q + dir.q, r: origin.r + dir.r }
+}
+
+export function getDirection(
+  pos1: AxialPosition,
+  pos2: AxialPosition,
+): Direction {
+  const dirPos = { q: pos1.q - pos2.q, r: pos1.r - pos2.r }
+  console.log(dirPos)
+
+  const dir = directions.findIndex(
+    (d) => d.q === pos1.q - pos2.q && d.r === pos1.r - pos2.r,
+  )
+  if (dir === -1) {
+    throw new Error('positions are not neighboring')
+  }
+  return dir as Direction
 }

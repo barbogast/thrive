@@ -24,6 +24,10 @@ function init() {
     draw.drawTile(layer, tile)
   }
 
+  for (const road of roads) {
+    draw.drawRoad(layer, road)
+  }
+
   layer.add(
     new Konva.Rect({
       x: 50,

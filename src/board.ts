@@ -7,9 +7,7 @@ export type Tile = {
 }
 
 export type Road = {
-  tiles:
-    | [hexUtils.OffsetPosition]
-    | [hexUtils.OffsetPosition, hexUtils.OffsetPosition]
+  tiles: [hexUtils.OffsetPosition, hexUtils.OffsetPosition]
 }
 
 function getColor() {

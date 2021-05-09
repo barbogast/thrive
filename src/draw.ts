@@ -4,7 +4,8 @@ import config from './config'
 import * as hexUtils from './hexUtils'
 import * as board from './board'
 
-function getCoordinates(row: number, col: number) {
+function getCoordinates(position: hexUtils.OffsetPosition) {
+  const { row, col } = position
   const left = 250
   const top = 250
 
@@ -27,15 +28,12 @@ function getCoordinates(row: number, col: number) {
 }
 
 export function drawTile(layer: Konva.Layer, info: board.Tile) {
-  const {
-    position: { row, col },
-    color,
-  } = info
+  const { position, color } = info
 
   const axial = hexUtils.offsetToAxial(info.position)
   drawHexagon(
     layer,
-    getCoordinates(row, col),
+    getCoordinates(position),
     color,
     `r: ${axial.q}\nc: ${axial.r}`,
   )
@@ -116,4 +114,48 @@ function drawHexagon(
   group.add(rect2)
 
   layer.add(group)
+}
+
+function getMiddle(pos1: number, pos2: number) {
+  const distance = Math.abs(pos1 - pos2)
+  return pos1 > pos2 ? pos2 + distance / 2 : pos1 + distance / 2
+}
+
+export function drawRoad(layer: Konva.Layer, road: board.Road) {
+  const [tile1, tile2] = road.tiles
+
+  const direction = hexUtils.getDirection(
+    hexUtils.offsetToAxial(tile1),
+    hexUtils.offsetToAxial(tile2),
+  )
+
+  const directionToDegree = {
+    0: 90,
+    1: 150,
+    2: 210,
+    3: 270,
+    4: 330,
+    5: 30,
+  }
+
+  const pos1 = getCoordinates(tile1)
+  const pos2 = getCoordinates(tile2)
+
+  const midX = getMiddle(pos1.x, pos2.x)
+  const midY = getMiddle(pos1.y, pos2.y)
+
+  const rect = new Konva.Rect({
+    x: midX,
+    y: midY,
+    offsetX: config().tileRadius / 2,
+    offsetY: 3,
+    width: config().tileRadius,
+    height: 7,
+    rotation: directionToDegree[direction],
+    // fill: '#00D2FF',
+    id: 'haha',
+    stroke: 'black',
+    strokeWidth: 1,
+  })
+  layer.add(rect)
 }
