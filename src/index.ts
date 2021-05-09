@@ -59,7 +59,7 @@ var stage = new Konva.Stage({
 
 var layer = new Konva.Layer()
 
-const r = 50
+const TILE_RADIUS = 50
 
 function getColor() {
   const colors = [
@@ -149,17 +149,17 @@ function getCoordinates(row: number, col: number) {
   const top = 250
   const distance = 0
   if (FLAT_TOPPED) {
-    const height = Math.sqrt(3) * r
-    const isOffset = row % 2 !== 0 ? (r * 2) / 2 : 0
+    const height = Math.sqrt(3) * TILE_RADIUS
+    const isOffset = row % 2 !== 0 ? (TILE_RADIUS * 2) / 2 : 0
     return {
       x: left + row * height,
-      y: top + col * (r * 2 + distance) + isOffset,
+      y: top + col * (TILE_RADIUS * 2 + distance) + isOffset,
     }
   } else {
-    const height = Math.sqrt(3) * r
-    const isOffset = col % 2 !== 0 ? (r * 2) / 2 : 0
+    const height = Math.sqrt(3) * TILE_RADIUS
+    const isOffset = col % 2 !== 0 ? (TILE_RADIUS * 2) / 2 : 0
     return {
-      x: left + row * (r * 2 + distance) + isOffset,
+      x: left + row * (TILE_RADIUS * 2 + distance) + isOffset,
       y: top + left + col * height,
     }
   }
@@ -185,7 +185,7 @@ function drawHexagon(pos: PixelPosition, color: string, label: string) {
     new Konva.RegularPolygon({
       sides: 6,
       rotation: FLAT_TOPPED ? 30 : 0,
-      radius: r + 1,
+      radius: TILE_RADIUS + 1,
       fill: color,
       stroke: 'black',
       strokeWidth: 1,
