@@ -61,7 +61,10 @@ function drawAtCoordinate(info) {
 
   const height = Math.sqrt(3) * r;
   const isOffset = info.x % 2 !== 0 ? (r * 2) / 2 : 0;
-  drawHexagon(x * height, y * (r * 2 + distance) + isOffset, color, `${x - y}\n${y}`);
+
+  const axialX = x;
+  const axialY = y - (x - (x & 1)) / 2;
+  drawHexagon(x * height, y * (r * 2 + distance) + isOffset, color, `r: ${axialX}\nc: ${axialY}`);
 }
 
 function drawHexagon(x, y, color, label) {
