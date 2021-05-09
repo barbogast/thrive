@@ -69,50 +69,6 @@ function drawHexagon(
     }),
   )
 
-  const rect = new Konva.Rect({
-    offsetX: config().tileRadius / 2,
-    offsetY: config().tileRadius - 2,
-    width: config().tileRadius,
-    height: 10,
-    rotate: 30,
-    // fill: '#00D2FF',
-    id: 'haha',
-    stroke: 'black',
-    strokeWidth: 0,
-  })
-
-  rect.on('mouseover', function (evt) {
-    var shape = evt.target
-    document.body.style.cursor = 'pointer'
-    shape.scaleX(1.2)
-    shape.scaleY(1.2)
-    shape.setAttr('fill', 'red')
-    layer.draw()
-  })
-
-  rect.on('mouseout', function (evt) {
-    var shape = evt.target
-    document.body.style.cursor = 'default'
-    shape.scaleX(1)
-    shape.scaleY(1)
-    layer.draw()
-  })
-
-  group.add(rect)
-
-  const rect2 = new Konva.Rect({
-    offsetX: config().tileRadius / 2,
-    offsetY: config().tileRadius + 6,
-    width: config().tileRadius,
-    height: 15,
-    rotate: 30,
-    fill: 'brown',
-    id: 'haha',
-    stroke: 'black',
-    strokeWidth: 1,
-  })
-  group.add(rect2)
-
   layer.add(group)
 }
 
