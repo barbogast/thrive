@@ -1,10 +1,8 @@
 import Konva from 'konva'
 import config from './config'
 import * as hexUtils from './hexUtils'
+import { Tile } from './types'
 
-type Tile = {
-  position: hexUtils.OffsetPosition
-  color: string
 }
 
 var stage = new Konva.Stage({
