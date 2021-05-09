@@ -1,5 +1,5 @@
-import { AxialPosition, OffsetPosition } from './hexUtils'
-import { Tile } from './types'
+import { Tile } from './board'
+import { OffsetPosition } from './hexUtils'
 
 export type TileMap = { [key: string]: Tile }
 

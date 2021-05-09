@@ -2,7 +2,7 @@ import Konva from 'konva'
 
 import config from './config'
 import * as hexUtils from './hexUtils'
-import { Tile } from './types'
+import * as board from './board'
 
 function getCoordinates(row: number, col: number) {
   const left = 250
@@ -26,7 +26,7 @@ function getCoordinates(row: number, col: number) {
   }
 }
 
-export function drawTile(layer: Konva.Layer, info: Tile) {
+export function drawTile(layer: Konva.Layer, info: board.Tile) {
   const {
     position: { row, col },
     color,

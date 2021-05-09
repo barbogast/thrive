@@ -1,8 +1,12 @@
 import * as hexUtils from './hexUtils'
 import * as tileMap from './tileMap'
-import { Tile } from './types'
 
-type Road = {
+export type Tile = {
+  position: hexUtils.OffsetPosition
+  color: string
+}
+
+export type Road = {
   tiles:
     | [hexUtils.OffsetPosition]
     | [hexUtils.OffsetPosition, hexUtils.OffsetPosition]
