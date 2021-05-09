@@ -1,8 +1,13 @@
 import Konva from 'konva'
 import config from './config'
 import * as hexUtils from './hexUtils'
+import * as tileMap from './tileMap'
 import { Tile } from './types'
 
+type Road = {
+  tiles:
+    | [hexUtils.OffsetPosition]
+    | [hexUtils.OffsetPosition, hexUtils.OffsetPosition]
 }
 
 var stage = new Konva.Stage({
@@ -84,8 +89,48 @@ function getHexagonBoard(size: '3' | '5'): Tile[] {
   }))
 }
 
+function getRoadPositions(tiles: tileMap.TileMap): Road[] {
+  /*
+  For every tile we add roads in directions 1, 2 and 3
+  For the ones which lack neighours 4, 5 or 6 we add those as well.
+  This should give us each road position exactly once */
+  const roads: Road[] = []
+  for (const tile of Object.values(tiles)) {
+    const axialPos = hexUtils.offsetToAxial(tile.position)
+
+    for (const direction of [0, 1, 2] as hexUtils.Direction[]) {
+      const neighborPos = hexUtils.axialToOffset(
+        hexUtils.getNeighbor(axialPos, direction),
+      )
+      const road: Road = {
+        tiles: [tile.position, neighborPos],
+      }
+      roads.push(road)
+    }
+    for (const direction of [3, 4, 5] as hexUtils.Direction[]) {
+      const neighbourPos = hexUtils.axialToOffset(
+        hexUtils.getNeighbor(axialPos, direction),
+      )
+      if (!tileMap.findInPos(tiles, neighbourPos)) {
+        const road: Road = {
+          tiles: [tile.position, neighbourPos],
+        }
+        roads.push(road)
+      }
+    }
+  }
+  return roads
+}
+
 function init() {
-  for (const tile of getHexagonBoard('5')) {
+  const tiles = getHexagonBoard('3')
+
+  const tMap = tileMap.fromArray(tiles)
+
+  const roads = getRoadPositions(tMap)
+  console.log(roads)
+
+  for (const tile of tiles) {
     drawAtCoordinate(tile)
   }
 
