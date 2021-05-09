@@ -1,5 +1,25 @@
 import Konva from 'konva'
 
+type PixelPosition = {
+  x: number
+  y: number
+}
+
+type OffsetPosition = {
+  row: number
+  col: number
+}
+
+type AxialPosition = {
+  q: number
+  r: number
+}
+
+type Tile = {
+  position: OffsetPosition
+  color: string
+}
+
 var stage = new Konva.Stage({
   container: 'container', // id of container <div>
   width: 500,
@@ -38,17 +58,17 @@ function regularPolygonPoints(sideCount: number, radius: number) {
 }
 const hexagonPoints = regularPolygonPoints(6, r)
 
-function getSquareBoard() {
+function getSquareBoard(): Tile[] {
   const tiles = []
   for (let x = 0; x < 10; x++) {
     for (let y = 0; y < 10; y++) {
-      tiles.push({ x, y, color: getColor(), isHovered: false })
+      tiles.push({ position: { row: x, col: y }, color: getColor() })
     }
   }
   return tiles
 }
 
-function getHexagonBoard() {
+function getHexagonBoard(): Tile[] {
   // return [
   //   { y: 0, x: 1, color: getColor() }
   // ];
@@ -59,7 +79,7 @@ function getHexagonBoard() {
   let i = 0
   for (const rowLength of rows) {
     for (let x = 0; x < rowLength; x++) {
-      tiles.push({ y: i, x, color: getColor(), isHovered: false })
+      tiles.push({ position: { row: x, col: i }, color: getColor() })
       console.log(x, i)
     }
     i++
@@ -83,27 +103,29 @@ function init() {
 
 init()
 
-function drawAtCoordinate(info: { x: number; y: number; color: string }) {
-  const { x, y, color } = info
+function drawAtCoordinate(info: Tile) {
+  const {
+    position: { row, col },
+    color,
+  } = info
   const distance = 0
 
   const height = Math.sqrt(3) * r
-  const isOffset = info.x % 2 !== 0 ? (r * 2) / 2 : 0
+  const isOffset = row % 2 !== 0 ? (r * 2) / 2 : 0
 
-  const axialX = x
-  const axialY = y - (x - (x & 1)) / 2
+  const axialX = row
+  const axialY = col - (row - (row & 1)) / 2
   drawHexagon(
-    x * height,
-    y * (r * 2 + distance) + isOffset,
+    { x: row * height, y: col * (r * 2 + distance) + isOffset },
     color,
     `r: ${axialX}\nc: ${axialY}`,
   )
 }
 
-function drawHexagon(x: number, y: number, color: string, label: string) {
+function drawHexagon(pos: PixelPosition, color: string, label: string) {
   var group = new Konva.Group({
-    x,
-    y,
+    x: pos.x,
+    y: pos.y,
   })
 
   group.add(
@@ -114,7 +136,7 @@ function drawHexagon(x: number, y: number, color: string, label: string) {
       fill: color,
       stroke: 'black',
       strokeWidth: 1,
-      id: 'asdf' + x + y,
+      id: 'asdf' + pos.x + pos.y,
     }),
   )
   group.add(
