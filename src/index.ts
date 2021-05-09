@@ -114,12 +114,14 @@ function drawAtCoordinate(info: Tile) {
   } = info
   const distance = 0
 
+  const left = 50
+  const top = 50
   const height = Math.sqrt(3) * r
   const isOffset = row % 2 !== 0 ? (r * 2) / 2 : 0
 
   const axial = offsetToAxial(info.position)
   drawHexagon(
-    { x: row * height, y: col * (r * 2 + distance) + isOffset },
+    { x: left + row * height, y: top + col * (r * 2 + distance) + isOffset },
     color,
     `r: ${axial.q}\nc: ${axial.r}`,
   )
