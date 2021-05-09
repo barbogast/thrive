@@ -184,11 +184,26 @@ function init() {
     drawAtCoordinate(tile)
   }
 
+  layer.add(
+    new Konva.Rect({
+      x: 50,
+      y: 50,
+      width: 100,
+      height: 50,
+      fill: '#00D2FF',
+      stroke: 'black',
+      strokeWidth: 4,
+      draggable: true,
+    }),
+  )
+
   stage.add(layer)
 
   layer.draw()
-  layer.on('click', (...args) => {
-    console.log('lick', args)
+  layer.on('click', (event) => {
+    console.log(event)
+
+    console.log('lick', event.evt.offsetX, event.evt.offsetY)
   })
 }
 
@@ -249,6 +264,51 @@ function drawHexagon(pos: PixelPosition, color: string, label: string) {
       fontFamily: 'Arial',
     }),
   )
+
+  const rect = new Konva.Rect({
+    offsetX: TILE_RADIUS / 2,
+    offsetY: TILE_RADIUS - 2,
+    width: TILE_RADIUS,
+    height: 10,
+    rotate: 30,
+    // fill: '#00D2FF',
+    id: 'haha',
+    stroke: 'black',
+    strokeWidth: 0,
+  })
+
+  rect.on('mouseover', function (evt) {
+    var shape = evt.target
+    document.body.style.cursor = 'pointer'
+    shape.scaleX(1.2)
+    shape.scaleY(1.2)
+    shape.setAttr('fill', 'red')
+    layer.draw()
+  })
+
+  rect.on('mouseout', function (evt) {
+    var shape = evt.target
+    document.body.style.cursor = 'default'
+    shape.scaleX(1)
+    shape.scaleY(1)
+    layer.draw()
+  })
+
+  group.add(rect)
+
+  const rect2 = new Konva.Rect({
+    offsetX: TILE_RADIUS / 2,
+    offsetY: TILE_RADIUS + 6,
+    width: TILE_RADIUS,
+    height: 15,
+    rotate: 30,
+    fill: 'brown',
+    id: 'haha',
+    stroke: 'black',
+    strokeWidth: 1,
+  })
+  group.add(rect2)
+
   layer.add(group)
 }
 
