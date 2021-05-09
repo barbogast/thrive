@@ -1,4 +1,11 @@
-const canvas = new fabric.Canvas('canvas', { selection: false });
+var stage = new Konva.Stage({
+  container: 'container', // id of container <div>
+  width: 500,
+  height: 500,
+  draggable: true,
+});
+
+var layer = new Konva.Layer();
 
 const a = (2 * Math.PI) / 6;
 const r = 30;
@@ -36,23 +43,13 @@ function init() {
 
   drawAll(tiles);
 
-  canvas.on('mouse:down', function (options) {
-    console.log(options.e.clientX, options.e.clientY);
-    console.log(options);
-  });
+  stage.add(layer);
 
-  let i = 0;
-  // canvas.on('mouse:wheel', function (opt) {
-  //   console.log(i++);
-  //   var delta = opt.e.deltaY;
-  //   var zoom = canvas.getZoom();
-  //   zoom *= 0.999 ** delta;
-  //   if (zoom > 20) zoom = 20;
-  //   if (zoom < 0.01) zoom = 0.01;
-  //   canvas.setZoom(zoom);
-  //   opt.e.preventDefault();
-  //   opt.e.stopPropagation();
-  // });
+  // draw the image
+  layer.draw();
+  layer.on('click', (...args) => {
+    console.log('lick', args);
+  });
 }
 
 function drawAll(tiles) {
@@ -83,107 +80,40 @@ function drawAtCoordinate(info) {
 }
 
 function drawHexagon(x, y, color, label) {
-  var rect = new fabric.Polygon(hexagonPoints, {
-    originX: 'center',
-    originY: 'center',
-    angle: 0,
+  const hexagon = new Konva.RegularPolygon({
+    x,
+    y,
+    sides: 6,
+    rotation: 30,
+    radius: r,
     fill: color,
-
-    id: 'myid2',
-    type: 'asfd',
-    x: 34,
+    stroke: 'black',
+    strokeWidth: 1,
+    id: 'asdf' + x + y,
   });
-
-  console.log(label);
-  var t = new fabric.Text(label, {
-    fontFamily: 'Arial',
-    fontSize: 8,
-    color: 'black',
-    top: r,
-    left: r,
-    originX: 'center',
-    originY: 'center',
-  });
-
-  var g = new fabric.Group([rect, t], {
-    left: x,
-    top: y,
-    hasControls: false,
-    selectable: false,
-    hoverCursor: 'pointer',
-    padding: 0,
-    perPixelTargetFind: true,
-  });
-
-  canvas.add(g);
+  layer.add(hexagon);
 }
 
-// from just after the function applyZoom replace all the code
-var mouse = {
-  // holds the mouse state
-  x: 0,
-  y: 0,
-  down: false,
-  w: 0,
-  delta: new fabric.Point(0, 0),
-};
-// event just track mouse state
-function zoom(e) {
-  if (e != null) {
-    e.preventDefault();
-  }
-  var evt = window.event || e;
-  mouse.x = e.offsetX;
-  mouse.y = e.offsetY;
-  mouse.w += evt.detail ? evt.detail * -120 : evt.wheelDelta;
-  return false;
-}
-canvas.on('mouse:up', function (e) {
-  mouse.down = false;
-});
-canvas.on('mouse:out', function (e) {
-  mouse.down = false;
-});
-canvas.on('mouse:down', function (e) {
-  mouse.down = true;
-});
-canvas.on('mouse:move', function (e) {
-  if (e && e.e) {
-    mouse.delta.x += e.e.movementX;
-    mouse.delta.y += e.e.movementY;
-  }
-});
+var scaleBy = 1.05;
+stage.on('wheel', (e) => {
+  e.evt.preventDefault();
+  var oldScale = stage.scaleX();
 
-let wheel = 0;
-canvas.on('mouse:wheel', function (opt) {
-  console.log(wheel++);
-  var delta = opt.e.deltaY;
-  mouse.w = delta;
-  // var zoom = canvas.getZoom();
-  // zoom *= 0.999 ** delta;
-  // if (zoom > 20) zoom = 20;
-  // if (zoom < 0.01) zoom = 0.01;
-  // canvas.setZoom(zoom);
-  opt.e.preventDefault();
-  opt.e.stopPropagation();
-});
+  var pointer = stage.getPointerPosition();
 
-let loop = 0;
-// main animation loop
-function update() {
-  // console.log(loop++);
-  if (mouse.w !== 0) {
-    // if the wheel has moved do zoom
-    var curZoom = canvas.getZoom();
-    canvas.zoomToPoint({ x: mouse.x, y: mouse.y }, canvas.getZoom() + mouse.w / 1000);
-    mouse.w = 0; // consume wheel delta
-  } else if (mouse.down) {
-    // if mouse button down
-    canvas.relativePan(mouse.delta);
-  }
-  // consume mouse delta
-  mouse.delta.x = 0;
-  mouse.delta.y = 0;
-  requestAnimationFrame(update);
-}
-requestAnimationFrame(update);
+  var mousePointTo = {
+    x: (pointer.x - stage.x()) / oldScale,
+    y: (pointer.y - stage.y()) / oldScale,
+  };
+
+  var newScale = e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+
+  stage.scale({ x: newScale, y: newScale });
+
+  var newPos = {
+    x: pointer.x - mousePointTo.x * newScale,
+    y: pointer.y - mousePointTo.y * newScale,
+  };
+  stage.position(newPos);
+  stage.batchDraw();
+});
