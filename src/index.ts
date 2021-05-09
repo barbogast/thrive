@@ -59,7 +59,7 @@ var stage = new Konva.Stage({
 
 var layer = new Konva.Layer()
 
-const r = 30
+const r = 50
 
 function getColor() {
   const colors = [
@@ -122,6 +122,7 @@ function getHexagonBoard(size: '3' | '5'): Tile[] {
       { q: 2, r: 0 },
     ],
   }
+
   return positions[size].map((p) => ({
     position: axialToOffset(p),
     color: getColor(),
@@ -129,7 +130,7 @@ function getHexagonBoard(size: '3' | '5'): Tile[] {
 }
 
 function init() {
-  for (const tile of getHexagonBoard('3')) {
+  for (const tile of getHexagonBoard('5')) {
     drawAtCoordinate(tile)
   }
 
@@ -144,8 +145,8 @@ function init() {
 init()
 
 function getCoordinates(row: number, col: number) {
-  const left = 50
-  const top = 50
+  const left = 250
+  const top = 250
   const distance = 0
   if (FLAT_TOPPED) {
     const height = Math.sqrt(3) * r
