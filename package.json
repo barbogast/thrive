@@ -1,0 +1,21 @@
+{
+  "name": "bla",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Benjamin Arbogast <benjamin.arbogast@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@snowpack/plugin-typescript": "^1.2.1",
+    "snowpack": "^3.3.7",
+    "typescript": "^4.2.4"
+  },
+  "scripts": {
+    "dev": "snowpack dev",
+    "build": "snowpack build"
+  },
+  "prettier": {
+    "trailingComma": "all",
+    "singleQuote": true,
+    "semi": false
+  }
+}
