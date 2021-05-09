@@ -1,72 +1,10 @@
 import Konva from 'konva'
-
-type PixelPosition = {
-  x: number
-  y: number
-}
-
-type OffsetPosition = {
-  row: number
-  col: number
-}
-
-type AxialPosition = {
-  q: number
-  r: number
-}
-
-type CubePosition = {
-  x: number
-  y: number
-  z: number
-}
+import config from './config'
+import * as hexUtils from './hexUtils'
 
 type Tile = {
-  position: OffsetPosition
+  position: hexUtils.OffsetPosition
   color: string
-}
-
-const FLAT_TOPPED = true
-
-function offsetToAxial({ row, col }: OffsetPosition): AxialPosition {
-  if (FLAT_TOPPED) {
-    return {
-      q: row,
-      r: col - (row - (row & 1)) / 2,
-    }
-  } else {
-    return {
-      q: row - (col - (col & 1)) / 2,
-      r: col,
-    }
-  }
-}
-
-function axialToOffset({ q, r }: AxialPosition): OffsetPosition {
-  if (FLAT_TOPPED) {
-    return {
-      row: q,
-      col: r + (q - (q & 1)) / 2,
-    }
-  } else {
-    return {
-      row: q + (r - (r & 1)) / 2,
-      col: r,
-    }
-  }
-}
-
-function cubeToAxial(cube: CubePosition): AxialPosition {
-  var q = cube.x
-  var r = cube.z
-  return { q, r }
-}
-
-function axialToCube(pos: AxialPosition): CubePosition {
-  var x = pos.q
-  var z = pos.r
-  var y = -x - z
-  return { x, y, z }
 }
 
 var stage = new Konva.Stage({
@@ -143,42 +81,11 @@ function getHexagonBoard(size: '3' | '5'): Tile[] {
   }
 
   return positions[size].map((p) => ({
-    position: axialToOffset(p),
+    position: hexUtils.axialToOffset(p),
     color: getColor(),
   }))
 }
 
-function cubeRound(cube: CubePosition): CubePosition {
-  // https://www.redblobgames.com/grids/hexagons/#rounding
-  var rx = Math.round(cube.x)
-  var ry = Math.round(cube.y)
-  var rz = Math.round(cube.z)
-
-  var x_diff = Math.abs(rx - cube.x)
-  var y_diff = Math.abs(ry - cube.y)
-  var z_diff = Math.abs(rz - cube.z)
-
-  if (x_diff > y_diff && x_diff > z_diff) {
-    rx = -ry - rz
-  } else if (y_diff > z_diff) {
-    ry = -rx - rz
-  } else {
-    rz = -rx - ry
-  }
-
-  return { x: rx, y: ry, z: rz }
-}
-
-function hexRound(pos: AxialPosition): AxialPosition {
-  // https://www.redblobgames.com/grids/hexagons/#rounding
-  return cubeToAxial(cubeRound(axialToCube(pos)))
-}
-
-function pixelToFlatHex(point: PixelPosition): AxialPosition {
-  var q = ((2 / 3) * point.x) / TILE_RADIUS
-  var r = ((-1 / 3) * point.x + (Math.sqrt(3) / 3) * point.y) / TILE_RADIUS
-  return hexRound({ q, r })
-}
 function init() {
   for (const tile of getHexagonBoard('5')) {
     drawAtCoordinate(tile)
@@ -213,18 +120,19 @@ function getCoordinates(row: number, col: number) {
   const left = 250
   const top = 250
   const distance = 0
-  if (FLAT_TOPPED) {
-    const height = Math.sqrt(3) * TILE_RADIUS
-    const isOffset = row % 2 !== 0 ? (TILE_RADIUS * 2) / 2 : 0
+  const r = config().tileRadius
+  if (config().flatTopped) {
+    const height = Math.sqrt(3) * r
+    const isOffset = row % 2 !== 0 ? (r * 2) / 2 : 0
     return {
       x: left + row * height,
-      y: top + col * (TILE_RADIUS * 2 + distance) + isOffset,
+      y: top + col * (r * 2 + distance) + isOffset,
     }
   } else {
-    const height = Math.sqrt(3) * TILE_RADIUS
-    const isOffset = col % 2 !== 0 ? (TILE_RADIUS * 2) / 2 : 0
+    const height = Math.sqrt(3) * r
+    const isOffset = col % 2 !== 0 ? (r * 2) / 2 : 0
     return {
-      x: left + row * (TILE_RADIUS * 2 + distance) + isOffset,
+      x: left + row * (r * 2 + distance) + isOffset,
       y: top + left + col * height,
     }
   }
@@ -236,11 +144,15 @@ function drawAtCoordinate(info: Tile) {
     color,
   } = info
 
-  const axial = offsetToAxial(info.position)
+  const axial = hexUtils.offsetToAxial(info.position)
   drawHexagon(getCoordinates(row, col), color, `r: ${axial.q}\nc: ${axial.r}`)
 }
 
-function drawHexagon(pos: PixelPosition, color: string, label: string) {
+function drawHexagon(
+  pos: hexUtils.PixelPosition,
+  color: string,
+  label: string,
+) {
   var group = new Konva.Group({
     x: pos.x,
     y: pos.y,
@@ -249,8 +161,8 @@ function drawHexagon(pos: PixelPosition, color: string, label: string) {
   group.add(
     new Konva.RegularPolygon({
       sides: 6,
-      rotation: FLAT_TOPPED ? 30 : 0,
-      radius: TILE_RADIUS + 1,
+      rotation: config().flatTopped ? 30 : 0,
+      radius: config().tileRadius + 1,
       fill: color,
       stroke: 'black',
       strokeWidth: 1,
