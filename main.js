@@ -39,8 +39,27 @@ function getSquareBoard() {
   return tiles;
 }
 
+function getHexagonBoard() {
+  // return [
+  //   { y: 0, x: 1, color: getColor() }
+  // ];
+
+  const rows = [1, 3, 1];
+  const tiles = [];
+
+  let i = 0;
+  for (const rowLength of rows) {
+    for (let x = 0; x < rowLength; x++) {
+      tiles.push({ y: i, x, color: getColor(), isHovered: false });
+      console.log(x, i);
+    }
+    i++;
+  }
+  return tiles;
+}
+
 function init() {
-  for (const tile of getSquareBoard()) {
+  for (const tile of getHexagonBoard()) {
     drawAtCoordinate(tile);
   }
 
@@ -87,7 +106,7 @@ function drawHexagon(x, y, color, label) {
   group.add(
     new Konva.Text({
       text: label,
-      fontSize: 8,
+      fontSize: 10,
       fontFamily: 'Arial',
     })
   );
