@@ -20,12 +20,34 @@ type Tile = {
   color: string
 }
 
+const FLAT_TOPPED = true
+
 function offsetToAxial({ row, col }: OffsetPosition): AxialPosition {
-  return { q: row, r: col - (row - (row & 1)) / 2 }
+  if (FLAT_TOPPED) {
+    return {
+      q: row,
+      r: col - (row - (row & 1)) / 2,
+    }
+  } else {
+    return {
+      q: row - (col - (col & 1)) / 2,
+      r: col,
+    }
+  }
 }
 
 function axialToOffset({ q, r }: AxialPosition): OffsetPosition {
-  return { row: q, col: r + (q - (q & 1)) / 2 }
+  if (FLAT_TOPPED) {
+    return {
+      row: q,
+      col: r + (q - (q & 1)) / 2,
+    }
+  } else {
+    return {
+      row: q + (r - (r & 1)) / 2,
+      col: r,
+    }
+  }
 }
 
 var stage = new Konva.Stage({
@@ -121,24 +143,35 @@ function init() {
 
 init()
 
+function getCoordinates(row: number, col: number) {
+  const left = 50
+  const top = 50
+  const distance = 0
+  if (FLAT_TOPPED) {
+    const height = Math.sqrt(3) * r
+    const isOffset = row % 2 !== 0 ? (r * 2) / 2 : 0
+    return {
+      x: left + row * height,
+      y: top + col * (r * 2 + distance) + isOffset,
+    }
+  } else {
+    const height = Math.sqrt(3) * r
+    const isOffset = col % 2 !== 0 ? (r * 2) / 2 : 0
+    return {
+      x: left + row * (r * 2 + distance) + isOffset,
+      y: top + left + col * height,
+    }
+  }
+}
+
 function drawAtCoordinate(info: Tile) {
   const {
     position: { row, col },
     color,
   } = info
-  const distance = 0
-
-  const left = 50
-  const top = 50
-  const height = Math.sqrt(3) * r
-  const isOffset = row % 2 !== 0 ? (r * 2) / 2 : 0
 
   const axial = offsetToAxial(info.position)
-  drawHexagon(
-    { x: left + row * height, y: top + col * (r * 2 + distance) + isOffset },
-    color,
-    `r: ${axial.q}\nc: ${axial.r}`,
-  )
+  drawHexagon(getCoordinates(row, col), color, `r: ${axial.q}\nc: ${axial.r}`)
 }
 
 function drawHexagon(pos: PixelPosition, color: string, label: string) {
@@ -150,7 +183,7 @@ function drawHexagon(pos: PixelPosition, color: string, label: string) {
   group.add(
     new Konva.RegularPolygon({
       sides: 6,
-      rotation: 30,
+      rotation: FLAT_TOPPED ? 30 : 0,
       radius: r + 1,
       fill: color,
       stroke: 'black',
