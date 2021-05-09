@@ -29,19 +29,20 @@ function regularPolygonPoints(sideCount, radius) {
 }
 const hexagonPoints = regularPolygonPoints(6, r);
 
-function init() {
-  let tiles = [];
-  for (let x = 0; x < 20; x++) {
-    const row = [];
-    for (let y = 0; y < 20; y++) {
-      row.push({ x, y, color: getColor(), isHovered: false });
+function getSquareBoard() {
+  const tiles = [];
+  for (let x = 0; x < 10; x++) {
+    for (let y = 0; y < 10; y++) {
+      tiles.push({ x, y, color: getColor(), isHovered: false });
     }
-    tiles.push(row);
   }
+  return tiles;
+}
 
-  let corners = [];
-
-  drawAll(tiles);
+function init() {
+  for (const tile of getSquareBoard()) {
+    drawAtCoordinate(tile);
+  }
 
   stage.add(layer);
 
@@ -50,14 +51,6 @@ function init() {
   layer.on('click', (...args) => {
     console.log('lick', args);
   });
-}
-
-function drawAll(tiles) {
-  for (let i = 0; i < tiles.length; i++) {
-    for (let j = 0; j < tiles[i].length; j++) {
-      drawAtCoordinate(tiles[i][j]);
-    }
-  }
 }
 
 init();
