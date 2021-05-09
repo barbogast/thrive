@@ -24,7 +24,7 @@ function getColor() {
   return colors[Math.floor(Math.random() * colors.length)]
 }
 
-function regularPolygonPoints(sideCount, radius) {
+function regularPolygonPoints(sideCount: number, radius: number) {
   var sweep = (Math.PI * 2) / sideCount
   var cx = radius
   var cy = radius
@@ -83,7 +83,7 @@ function init() {
 
 init()
 
-function drawAtCoordinate(info) {
+function drawAtCoordinate(info: { x: number; y: number; color: string }) {
   const { x, y, color } = info
   const distance = 0
 
@@ -100,7 +100,7 @@ function drawAtCoordinate(info) {
   )
 }
 
-function drawHexagon(x, y, color, label) {
+function drawHexagon(x: number, y: number, color: string, label: string) {
   var group = new Konva.Group({
     x,
     y,
@@ -134,6 +134,9 @@ stage.on('wheel', (e) => {
 
   var pointer = stage.getPointerPosition()
 
+  if (!pointer) {
+    return
+  }
   var mousePointTo = {
     x: (pointer.x - stage.x()) / oldScale,
     y: (pointer.y - stage.y()) / oldScale,
