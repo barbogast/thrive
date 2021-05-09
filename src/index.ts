@@ -24,6 +24,10 @@ function offsetToAxial({ row, col }: OffsetPosition): AxialPosition {
   return { q: row, r: col - (row - (row & 1)) / 2 }
 }
 
+function axialToOffset({ q, r }: AxialPosition): OffsetPosition {
+  return { row: q, col: r + (q - (q & 1)) / 2 }
+}
+
 var stage = new Konva.Stage({
   container: 'container', // id of container <div>
   width: 500,
