@@ -10,33 +10,102 @@ function getColor() {
 }
 
 function init() {
-  let tiles = [];
-  for (let x = 0; x < 10; x++) {
-    const row = [];
-    for (let y = 0; y < 10; y++) {
-      row.push({ x, y, color: getColor(), isHovered: false });
+  // let tiles = [];
+  // for (let x = 0; x < 10; x++) {
+  //   const row = [];
+  //   for (let y = 0; y < 10; y++) {
+  //     row.push({ x, y, color: getColor(), isHovered: false });
+  //   }
+  //   tiles.push(row);
+  // }
+
+  // let corners = [];
+
+  // drawAll(tiles);
+
+  // let mouseIsDown = false;
+  // canvas.addEventListener('mousedown', () => {
+  //   mouseIsDown = true;
+  // });
+  // canvas.addEventListener('mouseup', () => {
+  //   mouseIsDown = false;
+  // });
+
+  // canvas.addEventListener('mousemove', (event) => {
+  //   if (!mouseIsDown) {
+  //     return;
+  //   }
+
+  //   console.log(event.offsetX, event.offsetY);
+  // });
+
+  var canvas = new fabric.Canvas('canvas2', { selection: false });
+
+  function regularPolygonPoints(sideCount, radius) {
+    var sweep = (Math.PI * 2) / sideCount;
+    var cx = radius;
+    var cy = radius;
+    var points = [];
+    for (var i = 0; i < sideCount; i++) {
+      var x = cx + radius * Math.cos(i * sweep);
+      var y = cy + radius * Math.sin(i * sweep);
+      points.push({ x: x, y: y });
     }
-    tiles.push(row);
+    return points;
   }
 
-  let corners = [];
-
-  drawAll(tiles);
-
-  let mouseIsDown = false;
-  canvas.addEventListener('mousedown', () => {
-    mouseIsDown = true;
+  // create a rectangle object
+  var rect = new fabric.Polygon(regularPolygonPoints(6, 30), {
+    left: 250,
+    top: 150,
+    angle: 0,
+    fill: 'green',
+    hasControls: false,
+    selectable: false,
+    hoverCursor: 'pointer',
+    padding: 0,
+    perPixelTargetFind: true,
+    id: 'myid',
+    type: 'asfd',
+    x: 34,
   });
-  canvas.addEventListener('mouseup', () => {
-    mouseIsDown = false;
+
+  var rect2 = new fabric.Polygon(regularPolygonPoints(6, 30), {
+    left: 255,
+    top: 155,
+    angle: 0,
+    fill: 'yellow',
+    hasControls: false,
+    selectable: false,
+    hoverCursor: 'pointer',
+    padding: 0,
+    perPixelTargetFind: true,
+    id: 'myid2',
+    type: 'asfd',
+    x: 34,
+  });
+  // rect.on('mousedown', function () {
+  //   console.log('selected a rectangle');
+  // });
+
+  // "add" rectangle onto canvas
+  canvas.add(rect);
+  canvas.add(rect2);
+
+  canvas.on('mouse:down', function (options) {
+    console.log(options.e.clientX, options.e.clientY);
+    console.log(options);
   });
 
-  canvas.addEventListener('mousemove', (event) => {
-    if (!mouseIsDown) {
-      return;
-    }
-
-    console.log(event.offsetX, event.offsetY);
+  canvas.on('mouse:wheel', function (opt) {
+    var delta = opt.e.deltaY;
+    var zoom = canvas.getZoom();
+    zoom *= 0.999 ** delta;
+    if (zoom > 20) zoom = 20;
+    if (zoom < 0.01) zoom = 0.01;
+    canvas.setZoom(zoom);
+    opt.e.preventDefault();
+    opt.e.stopPropagation();
   });
 }
 
