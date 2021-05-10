@@ -3,14 +3,24 @@ import produce from 'immer'
 
 import * as game from '../game'
 
+export enum Action {
+  buildRoad = 'buildRoad',
+  buildTown = 'buildTown',
+  none = 'none',
+}
+
 type State = {
   gameState: game.GameState
+  uiState: {
+    currentAction: Action
+  }
 }
 
 type Setter = {
   initialise: () => void
   buildTown: (id: string) => void
   nextPlayer: () => void
+  toggleCurrentAction: (action: Action) => void
 }
 
 const useStore = create<State & Setter>((set) => {
@@ -22,6 +32,9 @@ const useStore = create<State & Setter>((set) => {
       towns: [],
       players: [],
       currentPlayer: game.PlayerId.green,
+    },
+    uiState: {
+      currentAction: Action.none,
     },
 
     initialise: () => iSet(() => ({ gameState: game.initialiseGame() })),
@@ -37,6 +50,12 @@ const useStore = create<State & Setter>((set) => {
         draft.gameState.currentPlayer = game.getNextPlayer(
           draft.gameState.currentPlayer,
         )
+      }),
+
+    toggleCurrentAction: (action: Action) =>
+      iSet((draft) => {
+        draft.uiState.currentAction =
+          action === draft.uiState.currentAction ? Action.none : action
       }),
   }
 })

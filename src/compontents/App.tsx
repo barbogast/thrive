@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Stage, useStrictMode } from 'react-konva'
 
 import * as game from '../game'
-import useStore from '../state'
+import useStore, { Action } from '../state'
 import Board from './Board'
 
 useStrictMode(true)
@@ -40,10 +40,18 @@ function onWheel(e: KonvaEventObject<WheelEvent>) {
 }
 
 function App(): JSX.Element {
-  const { initialise, nextPlayer, currentPlayer } = useStore((state) => ({
+  const {
+    initialise,
+    nextPlayer,
+    currentPlayer,
+    toggleCurrentAction,
+    currentAction,
+  } = useStore((state) => ({
     initialise: state.initialise,
     nextPlayer: state.nextPlayer,
     currentPlayer: state.gameState.currentPlayer,
+    toggleCurrentAction: state.toggleCurrentAction,
+    currentAction: state.uiState.currentAction,
   }))
   useEffect(initialise, [])
 
@@ -58,8 +66,18 @@ function App(): JSX.Element {
           display: 'inline-block',
         }}
       ></span>
-      <br></br>
+      <br />
       <button onClick={nextPlayer}>Next player</button>
+      &nbsp;&nbsp;
+      <button
+        onClick={() => toggleCurrentAction(Action.buildRoad)}
+        style={{
+          boxShadow:
+            currentAction === Action.buildRoad ? '0 0 0 2px black' : '',
+        }}
+      >
+        Build road
+      </button>
       <Stage
         width={window.innerWidth}
         height={window.innerHeight}

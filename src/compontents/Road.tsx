@@ -5,12 +5,18 @@ import config from '../config'
 import * as game from '../game'
 import * as draw from '../draw'
 import * as hexUtils from '../hexUtils'
+import { Action } from '../state'
 
 type Props = {
   road: game.Road
+  currentAction: Action
 }
 
-function Road({ road }: Props): JSX.Element {
+function Road({ road, currentAction }: Props): JSX.Element {
+  if (currentAction !== Action.buildRoad) {
+    return <></>
+  }
+
   const [tile1, tile2] = road.position
 
   const direction = hexUtils.getDirection(

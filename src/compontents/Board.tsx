@@ -7,7 +7,13 @@ import Road from './Road'
 import Town from './Town'
 
 function Board(): JSX.Element {
-  const { tiles, roads, towns } = useStore((state) => state.gameState)
+  const {
+    gameState: { tiles, roads, towns },
+    currentAction,
+  } = useStore((state) => ({
+    gameState: state.gameState,
+    currentAction: state.uiState.currentAction,
+  }))
 
   return (
     <Layer>
@@ -16,7 +22,7 @@ function Board(): JSX.Element {
       ))}
 
       {Object.values(roads).map((r, i) => (
-        <Road key={i} road={r} />
+        <Road key={i} road={r} currentAction={currentAction} />
       ))}
 
       {Object.values(towns).map((t, i) => (
