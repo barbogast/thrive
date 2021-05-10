@@ -15,17 +15,7 @@ var layer = new Konva.Layer()
 
 function init() {
   const state = game.initialiseGame()
-  for (const tile of Object.values(state.tiles)) {
-    draw.drawTile(layer, tile)
-  }
-
-  for (const road of state.roads) {
-    draw.drawRoad(layer, road)
-  }
-
-  for (const town of state.towns) {
-    draw.drawTown(layer, town)
-  }
+  draw.drawGame(layer, state)
 
   layer.add(
     new Konva.Rect({

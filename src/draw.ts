@@ -27,7 +27,7 @@ function getCoordinates(position: hexUtils.OffsetPosition) {
   }
 }
 
-export function drawTile(layer: Konva.Layer, info: game.Tile) {
+function drawTile(layer: Konva.Layer, info: game.Tile) {
   const { position, color } = info
 
   const axial = hexUtils.offsetToAxial(info.position)
@@ -87,7 +87,7 @@ function getMiddle(
   }
 }
 
-export function drawRoad(layer: Konva.Layer, road: game.Road) {
+function drawRoad(layer: Konva.Layer, road: game.Road) {
   const [tile1, tile2] = road.tiles
 
   const direction = hexUtils.getDirection(
@@ -121,7 +121,7 @@ export function drawRoad(layer: Konva.Layer, road: game.Road) {
   layer.add(rect)
 }
 
-export function drawTown(layer: Konva.Layer, town: game.Town) {
+function drawTown(layer: Konva.Layer, town: game.Town) {
   const middle = getMiddle(town.tiles)
   const rect = new Konva.Circle({
     x: middle.x,
@@ -133,4 +133,18 @@ export function drawTown(layer: Konva.Layer, town: game.Town) {
     strokeWidth: 1,
   })
   layer.add(rect)
+}
+
+export function drawGame(layer: Konva.Layer, state: game.GameState) {
+  for (const tile of Object.values(state.tiles)) {
+    drawTile(layer, tile)
+  }
+
+  for (const road of state.roads) {
+    drawRoad(layer, road)
+  }
+
+  for (const town of state.towns) {
+    drawTown(layer, town)
+  }
 }
