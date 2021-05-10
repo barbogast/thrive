@@ -18,7 +18,7 @@ function init() {
   const tMap = tileMap.fromArray(tiles)
 
   const roads = board.getRoadPositions(tMap)
-  console.log(roads)
+
   const towns = board.getTownPositions(tMap)
 
   for (const tile of tiles) {
