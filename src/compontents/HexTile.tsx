@@ -11,7 +11,8 @@ type Props = {
 
 function HexTile({ tile }: Props): JSX.Element {
   const pxPosition = draw.getTilePosition(tile.position)
-  const axial = hexUtils.offsetToAxial(position)
+  // const axial = hexUtils.offsetToAxial(position)
+  // const coord = `r: ${axial.q}\nc: ${axial.r}`
 
   return (
     <Group x={pxPosition.x} y={pxPosition.y}>
@@ -24,11 +25,16 @@ function HexTile({ tile }: Props): JSX.Element {
         strokeWidth={1}
         id={'asdf' + pxPosition.x + pxPosition.y}
       />
-      <Text
-        text={`r: ${axial.q}\nc: ${axial.r}`}
-        fontSize={10}
-        fontFamily="Arial"
-      />
+      {tile.number ? (
+        <Text
+          text={String(tile.number)}
+          fontSize={14}
+          fontFamily="Arial"
+          offsetX={6}
+          offsetY={3}
+          fontVariant="bold"
+        />
+      ) : null}
     </Group>
   )
 }

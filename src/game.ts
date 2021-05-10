@@ -1,6 +1,7 @@
 import * as hexUtils from './hexUtils'
 import * as tileMap from './tileMap'
 import * as board from './board'
+import * as utils from './utils'
 
 export enum PlayerId {
   green = 'green',
@@ -17,6 +18,7 @@ type Player = {
 export type Tile = {
   position: hexUtils.OffsetPosition
   color: string
+  number: number | void
 }
 
 export type Road = {
@@ -48,7 +50,11 @@ export function getSquareBoard(): Tile[] {
   const tiles = []
   for (let x = 0; x < 10; x++) {
     for (let y = 0; y < 10; y++) {
-      tiles.push({ position: { row: x, col: y }, color: getColor() })
+      tiles.push({
+        position: { row: x, col: y },
+        color: getColor(),
+        number: utils.randomNumber(12),
+      })
     }
   }
   return tiles
@@ -97,6 +103,7 @@ export function getHexagonBoard(size: '3' | '5'): Tile[] {
   return positions[size].map((p) => ({
     position: hexUtils.axialToOffset(p),
     color: p.q === 0 && p.r === 0 ? 'lightyellow' : getColor(),
+    number: p.q === 0 && p.r === 0 ? undefined : utils.randomNumber(12),
   }))
 }
 
