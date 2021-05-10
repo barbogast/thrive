@@ -19,6 +19,8 @@ export const Resource = {
 } as const
 type Resource = typeof Resource[keyof typeof Resource]
 
+type Resources = { [key in Resource]: number }
+
 export const TileType = {
   ...Resource,
   desert: 'desert',
@@ -28,7 +30,7 @@ export type TileType = typeof TileType[keyof typeof TileType]
 type Player = {
   id: PlayerId
   color: string
-  resources: { [key in Resource]: number }
+  resources: Resources
 }
 
 export type Tile = {
@@ -67,6 +69,25 @@ function getResource() {
     Resource.wood,
   ]
   return resources[utils.randomNumber(resources.length)]
+}
+
+export function getCost(type: 'town' | 'road'): Resources {
+  return {
+    road: {
+      brick: 1,
+      grain: 0,
+      ore: 0,
+      sheep: 0,
+      wood: 1,
+    },
+    town: {
+      brick: 1,
+      grain: 1,
+      ore: 0,
+      sheep: 1,
+      wood: 1,
+    },
+  }[type]
 }
 
 export function getSquareBoard(): Tile[] {
@@ -139,22 +160,22 @@ export function initialisePlayers() {
     [PlayerId.green]: {
       id: PlayerId.green,
       color: 'green',
-      resources: { brick: 0, grain: 0, ore: 0, sheep: 0, wood: 0 },
+      resources: { brick: 10, grain: 10, ore: 10, sheep: 10, wood: 10 },
     },
     [PlayerId.red]: {
       id: PlayerId.red,
       color: 'red',
-      resources: { brick: 0, grain: 0, ore: 0, sheep: 0, wood: 0 },
+      resources: { brick: 10, grain: 10, ore: 10, sheep: 10, wood: 10 },
     },
     [PlayerId.yellow]: {
       id: PlayerId.yellow,
       color: 'yellow',
-      resources: { brick: 0, grain: 0, ore: 0, sheep: 0, wood: 0 },
+      resources: { brick: 10, grain: 10, ore: 10, sheep: 10, wood: 10 },
     },
     [PlayerId.blue]: {
       id: PlayerId.blue,
       color: 'blue',
-      resources: { brick: 0, grain: 0, ore: 0, sheep: 0, wood: 0 },
+      resources: { brick: 10, grain: 10, ore: 10, sheep: 10, wood: 10 },
     },
   }
 }
@@ -216,4 +237,22 @@ export function rollDice(state: GameState) {
   }
 
   state.currentDiceRoll = [diceResult1, diceResult2]
+}
+
+function payResources(
+  state: GameState,
+  playerId: PlayerId,
+  resources: Resources,
+) {
+  const playerResources = state.players[playerId].resources
+  for (const resourceType of Object.keys(resources)) {
+    playerResources[resourceType as Resource] -=
+      resources[resourceType as Resource]
+  }
+}
+
+export function buildTown(state: GameState, townId: string) {
+  payResources(state, state.currentPlayer, getCost('town'))
+  const town = state.towns.find((town) => town.id === townId)!
+  town.owner = state.currentPlayer
 }
