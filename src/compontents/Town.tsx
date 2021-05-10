@@ -12,10 +12,11 @@ type Props = {
 }
 
 function Town({ town, currentAction }: Props): JSX.Element {
+  const buildTown = useStore((state) => state.buildTown)
+
   if (currentAction !== Action.buildTown && !town.owner) {
     return <></>
   }
-  const buildTown = useStore((state) => state.buildTown)
   const middle = draw.getMiddle(town.position)
   const style = town.owner
     ? {

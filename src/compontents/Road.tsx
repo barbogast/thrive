@@ -5,7 +5,7 @@ import config from '../config'
 import * as game from '../game'
 import * as draw from '../draw'
 import * as hexUtils from '../hexUtils'
-import { Action } from '../state'
+import useStore, { Action } from '../state'
 
 type Props = {
   road: game.Road
@@ -13,7 +13,9 @@ type Props = {
 }
 
 function Road({ road, currentAction }: Props): JSX.Element {
-  if (currentAction !== Action.buildRoad) {
+  const buildRoad = useStore((state) => state.buildRoad)
+
+  if (currentAction !== Action.buildRoad && !road.owner) {
     return <></>
   }
 
@@ -35,6 +37,15 @@ function Road({ road, currentAction }: Props): JSX.Element {
 
   const middle = draw.getMiddle(road.position)
 
+  const style = road.owner
+    ? {
+        fill: road.owner,
+      }
+    : {
+        stroke: 'black',
+        strokeWidth: 1,
+      }
+
   return (
     <Rect
       x={middle.x}
@@ -44,9 +55,8 @@ function Road({ road, currentAction }: Props): JSX.Element {
       width={config().tileRadius}
       height={7}
       rotation={directionToDegree[direction]}
-      id={'haha'}
-      stroke="black"
-      strokeWidth={1}
+      {...style}
+      onClick={() => buildRoad(road.id)}
     />
   )
 }

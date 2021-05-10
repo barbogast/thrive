@@ -19,6 +19,7 @@ type State = {
 type Setter = {
   initialise: () => void
   buildTown: (id: string) => void
+  buildRoad: (id: string) => void
   nextPlayer: () => void
   toggleCurrentAction: (action: Action) => void
 }
@@ -43,6 +44,12 @@ const useStore = create<State & Setter>((set) => {
       iSet((draft) => {
         const town = draft.gameState.towns.find((town) => town.id === id)!
         town.owner = draft.gameState.currentPlayer
+      }),
+
+    buildRoad: (id: string) =>
+      iSet((draft) => {
+        const road = draft.gameState.roads.find((road) => road.id === id)!
+        road.owner = draft.gameState.currentPlayer
       }),
 
     nextPlayer: () =>
