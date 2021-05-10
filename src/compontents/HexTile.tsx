@@ -2,16 +2,15 @@ import React from 'react'
 import { Group, RegularPolygon, Text } from 'react-konva'
 
 import config from '../config'
-import * as hexUtils from '../hexUtils'
+import * as game from '../game'
 import * as draw from '../draw'
 
 type Props = {
-  color: string
-  position: hexUtils.OffsetPosition
+  tile: game.Tile
 }
 
-function HexTile({ color, position }: Props): JSX.Element {
-  const pxPosition = draw.getTilePosition(position)
+function HexTile({ tile }: Props): JSX.Element {
+  const pxPosition = draw.getTilePosition(tile.position)
   const axial = hexUtils.offsetToAxial(position)
 
   return (
@@ -20,7 +19,7 @@ function HexTile({ color, position }: Props): JSX.Element {
         sides={6}
         rotation={config().flatTopped ? 30 : 0}
         radius={config().tileRadius + 1}
-        fill={color}
+        fill={tile.color}
         stroke={'black'}
         strokeWidth={1}
         id={'asdf' + pxPosition.x + pxPosition.y}

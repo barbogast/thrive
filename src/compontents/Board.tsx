@@ -12,7 +12,7 @@ function Board(): JSX.Element {
   return (
     <Layer>
       {Object.values(tiles).map((t, i) => (
-        <HexTile key={i} color={t.color} position={t.position} />
+        <HexTile key={i} tile={t} />
       ))}
 
       {Object.values(roads).map((r, i) => (
