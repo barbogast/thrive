@@ -1,4 +1,4 @@
-import config from './constants'
+import { visualConfig } from './constants'
 
 export type PixelPosition = {
   x: number
@@ -22,7 +22,7 @@ export type CubePosition = {
 }
 
 export function offsetToAxial({ row, col }: OffsetPosition): AxialPosition {
-  if (config().flatTopped) {
+  if (visualConfig().flatTopped) {
     return {
       q: row,
       r: col - (row - (row & 1)) / 2,
@@ -36,7 +36,7 @@ export function offsetToAxial({ row, col }: OffsetPosition): AxialPosition {
 }
 
 export function axialToOffset({ q, r }: AxialPosition): OffsetPosition {
-  if (config().flatTopped) {
+  if (visualConfig().flatTopped) {
     return {
       row: q,
       col: r + (q - (q & 1)) / 2,
@@ -89,9 +89,10 @@ function hexRound(pos: AxialPosition): AxialPosition {
 }
 
 function pixelToFlatHex(point: PixelPosition): AxialPosition {
-  var q = ((2 / 3) * point.x) / config().tileRadius
+  var q = ((2 / 3) * point.x) / visualConfig().tileRadius
   var r =
-    ((-1 / 3) * point.x + (Math.sqrt(3) / 3) * point.y) / config().tileRadius
+    ((-1 / 3) * point.x + (Math.sqrt(3) / 3) * point.y) /
+    visualConfig().tileRadius
   return hexRound({ q, r })
 }
 

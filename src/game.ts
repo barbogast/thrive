@@ -2,6 +2,7 @@ import * as hexUtils from './hexUtils'
 import * as tileMap from './tileMap'
 import * as board from './board'
 import * as utils from './utils'
+import { gameConfig } from './constants'
 
 export enum PlayerId {
   green = 'green',
@@ -72,22 +73,7 @@ function getResource() {
 }
 
 export function getCost(type: 'town' | 'road'): Resources {
-  return {
-    road: {
-      brick: 1,
-      grain: 0,
-      ore: 0,
-      sheep: 0,
-      wood: 1,
-    },
-    town: {
-      brick: 1,
-      grain: 1,
-      ore: 0,
-      sheep: 1,
-      wood: 1,
-    },
-  }[type]
+  return gameConfig().resourceCost[type]
 }
 
 export function getSquareBoard(): Tile[] {
@@ -105,44 +91,7 @@ export function getSquareBoard(): Tile[] {
 }
 
 export function getHexagonBoard(size: '3' | '5'): Tile[] {
-  const positions = {
-    '3': [
-      { q: -1, r: 0 },
-      { q: -1, r: 1 },
-
-      { q: 0, r: -1 },
-      { q: 0, r: 0 },
-      { q: 0, r: 1 },
-
-      { q: 1, r: -1 },
-      { q: 1, r: 0 },
-    ],
-    '5': [
-      { q: -2, r: 0 },
-      { q: -2, r: 1 },
-      { q: -2, r: 2 },
-
-      { q: -1, r: -1 },
-      { q: -1, r: 0 },
-      { q: -1, r: 1 },
-      { q: -1, r: 2 },
-
-      { q: 0, r: -2 },
-      { q: 0, r: -1 },
-      { q: 0, r: 0 },
-      { q: 0, r: 1 },
-      { q: 0, r: 2 },
-
-      { q: 1, r: -2 },
-      { q: 1, r: -1 },
-      { q: 1, r: 0 },
-      { q: 1, r: 1 },
-
-      { q: 2, r: -2 },
-      { q: 2, r: -1 },
-      { q: 2, r: 0 },
-    ],
-  }
+  const positions = gameConfig().hexagonPositions
 
   return positions[size].map((p) => ({
     position: hexUtils.axialToOffset(p),
