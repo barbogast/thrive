@@ -1,13 +1,14 @@
 {
   "include": ["src", "types"],
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "ES2020",
+    "module": "esnext",
+    "target": "esnext",
 
     "outDir": "public",
 
     /* paths - If you configure Snowpack import aliases, add them here. */
     "paths": {
+      "konva-types/*": ["./node_modules/konva/types/*"],
       /* "source: skypack" type declarations are installed to ".snowpack/types" */
       "*": [".snowpack/types/*"]
     },
@@ -18,6 +19,8 @@
     "skipLibCheck": true,
     "moduleResolution": "node",
     "baseUrl": "./",
+    "jsx": "preserve",
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true
   }
 }
