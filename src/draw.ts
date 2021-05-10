@@ -123,14 +123,22 @@ function drawRoad(layer: Konva.Layer, road: game.Road) {
 
 function drawTown(layer: Konva.Layer, town: game.Town) {
   const middle = getMiddle(town.position)
+  const style = town.owner
+    ? {
+        fill: town.owner.color,
+      }
+    : {
+        stroke: 'black',
+        strokeWidth: 1,
+      }
+
   const rect = new Konva.Circle({
+    id: town.id,
+    type: 'town',
     x: middle.x,
     y: middle.y,
     radius: 10,
-    fill: 'black',
-    id: 'haha',
-    stroke: 'black',
-    strokeWidth: 1,
+    ...style,
   })
   layer.add(rect)
 }

@@ -2,17 +2,23 @@ import * as hexUtils from './hexUtils'
 import * as tileMap from './tileMap'
 import * as board from './board'
 
+type Player = { color: 'green' } | { color: 'red' }
+
 export type Tile = {
   position: hexUtils.OffsetPosition
   color: string
 }
 
 export type Road = {
+  id: string
   position: board.RoadPosition
+  owner: Player | void
 }
 
 export type Town = {
+  id: string
   position: board.TownPosition
+  owner: Player | void
 }
 
 export type GameState = {
@@ -82,6 +88,10 @@ export function getHexagonBoard(size: '3' | '5'): Tile[] {
   }))
 }
 
+function getId(type: string, position: hexUtils.OffsetPosition[]) {
+  return `${type}_${position.map((pos) => `${pos.row}|${pos.col}`)}`
+}
+
 export function initialiseGame(): GameState {
   const tiles = getHexagonBoard('3')
   const tMap = tileMap.fromArray(tiles)
@@ -90,7 +100,18 @@ export function initialiseGame(): GameState {
 
   return {
     tiles: tMap,
-    roads: roadPositions.map((position) => ({ position })),
-    towns: townPositions.map((position) => ({ position })),
+    roads: roadPositions.map((position) => ({
+      position,
+      owner: undefined,
+      id: getId('road', position),
+    })),
+    towns: townPositions.map((position) => ({
+      position,
+      owner: undefined,
+      id: getId('road', position),
+    })),
+  }
+}
+
   }
 }
