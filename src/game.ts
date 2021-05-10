@@ -127,17 +127,3 @@ export function initialiseGame(): GameState {
     ],
   }
 }
-
-export function buildTown(state: GameState, id: string): GameState {
-  return {
-    ...state,
-    towns: state.towns.map((town) =>
-      town.id === id
-        ? {
-            ...town,
-            owner: PlayerId.green,
-          }
-        : town,
-    ),
-  }
-}

@@ -1,4 +1,5 @@
-import create from 'zustand'
+import create, { SetState } from 'zustand'
+import produce from 'immer'
 
 import * as game from '../game'
 
@@ -7,25 +8,23 @@ type Setter = {
   buildTown: (id: string) => void
 }
 
-const useStore = create<game.GameState & Setter>((set) => ({
-  tiles: {},
-  roads: [],
-  towns: [],
-  players: [],
-  currentPlayer: game.PlayerId.green,
+const useStore = create<game.GameState & Setter>((set) => {
+  const iSet = (fn: (state: game.GameState) => void) => set(produce(fn))
+  return {
+    tiles: {},
+    roads: [],
+    towns: [],
+    players: [],
+    currentPlayer: game.PlayerId.green,
 
-  initialise: () => set(() => game.initialiseGame()),
-  buildTown: (id: string) =>
-    set((state) => ({
-      towns: state.towns.map((town) =>
-        town.id === id
-          ? {
-              ...town,
-              owner: game.PlayerId.green,
-            }
-          : town,
-      ),
-    })),
-}))
+    initialise: () => iSet(() => game.initialiseGame()),
+
+    buildTown: (id: string) =>
+      iSet((draft) => {
+        const town = draft.towns.find((town) => town.id === id)!
+        town.owner = game.PlayerId.green
+      }),
+  }
+})
 
 export default useStore
