@@ -20,7 +20,7 @@ type Setter = {
   initialise: () => void
   buildTown: (id: string) => void
   buildRoad: (id: string) => void
-  nextPlayer: () => void
+  nextTurn: () => void
   toggleCurrentAction: (action: Action) => void
 }
 
@@ -33,6 +33,7 @@ const useStore = create<State & Setter>((set) => {
       towns: [],
       players: [],
       currentPlayer: game.PlayerId.green,
+      currentDiceRoll: [],
     },
     uiState: {
       currentAction: Action.none,
@@ -52,8 +53,9 @@ const useStore = create<State & Setter>((set) => {
         road.owner = draft.gameState.currentPlayer
       }),
 
-    nextPlayer: () =>
+    nextTurn: () =>
       iSet((draft) => {
+        game.rollDice(draft.gameState)
         draft.gameState.currentPlayer = game.getNextPlayer(
           draft.gameState.currentPlayer,
         )

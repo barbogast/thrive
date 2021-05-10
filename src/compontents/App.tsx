@@ -56,18 +56,20 @@ function Box({ color }: { color: string }): JSX.Element {
 function App(): JSX.Element {
   const {
     initialise,
-    nextPlayer,
+    nextTurn,
     currentPlayer,
     toggleCurrentAction,
     currentAction,
+    currentDiceRoll,
     players,
     state,
   } = useStore((state) => ({
     initialise: state.initialise,
-    nextPlayer: state.nextPlayer,
+    nextTurn: state.nextTurn,
     currentPlayer: state.gameState.currentPlayer,
     toggleCurrentAction: state.toggleCurrentAction,
     currentAction: state.uiState.currentAction,
+    currentDiceRoll: state.gameState.currentDiceRoll,
     players: state.gameState.players,
     state: state,
   }))
@@ -108,8 +110,9 @@ function App(): JSX.Element {
       </div>
       Current player: <Box color={currentPlayer} />
       <br />
-      <button onClick={nextPlayer}>Next player</button>
-      &nbsp;&nbsp;
+      Current dice roll:{' '}
+      {currentDiceRoll.length ? currentDiceRoll.join(' | ') : ''}
+      <br />
       <button
         onClick={() => toggleCurrentAction(Action.buildRoad)}
         style={{
@@ -129,6 +132,8 @@ function App(): JSX.Element {
       >
         Build town
       </button>
+      &nbsp;&nbsp;
+      <button onClick={nextTurn}>Finish turn</button>
       <Stage
         width={window.innerWidth}
         height={window.innerHeight}

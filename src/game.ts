@@ -54,6 +54,7 @@ export type GameState = {
   roads: Road[]
   towns: Town[]
   currentPlayer: PlayerId
+  currentDiceRoll: [number, number] | []
   players: Player[]
 }
 
@@ -152,6 +153,7 @@ export function initialiseGame(): GameState {
       id: getId('road', position),
     })),
     currentPlayer: PlayerId.green,
+    currentDiceRoll: [],
     players: [
       {
         id: PlayerId.green,
@@ -175,4 +177,31 @@ const playerOrder: PlayerId[] = [
 ]
 export function getNextPlayer(currentPlayer: PlayerId): PlayerId {
   return playerOrder[(playerOrder.indexOf(currentPlayer) + 1) % 4]
+}
+
+export function rollDice(state: GameState) {
+  // Roll with 2 dices
+  const diceResult1 = utils.randomNumber(5) + 1
+  const diceResult2 = utils.randomNumber(5) + 1
+
+  const newResources: { playerId: PlayerId; resource: Resource }[] = []
+
+  for (const tile of Object.values(state.tiles)) {
+    if (
+      tile.resource !== 'desert' &&
+      tile.number === diceResult1 + diceResult2
+    ) {
+      const townsOnTile = board.getTownsOnTile(tile.position, state.towns)
+      for (const town of townsOnTile) {
+        if (town.owner) {
+          state.players.find((p) => p.id === town.owner)!.resources[
+            tile.resource
+          ] += 1
+          newResources.push({ resource: tile.resource, playerId: town.owner })
+        }
+      }
+    }
+  }
+
+  state.currentDiceRoll = [diceResult1, diceResult2]
 }

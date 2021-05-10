@@ -1,5 +1,6 @@
 import * as hexUtils from './hexUtils'
 import * as tileMap from './tileMap'
+import * as game from './game'
 
 export type RoadPosition = [hexUtils.OffsetPosition, hexUtils.OffsetPosition]
 
@@ -85,4 +86,21 @@ export function getTownPositions(tiles: tileMap.TileMap): TownPosition[] {
   }
 
   return towns
+}
+
+export function getTownsOnTile(
+  tilePosition: hexUtils.OffsetPosition,
+  towns: game.Town[],
+): game.Town[] {
+  const townsOnTile = []
+  for (const town of towns) {
+    if (
+      town.position.find(
+        (pos) => pos.col === tilePosition.col && pos.row === tilePosition.row,
+      )
+    ) {
+      townsOnTile.push(town)
+    }
+  }
+  return townsOnTile
 }
