@@ -2,12 +2,12 @@ import * as hexUtils from './hexUtils'
 import * as tileMap from './tileMap'
 import * as game from './game'
 
-export type RoadPosition = [hexUtils.OffsetPosition, hexUtils.OffsetPosition]
+export type RoadPosition = [hexUtils.AxialPosition, hexUtils.AxialPosition]
 
 export type TownPosition = [
-  hexUtils.OffsetPosition,
-  hexUtils.OffsetPosition,
-  hexUtils.OffsetPosition,
+  hexUtils.AxialPosition,
+  hexUtils.AxialPosition,
+  hexUtils.AxialPosition,
 ]
 
 export function getRoadPositions(tiles: tileMap.TileMap): RoadPosition[] {
@@ -17,19 +17,14 @@ export function getRoadPositions(tiles: tileMap.TileMap): RoadPosition[] {
     This should give us each road position exactly once */
   const roads: RoadPosition[] = []
   for (const tile of Object.values(tiles)) {
-    const axialPos = hexUtils.offsetToAxial(tile.position)
-
     for (const direction of [0, 1, 2] as hexUtils.Direction[]) {
-      const neighborPos = hexUtils.axialToOffset(
-        hexUtils.getNeighbor(axialPos, direction),
-      )
+      const neighborPos = hexUtils.getNeighbor(tile.position, direction)
+
       const road: RoadPosition = [tile.position, neighborPos]
       roads.push(road)
     }
     for (const direction of [3, 4, 5] as hexUtils.Direction[]) {
-      const neighbourPos = hexUtils.axialToOffset(
-        hexUtils.getNeighbor(axialPos, direction),
-      )
+      const neighbourPos = hexUtils.getNeighbor(tile.position, direction)
       if (!tileMap.findInPos(tiles, neighbourPos)) {
         const road: RoadPosition = [tile.position, neighbourPos]
         roads.push(road)
@@ -41,7 +36,7 @@ export function getRoadPositions(tiles: tileMap.TileMap): RoadPosition[] {
 
 function townIsEqual(town1: TownPosition, town2: TownPosition) {
   for (const pos of town1) {
-    if (!town2.find((p) => p.col === pos.col && p.row === pos.row)) {
+    if (!town2.find((p) => p.q === pos.q && p.r === pos.r)) {
       return false
     }
   }
@@ -64,19 +59,14 @@ export function getTownPositions(tiles: tileMap.TileMap): TownPosition[] {
     that are not already present */
   const towns: TownPosition[] = []
   for (const tile of Object.values(tiles)) {
-    const axialPos = hexUtils.offsetToAxial(tile.position)
-
     for (const direction of [0, 1, 2, 3, 4, 5] as hexUtils.Direction[]) {
-      const neighborPos1 = hexUtils.axialToOffset(
-        hexUtils.getNeighbor(axialPos, direction),
+      const neighborPos1 = hexUtils.getNeighbor(tile.position, direction)
+
+      const neighborPos2 = hexUtils.getNeighbor(
+        tile.position,
+        ((direction + 1) % 6) as hexUtils.Direction,
       )
 
-      const neighborPos2 = hexUtils.axialToOffset(
-        hexUtils.getNeighbor(
-          axialPos,
-          ((direction + 1) % 6) as hexUtils.Direction,
-        ),
-      )
       const town: TownPosition = [tile.position, neighborPos1, neighborPos2]
 
       if (!findTown(towns, town)) {
@@ -89,14 +79,14 @@ export function getTownPositions(tiles: tileMap.TileMap): TownPosition[] {
 }
 
 export function getTownsOnTile(
-  tilePosition: hexUtils.OffsetPosition,
+  tilePosition: hexUtils.AxialPosition,
   towns: game.Town[],
 ): game.Town[] {
   const townsOnTile = []
   for (const town of towns) {
     if (
       town.position.find(
-        (pos) => pos.col === tilePosition.col && pos.row === tilePosition.row,
+        (pos) => pos.q === tilePosition.q && pos.r === tilePosition.r,
       )
     ) {
       townsOnTile.push(town)

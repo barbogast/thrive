@@ -3,9 +3,9 @@ import * as hexUtils from './hexUtils'
 import * as utils from './utils'
 
 export function getTilePosition(
-  position: hexUtils.OffsetPosition,
+  position: hexUtils.AxialPosition,
 ): hexUtils.PixelPosition {
-  const { row, col } = position
+  const { row, col } = hexUtils.axialToOffset(position)
   const left = 250
   const top = 150
 
@@ -28,7 +28,7 @@ export function getTilePosition(
 }
 
 export function getMiddle(
-  positions: hexUtils.OffsetPosition[],
+  positions: hexUtils.AxialPosition[],
 ): hexUtils.PixelPosition {
   const pxPositions = positions.map(getTilePosition)
   return {

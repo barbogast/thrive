@@ -1,10 +1,10 @@
 import { Tile } from './game'
-import { OffsetPosition } from './hexUtils'
+import { AxialPosition } from './hexUtils'
 
 export type TileMap = { [key: string]: Tile }
 
-function index(position: OffsetPosition) {
-  return `${position.col}_${position.row}`
+function index(position: AxialPosition) {
+  return `${position.q}_${position.r}`
 }
 export function fromArray(tiles: Tile[]): TileMap {
   return tiles.reduce((prev, current) => {
@@ -15,7 +15,7 @@ export function fromArray(tiles: Tile[]): TileMap {
 
 export function findInPos(
   tileMap: TileMap,
-  position: OffsetPosition,
+  position: AxialPosition,
 ): Tile | void {
   return tileMap[index(position)]
 }

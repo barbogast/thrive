@@ -21,10 +21,7 @@ function Road({ road, currentAction }: Props): JSX.Element {
 
   const [tile1, tile2] = road.position
 
-  const direction = hexUtils.getDirection(
-    hexUtils.offsetToAxial(tile1),
-    hexUtils.offsetToAxial(tile2),
-  )
+  const direction = hexUtils.getDirection(tile1, tile2)
 
   const directionToDegree = {
     0: 90,

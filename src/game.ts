@@ -35,7 +35,7 @@ type Player = {
 }
 
 export type Tile = {
-  position: hexUtils.OffsetPosition
+  position: hexUtils.AxialPosition
   resource: TileType
   number: number | void
 }
@@ -81,7 +81,7 @@ export function getSquareBoard(): Tile[] {
   for (let x = 0; x < 10; x++) {
     for (let y = 0; y < 10; y++) {
       tiles.push({
-        position: { row: x, col: y },
+        position: hexUtils.offsetToAxial({ row: x, col: y }),
         resource: getResource(),
         number: utils.randomNumber(12) + 1,
       })
@@ -94,14 +94,14 @@ export function getHexagonBoard(size: '3' | '5'): Tile[] {
   const positions = gameConfig().hexagonPositions
 
   return positions[size].map((p) => ({
-    position: hexUtils.axialToOffset(p),
+    position: p,
     resource: p.q === 0 && p.r === 0 ? TileType.desert : getResource(),
     number: p.q === 0 && p.r === 0 ? undefined : utils.randomNumber(12) + 1,
   }))
 }
 
-function getId(type: string, position: hexUtils.OffsetPosition[]) {
-  return `${type}_${position.map((pos) => `${pos.row}|${pos.col}`)}`
+function getId(type: string, position: hexUtils.AxialPosition[]) {
+  return `${type}_${position.map((pos) => `${pos.q}|${pos.r}`)}`
 }
 
 export function initialisePlayers() {
