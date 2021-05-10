@@ -53,7 +53,7 @@ export function getSquareBoard(): Tile[] {
       tiles.push({
         position: { row: x, col: y },
         color: getColor(),
-        number: utils.randomNumber(12),
+        number: utils.randomNumber(12) + 1,
       })
     }
   }
@@ -103,7 +103,7 @@ export function getHexagonBoard(size: '3' | '5'): Tile[] {
   return positions[size].map((p) => ({
     position: hexUtils.axialToOffset(p),
     color: p.q === 0 && p.r === 0 ? 'lightyellow' : getColor(),
-    number: p.q === 0 && p.r === 0 ? undefined : utils.randomNumber(12),
+    number: p.q === 0 && p.r === 0 ? undefined : utils.randomNumber(12) + 1,
   }))
 }
 
