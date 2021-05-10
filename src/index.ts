@@ -19,6 +19,7 @@ function init() {
 
   const roads = board.getRoadPositions(tMap)
   console.log(roads)
+  const towns = board.getTownPositions(tMap)
 
   for (const tile of tiles) {
     draw.drawTile(layer, tile)
@@ -26,6 +27,10 @@ function init() {
 
   for (const road of roads) {
     draw.drawRoad(layer, road)
+  }
+
+  for (const town of towns) {
+    draw.drawTown(layer, town)
   }
 
   layer.add(

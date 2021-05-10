@@ -115,3 +115,22 @@ export function drawRoad(layer: Konva.Layer, road: board.Road) {
   })
   layer.add(rect)
 }
+
+export function drawTown(layer: Konva.Layer, town: board.Town) {
+  const t1 = getCoordinates(town.tiles[0])
+  const t2 = getCoordinates(town.tiles[1])
+  const t3 = getCoordinates(town.tiles[2])
+  const x = (t1.x + t2.x + t3.x) / 3
+  const y = (t1.y + t2.y + t3.y) / 3
+
+  const rect = new Konva.Circle({
+    x,
+    y,
+    radius: 10,
+    fill: 'black',
+    id: 'haha',
+    stroke: 'black',
+    strokeWidth: 1,
+  })
+  layer.add(rect)
+}

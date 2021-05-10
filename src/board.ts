@@ -10,6 +10,14 @@ export type Road = {
   tiles: [hexUtils.OffsetPosition, hexUtils.OffsetPosition]
 }
 
+export type Town = {
+  tiles: [
+    hexUtils.OffsetPosition,
+    hexUtils.OffsetPosition,
+    hexUtils.OffsetPosition,
+  ]
+}
+
 function getColor() {
   const colors = ['yellow', 'darkgreen', 'lightgreen', 'grey', '#873600']
   return colors[Math.floor(Math.random() * colors.length)]
@@ -102,4 +110,55 @@ export function getRoadPositions(tiles: tileMap.TileMap): Road[] {
     }
   }
   return roads
+}
+
+function townIsEqual(town1: Town, town2: Town) {
+  for (const pos of town1.tiles) {
+    if (!town2.tiles.find((p) => p.col === pos.col && p.row === pos.row)) {
+      return false
+    }
+  }
+  return true
+}
+
+function findTown(towns: Town[], searchFor: Town) {
+  for (const town of towns) {
+    if (townIsEqual(town, searchFor)) {
+      return true
+    }
+  }
+  return false
+}
+
+export function getTownPositions(tiles: tileMap.TileMap): Town[] {
+  /*
+    Approach is different than the one for roads:
+    For each tile go through all 6 connecting positions and store the ones
+    that are not already present */
+  const towns: Town[] = []
+  for (const tile of Object.values(tiles)) {
+    const axialPos = hexUtils.offsetToAxial(tile.position)
+
+    for (const direction of [0, 1, 2, 3, 4, 5] as hexUtils.Direction[]) {
+      const neighborPos1 = hexUtils.axialToOffset(
+        hexUtils.getNeighbor(axialPos, direction),
+      )
+
+      const neighborPos2 = hexUtils.axialToOffset(
+        hexUtils.getNeighbor(
+          axialPos,
+          ((direction + 1) % 6) as hexUtils.Direction,
+        ),
+      )
+      const town: Town = {
+        tiles: [tile.position, neighborPos1, neighborPos2],
+      }
+
+      if (!findTown(towns, town)) {
+        towns.push(town)
+      }
+    }
+  }
+
+  return towns
 }
