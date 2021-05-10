@@ -117,9 +117,6 @@ export function getDirection(
   pos1: AxialPosition,
   pos2: AxialPosition,
 ): Direction {
-  const dirPos = { q: pos1.q - pos2.q, r: pos1.r - pos2.r }
-  console.log(dirPos)
-
   const dir = directions.findIndex(
     (d) => d.q === pos1.q - pos2.q && d.r === pos1.r - pos2.r,
   )
