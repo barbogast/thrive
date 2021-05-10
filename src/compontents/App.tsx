@@ -1,9 +1,10 @@
 import { KonvaEventObject } from 'konva-types/Node'
 import { Stage as StateType } from 'konva-types/Stage'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Stage, useStrictMode } from 'react-konva'
 
 import * as game from '../game'
+import useStore from '../state'
 import Board from './Board'
 
 useStrictMode(true)
@@ -38,15 +39,9 @@ function onWheel(e: KonvaEventObject<WheelEvent>) {
   stage.batchDraw()
 }
 
-function useGameState() {
-  const [state, setState] = useState<game.GameState>(game.initialiseGame())
-  const buildTown = (id: string) =>
-    setState((state) => game.buildTown(state, id))
-  return { state, buildTown }
-}
-
 function App(): JSX.Element {
-  const { state, buildTown } = useGameState()
+  const initialise = useStore((state) => state.initialise)
+  useEffect(initialise, [])
 
   return (
     <Stage
@@ -55,7 +50,7 @@ function App(): JSX.Element {
       onWheel={onWheel}
       draggable
     >
-      <Board gameState={state} onTownClick={buildTown} />
+      <Board />
     </Stage>
   )
 }

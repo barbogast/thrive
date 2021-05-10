@@ -3,13 +3,14 @@ import { Circle } from 'react-konva'
 
 import * as game from '../game'
 import * as draw from '../draw'
+import useStore from '../state'
 
 type Props = {
   town: game.Town
-  onClick: (id: string) => void
 }
 
-function Town({ town, onClick }: Props): JSX.Element {
+function Town({ town }: Props): JSX.Element {
+  const buildTown = useStore((state) => state.buildTown)
   const middle = draw.getMiddle(town.position)
   const style = town.owner
     ? {
@@ -27,7 +28,7 @@ function Town({ town, onClick }: Props): JSX.Element {
       x={middle.x}
       y={middle.y}
       radius={10}
-      onClick={() => onClick(town.id)}
+      onClick={() => buildTown(town.id)}
       {...style}
     />
   )

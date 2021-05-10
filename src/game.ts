@@ -2,7 +2,7 @@ import * as hexUtils from './hexUtils'
 import * as tileMap from './tileMap'
 import * as board from './board'
 
-enum PlayerId {
+export enum PlayerId {
   green = 'green',
   red = 'red',
 }
