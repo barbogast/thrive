@@ -2,6 +2,7 @@ import Konva from 'konva'
 import * as draw from './draw'
 import * as tileMap from './tileMap'
 import * as board from './board'
+import * as game from './game'
 
 var stage = new Konva.Stage({
   container: 'container', // id of container <div>
@@ -13,7 +14,8 @@ var stage = new Konva.Stage({
 var layer = new Konva.Layer()
 
 function init() {
-  const tiles = board.getHexagonBoard('3')
+  // const tiles = [game.getHexagonBoard('3')[0]]
+  const tiles = game.getHexagonBoard('3')
 
   const tMap = tileMap.fromArray(tiles)
 

@@ -3,6 +3,7 @@ import Konva from 'konva'
 import config from './config'
 import * as hexUtils from './hexUtils'
 import * as board from './board'
+import * as game from './game'
 
 function getCoordinates(position: hexUtils.OffsetPosition) {
   const { row, col } = position
@@ -27,7 +28,7 @@ function getCoordinates(position: hexUtils.OffsetPosition) {
   }
 }
 
-export function drawTile(layer: Konva.Layer, info: board.Tile) {
+export function drawTile(layer: Konva.Layer, info: game.Tile) {
   const { position, color } = info
 
   const axial = hexUtils.offsetToAxial(info.position)
