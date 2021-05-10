@@ -78,9 +78,9 @@ function App(): JSX.Element {
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        {players.map((player) => {
+        {Object.values(players).map((player) => {
           return (
-            <div>
+            <div key={player.id}>
               {player.id}
               <ul>
                 <li>

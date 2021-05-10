@@ -55,7 +55,7 @@ export type GameState = {
   towns: Town[]
   currentPlayer: PlayerId
   currentDiceRoll: [number, number] | []
-  players: Player[]
+  players: { [key in PlayerId]: Player }
 }
 
 function getResource() {
@@ -134,6 +134,31 @@ function getId(type: string, position: hexUtils.OffsetPosition[]) {
   return `${type}_${position.map((pos) => `${pos.row}|${pos.col}`)}`
 }
 
+export function initialisePlayers() {
+  return {
+    [PlayerId.green]: {
+      id: PlayerId.green,
+      color: 'green',
+      resources: { brick: 0, grain: 0, ore: 0, sheep: 0, wood: 0 },
+    },
+    [PlayerId.red]: {
+      id: PlayerId.red,
+      color: 'red',
+      resources: { brick: 0, grain: 0, ore: 0, sheep: 0, wood: 0 },
+    },
+    [PlayerId.yellow]: {
+      id: PlayerId.yellow,
+      color: 'yellow',
+      resources: { brick: 0, grain: 0, ore: 0, sheep: 0, wood: 0 },
+    },
+    [PlayerId.blue]: {
+      id: PlayerId.blue,
+      color: 'blue',
+      resources: { brick: 0, grain: 0, ore: 0, sheep: 0, wood: 0 },
+    },
+  }
+}
+
 export function initialiseGame(): GameState {
   const tiles = getHexagonBoard('3')
   const tMap = tileMap.fromArray(tiles)
@@ -154,18 +179,7 @@ export function initialiseGame(): GameState {
     })),
     currentPlayer: PlayerId.green,
     currentDiceRoll: [],
-    players: [
-      {
-        id: PlayerId.green,
-        color: 'green',
-        resources: { brick: 0, grain: 0, ore: 0, sheep: 0, wood: 0 },
-      },
-      {
-        id: PlayerId.red,
-        color: 'red',
-        resources: { brick: 0, grain: 0, ore: 0, sheep: 0, wood: 0 },
-      },
-    ],
+    players: initialisePlayers(),
   }
 }
 
@@ -194,9 +208,7 @@ export function rollDice(state: GameState) {
       const townsOnTile = board.getTownsOnTile(tile.position, state.towns)
       for (const town of townsOnTile) {
         if (town.owner) {
-          state.players.find((p) => p.id === town.owner)!.resources[
-            tile.resource
-          ] += 1
+          state.players[town.owner].resources[tile.resource] += 1
           newResources.push({ resource: tile.resource, playerId: town.owner })
         }
       }

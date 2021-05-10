@@ -31,7 +31,7 @@ const useStore = create<State & Setter>((set) => {
       tiles: {},
       roads: [],
       towns: [],
-      players: [],
+      players: game.initialisePlayers(),
       currentPlayer: game.PlayerId.green,
       currentDiceRoll: [],
     },
