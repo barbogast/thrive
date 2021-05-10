@@ -6,6 +6,7 @@ import * as game from '../game'
 type Setter = {
   initialise: () => void
   buildTown: (id: string) => void
+  nextPlayer: () => void
 }
 
 const useStore = create<game.GameState & Setter>((set) => {
@@ -22,7 +23,12 @@ const useStore = create<game.GameState & Setter>((set) => {
     buildTown: (id: string) =>
       iSet((draft) => {
         const town = draft.towns.find((town) => town.id === id)!
-        town.owner = game.PlayerId.green
+        town.owner = draft.currentPlayer
+      }),
+
+    nextPlayer: () =>
+      iSet((draft) => {
+        draft.currentPlayer = game.getNextPlayer(draft.currentPlayer)
       }),
   }
 })

@@ -5,6 +5,8 @@ import * as board from './board'
 export enum PlayerId {
   green = 'green',
   red = 'red',
+  yellow = 'yellow',
+  blue = 'blue',
 }
 
 type Player = {
@@ -126,4 +128,14 @@ export function initialiseGame(): GameState {
       { id: PlayerId.red, color: 'red' },
     ],
   }
+}
+
+const playerOrder: PlayerId[] = [
+  PlayerId.green,
+  PlayerId.red,
+  PlayerId.yellow,
+  PlayerId.blue,
+]
+export function getNextPlayer(currentPlayer: PlayerId): PlayerId {
+  return playerOrder[(playerOrder.indexOf(currentPlayer) + 1) % 4]
 }

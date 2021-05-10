@@ -40,18 +40,35 @@ function onWheel(e: KonvaEventObject<WheelEvent>) {
 }
 
 function App(): JSX.Element {
-  const initialise = useStore((state) => state.initialise)
+  const { initialise, nextPlayer, currentPlayer } = useStore((state) => ({
+    initialise: state.initialise,
+    nextPlayer: state.nextPlayer,
+    currentPlayer: state.currentPlayer,
+  }))
   useEffect(initialise, [])
 
   return (
-    <Stage
-      width={window.innerWidth}
-      height={window.innerHeight}
-      onWheel={onWheel}
-      draggable
-    >
-      <Board />
-    </Stage>
+    <>
+      Current player:{' '}
+      <span
+        style={{
+          backgroundColor: currentPlayer,
+          width: 10,
+          height: 10,
+          display: 'inline-block',
+        }}
+      ></span>
+      <br></br>
+      <button onClick={nextPlayer}>Next player</button>
+      <Stage
+        width={window.innerWidth}
+        height={window.innerHeight}
+        onWheel={onWheel}
+        draggable
+      >
+        <Board />
+      </Stage>
+    </>
   )
 }
 
