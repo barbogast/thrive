@@ -78,6 +78,16 @@ function App(): JSX.Element {
       >
         Build road
       </button>
+      &nbsp;&nbsp;
+      <button
+        onClick={() => toggleCurrentAction(Action.buildTown)}
+        style={{
+          boxShadow:
+            currentAction === Action.buildTown ? '0 0 0 2px black' : '',
+        }}
+      >
+        Build town
+      </button>
       <Stage
         width={window.innerWidth}
         height={window.innerHeight}

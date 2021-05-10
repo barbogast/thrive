@@ -26,7 +26,7 @@ function Board(): JSX.Element {
       ))}
 
       {Object.values(towns).map((t, i) => (
-        <Town key={i} town={t} />
+        <Town key={i} town={t} currentAction={currentAction} />
       ))}
     </Layer>
   )
