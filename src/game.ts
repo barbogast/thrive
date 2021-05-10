@@ -9,6 +9,7 @@ function getColor() {
   const colors = ['yellow', 'darkgreen', 'lightgreen', 'grey', '#873600']
   return colors[Math.floor(Math.random() * colors.length)]
 }
+
 export function getSquareBoard(): Tile[] {
   const tiles = []
   for (let x = 0; x < 10; x++) {
