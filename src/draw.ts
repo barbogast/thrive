@@ -8,7 +8,7 @@ import * as game from './game'
 function getCoordinates(position: hexUtils.OffsetPosition) {
   const { row, col } = position
   const left = 250
-  const top = 250
+  const top = 150
 
   const r = config().tileRadius
   if (config().flatTopped) {
