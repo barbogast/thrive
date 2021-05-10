@@ -72,9 +72,19 @@ function drawHexagon(
   layer.add(group)
 }
 
-function getMiddle(pos1: number, pos2: number) {
-  const distance = Math.abs(pos1 - pos2)
-  return pos1 > pos2 ? pos2 + distance / 2 : pos1 + distance / 2
+function average(numbers: number[]) {
+  const sum = numbers.reduce((a, b) => a + b, 0)
+  return sum / numbers.length || 0
+}
+
+function getMiddle(
+  positions: hexUtils.OffsetPosition[],
+): hexUtils.PixelPosition {
+  const pxPositions = positions.map(getCoordinates)
+  return {
+    x: average(pxPositions.map((pos) => pos.x)),
+    y: average(pxPositions.map((pos) => pos.y)),
+  }
 }
 
 export function drawRoad(layer: Konva.Layer, road: board.Road) {
@@ -94,15 +104,10 @@ export function drawRoad(layer: Konva.Layer, road: board.Road) {
     5: 30,
   }
 
-  const pos1 = getCoordinates(tile1)
-  const pos2 = getCoordinates(tile2)
-
-  const midX = getMiddle(pos1.x, pos2.x)
-  const midY = getMiddle(pos1.y, pos2.y)
-
+  const middle = getMiddle(road.tiles)
   const rect = new Konva.Rect({
-    x: midX,
-    y: midY,
+    x: middle.x,
+    y: middle.y,
     offsetX: config().tileRadius / 2,
     offsetY: 3,
     width: config().tileRadius,
@@ -117,15 +122,10 @@ export function drawRoad(layer: Konva.Layer, road: board.Road) {
 }
 
 export function drawTown(layer: Konva.Layer, town: board.Town) {
-  const t1 = getCoordinates(town.tiles[0])
-  const t2 = getCoordinates(town.tiles[1])
-  const t3 = getCoordinates(town.tiles[2])
-  const x = (t1.x + t2.x + t3.x) / 3
-  const y = (t1.y + t2.y + t3.y) / 3
-
+  const middle = getMiddle(town.tiles)
   const rect = new Konva.Circle({
-    x,
-    y,
+    x: middle.x,
+    y: middle.y,
     radius: 10,
     fill: 'black',
     id: 'haha',
