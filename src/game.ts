@@ -10,14 +10,30 @@ export enum PlayerId {
   blue = 'blue',
 }
 
+const Resource = {
+  grain: 'grain',
+  wood: 'wood',
+  brick: 'brick',
+  sheep: 'sheep',
+  ore: 'ore',
+} as const
+type Resource = typeof Resource[keyof typeof Resource]
+
+export const TileType = {
+  ...Resource,
+  desert: 'desert',
+} as const
+export type TileType = typeof TileType[keyof typeof TileType]
+
 type Player = {
   id: PlayerId
   color: string
+  resources: { [key in Resource]: number }
 }
 
 export type Tile = {
   position: hexUtils.OffsetPosition
-  color: string
+  resource: TileType
   number: number | void
 }
 
@@ -41,9 +57,15 @@ export type GameState = {
   players: Player[]
 }
 
-function getColor() {
-  const colors = ['yellow', 'darkgreen', 'lightgreen', 'grey', '#873600']
-  return colors[utils.randomNumber(colors.length)]
+function getResource() {
+  const resources = [
+    Resource.brick,
+    Resource.grain,
+    Resource.ore,
+    Resource.sheep,
+    Resource.wood,
+  ]
+  return resources[utils.randomNumber(resources.length)]
 }
 
 export function getSquareBoard(): Tile[] {
@@ -52,7 +74,7 @@ export function getSquareBoard(): Tile[] {
     for (let y = 0; y < 10; y++) {
       tiles.push({
         position: { row: x, col: y },
-        color: getColor(),
+        resource: getResource(),
         number: utils.randomNumber(12) + 1,
       })
     }
@@ -102,7 +124,7 @@ export function getHexagonBoard(size: '3' | '5'): Tile[] {
 
   return positions[size].map((p) => ({
     position: hexUtils.axialToOffset(p),
-    color: p.q === 0 && p.r === 0 ? 'lightyellow' : getColor(),
+    resource: p.q === 0 && p.r === 0 ? TileType.desert : getResource(),
     number: p.q === 0 && p.r === 0 ? undefined : utils.randomNumber(12) + 1,
   }))
 }
@@ -131,8 +153,16 @@ export function initialiseGame(): GameState {
     })),
     currentPlayer: PlayerId.green,
     players: [
-      { id: PlayerId.green, color: 'green' },
-      { id: PlayerId.red, color: 'red' },
+      {
+        id: PlayerId.green,
+        color: 'green',
+        resources: { brick: 0, grain: 0, ore: 0, sheep: 0, wood: 0 },
+      },
+      {
+        id: PlayerId.red,
+        color: 'red',
+        resources: { brick: 0, grain: 0, ore: 0, sheep: 0, wood: 0 },
+      },
     ],
   }
 }

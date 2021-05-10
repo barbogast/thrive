@@ -4,9 +4,21 @@ import { Group, RegularPolygon, Text } from 'react-konva'
 import config from '../config'
 import * as game from '../game'
 import * as draw from '../draw'
+import { TileType } from '../game'
 
 type Props = {
   tile: game.Tile
+}
+
+function getColorForTileType(tileType: TileType): string {
+  return {
+    grain: 'yellow',
+    wood: 'darkgreen',
+    brick: '#873600',
+    sheep: 'lightgreen',
+    ore: 'grey',
+    desert: 'lightyellow',
+  }[tileType]
 }
 
 function HexTile({ tile }: Props): JSX.Element {
@@ -20,7 +32,7 @@ function HexTile({ tile }: Props): JSX.Element {
         sides={6}
         rotation={config().flatTopped ? 30 : 0}
         radius={config().tileRadius + 1}
-        fill={tile.color}
+        fill={getColorForTileType(tile.resource)}
         stroke={'black'}
         strokeWidth={1}
         id={'asdf' + pxPosition.x + pxPosition.y}
