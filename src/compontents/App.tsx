@@ -6,6 +6,7 @@ import { Stage, useStrictMode } from 'react-konva'
 import * as game from '../game'
 import useStore, { Action } from '../state'
 import Board from './Board'
+import { getColorForTileType } from './HexTile'
 
 useStrictMode(true)
 
@@ -39,6 +40,19 @@ function onWheel(e: KonvaEventObject<WheelEvent>) {
   stage.batchDraw()
 }
 
+function Box({ color }: { color: string }): JSX.Element {
+  return (
+    <span
+      style={{
+        backgroundColor: color,
+        width: 10,
+        height: 10,
+        display: 'inline-block',
+      }}
+    ></span>
+  )
+}
+
 function App(): JSX.Element {
   const {
     initialise,
@@ -46,6 +60,7 @@ function App(): JSX.Element {
     currentPlayer,
     toggleCurrentAction,
     currentAction,
+    players,
     state,
   } = useStore((state) => ({
     initialise: state.initialise,
@@ -53,21 +68,45 @@ function App(): JSX.Element {
     currentPlayer: state.gameState.currentPlayer,
     toggleCurrentAction: state.toggleCurrentAction,
     currentAction: state.uiState.currentAction,
+    players: state.gameState.players,
     state: state,
   }))
   useEffect(initialise, [])
 
   return (
     <>
-      Current player:{' '}
-      <span
-        style={{
-          backgroundColor: currentPlayer,
-          width: 10,
-          height: 10,
-          display: 'inline-block',
-        }}
-      ></span>
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        {players.map((player) => {
+          return (
+            <div>
+              {player.id}
+              <ul>
+                <li>
+                  <Box color={getColorForTileType(game.Resource.wood)} />
+                  &nbsp; Wood: {player.resources.wood}
+                </li>
+                <li>
+                  <Box color={getColorForTileType(game.Resource.brick)} />
+                  &nbsp; Brick: {player.resources.brick}
+                </li>
+                <li>
+                  <Box color={getColorForTileType(game.Resource.grain)} />
+                  &nbsp; Grain: {player.resources.grain}
+                </li>
+                <li>
+                  <Box color={getColorForTileType(game.Resource.sheep)} />
+                  &nbsp; Sheep: {player.resources.sheep}
+                </li>
+                <li>
+                  <Box color={getColorForTileType(game.Resource.wood)} /> &nbsp;
+                  Ore: {player.resources.ore}
+                </li>
+              </ul>
+            </div>
+          )
+        })}
+      </div>
+      Current player: <Box color={currentPlayer} />
       <br />
       <button onClick={nextPlayer}>Next player</button>
       &nbsp;&nbsp;

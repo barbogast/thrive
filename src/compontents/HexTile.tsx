@@ -10,7 +10,7 @@ type Props = {
   tile: game.Tile
 }
 
-function getColorForTileType(tileType: TileType): string {
+export function getColorForTileType(tileType: TileType): string {
   return {
     grain: 'yellow',
     wood: 'darkgreen',

@@ -10,7 +10,7 @@ export enum PlayerId {
   blue = 'blue',
 }
 
-const Resource = {
+export const Resource = {
   grain: 'grain',
   wood: 'wood',
   brick: 'brick',
