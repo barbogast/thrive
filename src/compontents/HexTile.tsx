@@ -1,7 +1,7 @@
 import React from 'react'
 import { Group, RegularPolygon, Text } from 'react-konva'
 
-import config from '../config'
+import { visualConfig } from '../constants'
 import * as game from '../game'
 import * as draw from '../draw'
 import { TileType } from '../game'
@@ -30,8 +30,8 @@ function HexTile({ tile }: Props): JSX.Element {
     <Group x={pxPosition.x} y={pxPosition.y}>
       <RegularPolygon
         sides={6}
-        rotation={config().flatTopped ? 30 : 0}
-        radius={config().tileRadius + 1}
+        rotation={visualConfig().flatTopped ? 30 : 0}
+        radius={visualConfig().tileRadius + 1}
         fill={getColorForTileType(tile.resource)}
         stroke={'black'}
         strokeWidth={1}

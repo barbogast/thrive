@@ -1,4 +1,4 @@
-import config from './config'
+import { visualConfig } from './constants'
 import * as hexUtils from './hexUtils'
 import * as utils from './utils'
 
@@ -9,8 +9,8 @@ export function getTilePosition(
   const left = 250
   const top = 150
 
-  const r = config().tileRadius
-  if (config().flatTopped) {
+  const r = visualConfig().tileRadius
+  if (visualConfig().flatTopped) {
     const height = Math.sqrt(3) * r
     const isOffset = row % 2 !== 0 ? r : 0
     return {

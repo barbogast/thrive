@@ -1,7 +1,7 @@
 import React from 'react'
 import { Rect } from 'react-konva'
 
-import config from '../config'
+import { visualConfig } from '../constants'
 import * as game from '../game'
 import * as draw from '../draw'
 import * as hexUtils from '../hexUtils'
@@ -50,9 +50,9 @@ function Road({ road, currentAction }: Props): JSX.Element {
     <Rect
       x={middle.x}
       y={middle.y}
-      offsetX={config().tileRadius / 2}
+      offsetX={visualConfig().tileRadius / 2}
       offsetY={3}
-      width={config().tileRadius}
+      width={visualConfig().tileRadius}
       height={7}
       rotation={directionToDegree[direction]}
       {...style}
