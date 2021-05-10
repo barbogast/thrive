@@ -2,7 +2,15 @@ import * as hexUtils from './hexUtils'
 import * as tileMap from './tileMap'
 import * as board from './board'
 
-type Player = { color: 'green' } | { color: 'red' }
+enum PlayerId {
+  green = 'green',
+  red = 'red',
+}
+
+type Player = {
+  id: PlayerId
+  color: string
+}
 
 export type Tile = {
   position: hexUtils.OffsetPosition
@@ -12,19 +20,21 @@ export type Tile = {
 export type Road = {
   id: string
   position: board.RoadPosition
-  owner: Player | void
+  owner: PlayerId | void
 }
 
 export type Town = {
   id: string
   position: board.TownPosition
-  owner: Player | void
+  owner: PlayerId | void
 }
 
 export type GameState = {
   tiles: tileMap.TileMap
   roads: Road[]
   towns: Town[]
+  currentPlayer: PlayerId
+  players: Player[]
 }
 
 function getColor() {
@@ -110,6 +120,11 @@ export function initialiseGame(): GameState {
       owner: undefined,
       id: getId('road', position),
     })),
+    currentPlayer: PlayerId.green,
+    players: [
+      { id: PlayerId.green, color: 'green' },
+      { id: PlayerId.red, color: 'red' },
+    ],
   }
 }
 
@@ -120,7 +135,7 @@ export function buildTown(state: GameState, id: string): GameState {
       town.id === id
         ? {
             ...town,
-            owner: { color: 'green' },
+            owner: PlayerId.green,
           }
         : town,
     ),

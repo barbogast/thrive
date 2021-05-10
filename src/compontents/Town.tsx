@@ -13,7 +13,7 @@ function Town({ town, onClick }: Props): JSX.Element {
   const middle = draw.getMiddle(town.position)
   const style = town.owner
     ? {
-        fill: town.owner.color,
+        fill: town.owner,
       }
     : {
         stroke: 'black',
