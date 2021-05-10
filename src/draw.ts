@@ -88,7 +88,7 @@ function getMiddle(
 }
 
 function drawRoad(layer: Konva.Layer, road: game.Road) {
-  const [tile1, tile2] = road.tiles
+  const [tile1, tile2] = road.position
 
   const direction = hexUtils.getDirection(
     hexUtils.offsetToAxial(tile1),
@@ -104,7 +104,7 @@ function drawRoad(layer: Konva.Layer, road: game.Road) {
     5: 30,
   }
 
-  const middle = getMiddle(road.tiles)
+  const middle = getMiddle(road.position)
   const rect = new Konva.Rect({
     x: middle.x,
     y: middle.y,
@@ -122,7 +122,7 @@ function drawRoad(layer: Konva.Layer, road: game.Road) {
 }
 
 function drawTown(layer: Konva.Layer, town: game.Town) {
-  const middle = getMiddle(town.tiles)
+  const middle = getMiddle(town.position)
   const rect = new Konva.Circle({
     x: middle.x,
     y: middle.y,

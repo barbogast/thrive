@@ -8,15 +8,11 @@ export type Tile = {
 }
 
 export type Road = {
-  tiles: [hexUtils.OffsetPosition, hexUtils.OffsetPosition]
+  position: board.RoadPosition
 }
 
 export type Town = {
-  tiles: [
-    hexUtils.OffsetPosition,
-    hexUtils.OffsetPosition,
-    hexUtils.OffsetPosition,
-  ]
+  position: board.TownPosition
 }
 
 export type GameState = {
@@ -89,12 +85,12 @@ export function getHexagonBoard(size: '3' | '5'): Tile[] {
 export function initialiseGame(): GameState {
   const tiles = getHexagonBoard('3')
   const tMap = tileMap.fromArray(tiles)
-  const roads = board.getRoadPositions(tMap)
-  const towns = board.getTownPositions(tMap)
+  const roadPositions = board.getRoadPositions(tMap)
+  const townPositions = board.getTownPositions(tMap)
 
   return {
     tiles: tMap,
-    roads,
-    towns,
+    roads: roadPositions.map((position) => ({ position })),
+    towns: townPositions.map((position) => ({ position })),
   }
 }
