@@ -1,7 +1,5 @@
 import Konva from 'konva'
 import * as draw from './draw'
-import * as tileMap from './tileMap'
-import * as board from './board'
 import * as game from './game'
 
 var stage = new Konva.Stage({
