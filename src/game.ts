@@ -5,6 +5,17 @@ export type Tile = {
   color: string
 }
 
+export type Road = {
+  tiles: [hexUtils.OffsetPosition, hexUtils.OffsetPosition]
+}
+
+export type Town = {
+  tiles: [
+    hexUtils.OffsetPosition,
+    hexUtils.OffsetPosition,
+    hexUtils.OffsetPosition,
+  ]
+}
 function getColor() {
   const colors = ['yellow', 'darkgreen', 'lightgreen', 'grey', '#873600']
   return colors[Math.floor(Math.random() * colors.length)]

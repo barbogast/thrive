@@ -2,7 +2,6 @@ import Konva from 'konva'
 
 import config from './config'
 import * as hexUtils from './hexUtils'
-import * as board from './board'
 import * as game from './game'
 
 function getCoordinates(position: hexUtils.OffsetPosition) {
@@ -88,7 +87,7 @@ function getMiddle(
   }
 }
 
-export function drawRoad(layer: Konva.Layer, road: board.Road) {
+export function drawRoad(layer: Konva.Layer, road: game.Road) {
   const [tile1, tile2] = road.tiles
 
   const direction = hexUtils.getDirection(
@@ -122,7 +121,7 @@ export function drawRoad(layer: Konva.Layer, road: board.Road) {
   layer.add(rect)
 }
 
-export function drawTown(layer: Konva.Layer, town: board.Town) {
+export function drawTown(layer: Konva.Layer, town: game.Town) {
   const middle = getMiddle(town.tiles)
   const rect = new Konva.Circle({
     x: middle.x,
