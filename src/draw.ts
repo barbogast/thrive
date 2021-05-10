@@ -1,5 +1,6 @@
 import config from './config'
 import * as hexUtils from './hexUtils'
+import * as utils from './utils'
 
 export function getTilePosition(
   position: hexUtils.OffsetPosition,
@@ -26,17 +27,12 @@ export function getTilePosition(
   }
 }
 
-function average(numbers: number[]) {
-  const sum = numbers.reduce((a, b) => a + b, 0)
-  return sum / numbers.length || 0
-}
-
 export function getMiddle(
   positions: hexUtils.OffsetPosition[],
 ): hexUtils.PixelPosition {
   const pxPositions = positions.map(getTilePosition)
   return {
-    x: average(pxPositions.map((pos) => pos.x)),
-    y: average(pxPositions.map((pos) => pos.y)),
+    x: utils.average(pxPositions.map((pos) => pos.x)),
+    y: utils.average(pxPositions.map((pos) => pos.y)),
   }
 }
