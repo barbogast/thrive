@@ -7,7 +7,7 @@ import Road from './Road'
 import Town from './Town'
 
 function Board(): JSX.Element {
-  const { tiles, roads, towns } = useStore()
+  const { tiles, roads, towns } = useStore((state) => state.gameState)
 
   return (
     <Layer>

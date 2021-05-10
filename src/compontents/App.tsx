@@ -43,7 +43,7 @@ function App(): JSX.Element {
   const { initialise, nextPlayer, currentPlayer } = useStore((state) => ({
     initialise: state.initialise,
     nextPlayer: state.nextPlayer,
-    currentPlayer: state.currentPlayer,
+    currentPlayer: state.gameState.currentPlayer,
   }))
   useEffect(initialise, [])
 
