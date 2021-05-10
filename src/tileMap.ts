@@ -1,4 +1,4 @@
-import { Tile } from './board'
+import { Tile } from './game'
 import { OffsetPosition } from './hexUtils'
 
 export type TileMap = { [key: string]: Tile }
