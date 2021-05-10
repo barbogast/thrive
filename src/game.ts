@@ -41,7 +41,7 @@ export type GameState = {
 
 function getColor() {
   const colors = ['yellow', 'darkgreen', 'lightgreen', 'grey', '#873600']
-  return colors[Math.floor(Math.random() * colors.length)]
+  return colors[utils.randomNumber(colors.length)]
 }
 
 export function getSquareBoard(): Tile[] {
