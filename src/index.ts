@@ -14,7 +14,7 @@ var stage = new Konva.Stage({
 var layer = new Konva.Layer()
 
 function init() {
-  const state = game.initialiseGame()
+  let state = game.initialiseGame()
   draw.drawGame(layer, state)
 
   layer.add(
@@ -35,7 +35,14 @@ function init() {
   layer.draw()
   layer.on('click', (event) => {
     console.log(event)
-
+    if (!event.target) {
+      return
+    }
+    if (event.target.attrs.type === 'town') {
+      // state = game.buildTown(state, event.target.attrs)
+      // draw.drawGame(layer, state)
+      event.target.setAttr('fill', 'green')
+    }
     console.log('lick', event.evt.offsetX, event.evt.offsetY)
   })
 }
