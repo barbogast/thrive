@@ -46,12 +46,14 @@ function App(): JSX.Element {
     currentPlayer,
     toggleCurrentAction,
     currentAction,
+    state,
   } = useStore((state) => ({
     initialise: state.initialise,
     nextPlayer: state.nextPlayer,
     currentPlayer: state.gameState.currentPlayer,
     toggleCurrentAction: state.toggleCurrentAction,
     currentAction: state.uiState.currentAction,
+    state: state,
   }))
   useEffect(initialise, [])
 
@@ -96,6 +98,8 @@ function App(): JSX.Element {
       >
         <Board />
       </Stage>
+      &nbsp;&nbsp;
+      <button onClick={() => console.log(state)}>Log state</button>
     </>
   )
 }
