@@ -11,14 +11,7 @@ export type Road = {
 }
 
 function getColor() {
-  const colors = [
-    'lightyellow',
-    'yellow',
-    'darkgreen',
-    'lightgreen',
-    'grey',
-    'brown',
-  ]
+  const colors = ['yellow', 'darkgreen', 'lightgreen', 'grey', '#873600']
   return colors[Math.floor(Math.random() * colors.length)]
 }
 
@@ -74,7 +67,7 @@ export function getHexagonBoard(size: '3' | '5'): Tile[] {
 
   return positions[size].map((p) => ({
     position: hexUtils.axialToOffset(p),
-    color: getColor(),
+    color: p.q === 0 && p.r === 0 ? 'lightyellow' : getColor(),
   }))
 }
 
