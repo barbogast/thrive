@@ -1,10 +1,9 @@
-import Konva from 'konva'
-
 import config from './config'
 import * as hexUtils from './hexUtils'
-import * as game from './game'
 
-function getCoordinates(position: hexUtils.OffsetPosition) {
+export function getTilePosition(
+  position: hexUtils.OffsetPosition,
+): hexUtils.PixelPosition {
   const { row, col } = position
   const left = 250
   const top = 150
@@ -27,132 +26,17 @@ function getCoordinates(position: hexUtils.OffsetPosition) {
   }
 }
 
-function drawTile(layer: Konva.Layer, info: game.Tile) {
-  const { position, color } = info
-
-  const axial = hexUtils.offsetToAxial(info.position)
-  drawHexagon(
-    layer,
-    getCoordinates(position),
-    color,
-    `r: ${axial.q}\nc: ${axial.r}`,
-  )
-}
-
-function drawHexagon(
-  layer: Konva.Layer,
-  pos: hexUtils.PixelPosition,
-  color: string,
-  label: string,
-) {
-  var group = new Konva.Group({
-    x: pos.x,
-    y: pos.y,
-  })
-
-  group.add(
-    new Konva.RegularPolygon({
-      sides: 6,
-      rotation: config().flatTopped ? 30 : 0,
-      radius: config().tileRadius + 1,
-      fill: color,
-      stroke: 'black',
-      strokeWidth: 1,
-      id: 'asdf' + pos.x + pos.y,
-    }),
-  )
-  group.add(
-    new Konva.Text({
-      text: label,
-      fontSize: 10,
-      fontFamily: 'Arial',
-    }),
-  )
-
-  layer.add(group)
-}
-
 function average(numbers: number[]) {
   const sum = numbers.reduce((a, b) => a + b, 0)
   return sum / numbers.length || 0
 }
 
-function getMiddle(
+export function getMiddle(
   positions: hexUtils.OffsetPosition[],
 ): hexUtils.PixelPosition {
-  const pxPositions = positions.map(getCoordinates)
+  const pxPositions = positions.map(getTilePosition)
   return {
     x: average(pxPositions.map((pos) => pos.x)),
     y: average(pxPositions.map((pos) => pos.y)),
-  }
-}
-
-function drawRoad(layer: Konva.Layer, road: game.Road) {
-  const [tile1, tile2] = road.position
-
-  const direction = hexUtils.getDirection(
-    hexUtils.offsetToAxial(tile1),
-    hexUtils.offsetToAxial(tile2),
-  )
-
-  const directionToDegree = {
-    0: 90,
-    1: 150,
-    2: 210,
-    3: 270,
-    4: 330,
-    5: 30,
-  }
-
-  const middle = getMiddle(road.position)
-  const rect = new Konva.Rect({
-    x: middle.x,
-    y: middle.y,
-    offsetX: config().tileRadius / 2,
-    offsetY: 3,
-    width: config().tileRadius,
-    height: 7,
-    rotation: directionToDegree[direction],
-    // fill: '#00D2FF',
-    id: 'haha',
-    stroke: 'black',
-    strokeWidth: 1,
-  })
-  layer.add(rect)
-}
-
-function drawTown(layer: Konva.Layer, town: game.Town) {
-  const middle = getMiddle(town.position)
-  const style = town.owner
-    ? {
-        fill: town.owner.color,
-      }
-    : {
-        stroke: 'black',
-        strokeWidth: 1,
-      }
-
-  const rect = new Konva.Circle({
-    id: town.id,
-    type: 'town',
-    x: middle.x,
-    y: middle.y,
-    radius: 10,
-    ...style,
-  })
-  layer.add(rect)
-}
-
-export function drawGame(layer: Konva.Layer, state: game.GameState) {
-  for (const tile of Object.values(state.tiles)) {
-    drawTile(layer, tile)
-  }
-
-  for (const road of state.roads) {
-    drawRoad(layer, road)
-  }
-
-  for (const town of state.towns) {
-    drawTown(layer, town)
   }
 }
