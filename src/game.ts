@@ -1,4 +1,6 @@
 import * as hexUtils from './hexUtils'
+import * as tileMap from './tileMap'
+import * as board from './board'
 
 export type Tile = {
   position: hexUtils.OffsetPosition
@@ -16,6 +18,13 @@ export type Town = {
     hexUtils.OffsetPosition,
   ]
 }
+
+export type GameState = {
+  tiles: tileMap.TileMap
+  roads: Road[]
+  towns: Town[]
+}
+
 function getColor() {
   const colors = ['yellow', 'darkgreen', 'lightgreen', 'grey', '#873600']
   return colors[Math.floor(Math.random() * colors.length)]
@@ -75,4 +84,17 @@ export function getHexagonBoard(size: '3' | '5'): Tile[] {
     position: hexUtils.axialToOffset(p),
     color: p.q === 0 && p.r === 0 ? 'lightyellow' : getColor(),
   }))
+}
+
+export function initialiseGame(): GameState {
+  const tiles = getHexagonBoard('3')
+  const tMap = tileMap.fromArray(tiles)
+  const roads = board.getRoadPositions(tMap)
+  const towns = board.getTownPositions(tMap)
+
+  return {
+    tiles: tMap,
+    roads,
+    towns,
+  }
 }

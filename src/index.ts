@@ -14,24 +14,16 @@ var stage = new Konva.Stage({
 var layer = new Konva.Layer()
 
 function init() {
-  // const tiles = [game.getHexagonBoard('3')[0]]
-  const tiles = game.getHexagonBoard('3')
-
-  const tMap = tileMap.fromArray(tiles)
-
-  const roads = board.getRoadPositions(tMap)
-
-  const towns = board.getTownPositions(tMap)
-
-  for (const tile of tiles) {
+  const state = game.initialiseGame()
+  for (const tile of Object.values(state.tiles)) {
     draw.drawTile(layer, tile)
   }
 
-  for (const road of roads) {
+  for (const road of state.roads) {
     draw.drawRoad(layer, road)
   }
 
-  for (const town of towns) {
+  for (const town of state.towns) {
     draw.drawTown(layer, town)
   }
 
