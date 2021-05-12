@@ -128,3 +128,10 @@ export function getDirection(
   }
   return dir as Direction
 }
+
+export function compareCoordinates(
+  coord1: AxialPosition,
+  coord2: AxialPosition,
+): boolean {
+  return coord1.q === coord2.q && coord1.r === coord2.r
+}

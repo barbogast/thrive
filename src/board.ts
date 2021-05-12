@@ -42,9 +42,7 @@ function townIsOnTile(
   tilePosition: hexUtils.AxialPosition,
 ): boolean {
   return Boolean(
-    town.position.find(
-      (pos) => pos.q === tilePosition.q && pos.r === tilePosition.r,
-    ),
+    town.position.find((pos) => hexUtils.compareCoordinates(pos, tilePosition)),
   )
 }
 
@@ -123,7 +121,7 @@ export function roadPositionConnectsToExistingRoad(
   )
 
   const neighborsOfBoth = neighborsOfA.filter((tA) =>
-    neighborsOfB.find((tB) => tA.q === tB.q && tA.r === tB.r),
+    neighborsOfB.find((tB) => hexUtils.compareCoordinates(tA, tB)),
   )
 
   utils.assert(() => neighborsOfBoth.length === 2)
