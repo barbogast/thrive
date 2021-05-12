@@ -201,7 +201,10 @@ function payResources(
 }
 
 export function buildTown(state: GameState, townId: string) {
-  payResources(state, state.currentPlayer, getCost('town'))
   const town = state.towns.find((town) => town.id === townId)!
+  if (town.owner) {
+    return
+  }
+  payResources(state, state.currentPlayer, getCost('town'))
   town.owner = state.currentPlayer
 }
