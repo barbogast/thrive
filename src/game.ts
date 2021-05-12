@@ -2,6 +2,7 @@ import * as hexUtils from './hexUtils'
 import * as tileMap from './tileMap'
 import * as board from './board'
 import * as utils from './utils'
+import * as position from './position'
 import { gameConfig } from './constants'
 
 export enum PlayerId {
@@ -42,13 +43,13 @@ export type Tile = {
 
 export type Road = {
   id: string
-  position: board.RoadPosition
+  position: position.Position
   owner: PlayerId | void
 }
 
 export type Town = {
   id: string
-  position: board.TownPosition
+  position: position.Position
   owner: PlayerId | void
 }
 

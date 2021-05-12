@@ -2,47 +2,25 @@ import * as hexUtils from './hexUtils'
 import * as tileMap from './tileMap'
 import * as game from './game'
 import * as utils from './utils'
+import * as position from './position'
 
-export type RoadPosition = [hexUtils.AxialPosition, hexUtils.AxialPosition]
-
-export type TownPosition = [
-  hexUtils.AxialPosition,
-  hexUtils.AxialPosition,
-  hexUtils.AxialPosition,
-]
-
-function sortPositions(positions: hexUtils.AxialPosition[]) {
-  return [...positions].sort((a, b) => {
-    if (a.q === b.q) {
-      return a.r > b.r ? 1 : -1
-    }
-    return a.q > b.q ? 1 : -1
-  })
-}
-
-export function getRoadPositions(tiles: tileMap.TileMap): RoadPosition[] {
+export function getRoadPositions(tiles: tileMap.TileMap): position.Position[] {
   /*
     For every tile we add roads in directions 1, 2 and 3
     For the ones which lack neighours 4, 5 or 6 we add those as well.
     This should give us each road position exactly once */
-  const roads: RoadPosition[] = []
+  const roads: position.Position[] = []
   for (const tile of Object.values(tiles)) {
     for (const direction of [0, 1, 2] as hexUtils.Direction[]) {
       const neighborPos = hexUtils.getNeighbor(tile.position, direction)
 
-      const road: RoadPosition = sortPositions([
-        tile.position,
-        neighborPos,
-      ]) as RoadPosition
+      const road = position.createPosition([tile.position, neighborPos])
       roads.push(road)
     }
     for (const direction of [3, 4, 5] as hexUtils.Direction[]) {
       const neighbourPos = hexUtils.getNeighbor(tile.position, direction)
       if (!tileMap.findInPos(tiles, neighbourPos)) {
-        const road: RoadPosition = sortPositions([
-          tile.position,
-          neighbourPos,
-        ]) as RoadPosition
+        const road = position.createPosition([tile.position, neighbourPos])
         roads.push(road)
       }
     }
@@ -50,30 +28,32 @@ export function getRoadPositions(tiles: tileMap.TileMap): RoadPosition[] {
   return roads
 }
 
-function townIsEqual(town1: TownPosition, town2: TownPosition) {
-  for (const pos of town1) {
-    if (!town2.find((p) => p.q === pos.q && p.r === pos.r)) {
-      return false
-    }
-  }
-  return true
-}
-
-function findTown(towns: TownPosition[], searchFor: TownPosition) {
+function findTown(towns: position.Position[], searchFor: position.Position) {
   for (const town of towns) {
-    if (townIsEqual(town, searchFor)) {
+    if (position.comparePositions(town, searchFor)) {
       return true
     }
   }
   return false
 }
 
-export function getTownPositions(tiles: tileMap.TileMap): TownPosition[] {
+function townIsOnTile(
+  town: game.Town,
+  tilePosition: hexUtils.AxialPosition,
+): boolean {
+  return Boolean(
+    town.position.find(
+      (pos) => pos.q === tilePosition.q && pos.r === tilePosition.r,
+    ),
+  )
+}
+
+export function getTownPositions(tiles: tileMap.TileMap): position.Position[] {
   /*
     Approach is different than the one for roads:
     For each tile go through all 6 connecting positions and store the ones
     that are not already present */
-  const towns: TownPosition[] = []
+  const towns: position.Position[] = []
   for (const tile of Object.values(tiles)) {
     for (const direction of hexUtils.allDirections) {
       const neighborPos1 = hexUtils.getNeighbor(tile.position, direction)
@@ -83,7 +63,11 @@ export function getTownPositions(tiles: tileMap.TileMap): TownPosition[] {
         ((direction + 1) % 6) as hexUtils.Direction,
       )
 
-      const town: TownPosition = [tile.position, neighborPos1, neighborPos2]
+      const town = position.createPosition([
+        tile.position,
+        neighborPos1,
+        neighborPos2,
+      ])
 
       if (!findTown(towns, town)) {
         towns.push(town)
@@ -100,11 +84,7 @@ export function getTownsOnTile(
 ): game.Town[] {
   const townsOnTile = []
   for (const town of towns) {
-    if (
-      town.position.find(
-        (pos) => pos.q === tilePosition.q && pos.r === tilePosition.r,
-      )
-    ) {
+    if (townIsOnTile(town, tilePosition)) {
       townsOnTile.push(town)
     }
   }
@@ -113,15 +93,10 @@ export function getTownsOnTile(
 
 function findRoad(
   roads: game.Road[],
-  roadPosition: RoadPosition,
+  roadPosition: position.Position,
 ): game.Road | void {
   for (const road of roads) {
-    if (
-      road.position[0].q === roadPosition[0].q &&
-      road.position[0].r === roadPosition[0].r &&
-      road.position[1].q === roadPosition[1].q &&
-      road.position[1].r === roadPosition[1].r
-    ) {
+    if (position.comparePositions(road.position, roadPosition)) {
       return road
     }
   }
@@ -129,7 +104,7 @@ function findRoad(
 
 export function roadPositionConnectsToExistingRoad(
   roads: game.Road[],
-  roadPosition: RoadPosition,
+  roadPosition: position.Position,
   playerId: game.PlayerId,
 ): boolean {
   /*
@@ -157,7 +132,7 @@ export function roadPositionConnectsToExistingRoad(
     for (const tile of [tileA, tileB]) {
       const maybeRoad = findRoad(
         roads,
-        sortPositions([neighboaringTile, tile]) as RoadPosition,
+        position.createPosition([neighboaringTile, tile]),
       )
       if (maybeRoad && maybeRoad?.owner === playerId) {
         return true
