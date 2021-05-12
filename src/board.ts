@@ -10,6 +10,15 @@ export type TownPosition = [
   hexUtils.AxialPosition,
 ]
 
+function sortPositions(positions: hexUtils.AxialPosition[]) {
+  return [...positions].sort((a, b) => {
+    if (a.q === b.q) {
+      return a.r > b.r ? 1 : -1
+    }
+    return a.q > b.q ? 1 : -1
+  })
+}
+
 export function getRoadPositions(tiles: tileMap.TileMap): RoadPosition[] {
   /*
     For every tile we add roads in directions 1, 2 and 3
@@ -20,13 +29,19 @@ export function getRoadPositions(tiles: tileMap.TileMap): RoadPosition[] {
     for (const direction of [0, 1, 2] as hexUtils.Direction[]) {
       const neighborPos = hexUtils.getNeighbor(tile.position, direction)
 
-      const road: RoadPosition = [tile.position, neighborPos]
+      const road: RoadPosition = sortPositions([
+        tile.position,
+        neighborPos,
+      ]) as RoadPosition
       roads.push(road)
     }
     for (const direction of [3, 4, 5] as hexUtils.Direction[]) {
       const neighbourPos = hexUtils.getNeighbor(tile.position, direction)
       if (!tileMap.findInPos(tiles, neighbourPos)) {
-        const road: RoadPosition = [tile.position, neighbourPos]
+        const road: RoadPosition = sortPositions([
+          tile.position,
+          neighbourPos,
+        ]) as RoadPosition
         roads.push(road)
       }
     }
