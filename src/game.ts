@@ -208,3 +208,12 @@ export function buildTown(state: GameState, townId: string) {
   payResources(state, state.currentPlayer, getCost('town'))
   town.owner = state.currentPlayer
 }
+
+export function buildRoad(state: GameState, roadId: string) {
+  const road = state.roads.find((town) => town.id === roadId)!
+  if (road.owner) {
+    return
+  }
+  payResources(state, state.currentPlayer, getCost('road'))
+  road.owner = state.currentPlayer
+}

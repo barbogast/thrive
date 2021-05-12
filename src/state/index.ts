@@ -49,8 +49,7 @@ const useStore = create<State & Setter>((set) => {
 
     buildRoad: (id: string) =>
       iSet((draft) => {
-        const road = draft.gameState.roads.find((road) => road.id === id)!
-        road.owner = draft.gameState.currentPlayer
+        game.buildRoad(draft.gameState, id)
         draft.uiState.currentAction = Action.none
       }),
 
