@@ -1,11 +1,11 @@
 import { visualConfig } from './constants'
-import * as hexUtils from './hexUtils'
+import * as axial from './axial'
 import * as utils from './utils'
 
 export function getTilePosition(
-  position: hexUtils.AxialPosition,
-): hexUtils.PixelPosition {
-  const { row, col } = hexUtils.axialToOffset(position)
+  position: axial.AxialPosition,
+): axial.PixelPosition {
+  const { row, col } = axial.axialToOffset(position)
   const left = 250
   const top = 150
 
@@ -28,8 +28,8 @@ export function getTilePosition(
 }
 
 export function getMiddle(
-  positions: hexUtils.AxialPosition[],
-): hexUtils.PixelPosition {
+  positions: axial.AxialPosition[],
+): axial.PixelPosition {
   const pxPositions = positions.map(getTilePosition)
   return {
     x: utils.average(pxPositions.map((pos) => pos.x)),

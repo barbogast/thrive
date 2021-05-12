@@ -4,7 +4,7 @@ import { Rect } from 'react-konva'
 import { visualConfig } from '../constants'
 import * as game from '../game'
 import * as draw from '../draw'
-import * as hexUtils from '../hexUtils'
+import * as axial from '../axial'
 import useStore, { Action } from '../state'
 
 type Props = {
@@ -21,7 +21,7 @@ function Road({ road, currentAction }: Props): JSX.Element {
 
   const [tile1, tile2] = road.position
 
-  const direction = hexUtils.getDirection(tile1, tile2)
+  const direction = axial.getDirection(tile1, tile2)
 
   const directionToDegree = {
     0: 90,

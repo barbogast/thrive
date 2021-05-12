@@ -1,4 +1,4 @@
-import * as hexUtils from './hexUtils'
+import * as axial from './axial'
 import * as tileMap from './tileMap'
 import * as board from './board'
 import * as utils from './utils'
@@ -36,7 +36,7 @@ type Player = {
 }
 
 export type Tile = {
-  position: hexUtils.AxialPosition
+  position: axial.AxialPosition
   resource: TileType
   number: number | void
 }
@@ -82,7 +82,7 @@ export function getSquareBoard(): Tile[] {
   for (let x = 0; x < 10; x++) {
     for (let y = 0; y < 10; y++) {
       tiles.push({
-        position: hexUtils.offsetToAxial({ row: x, col: y }),
+        position: axial.offsetToAxial({ row: x, col: y }),
         resource: getResource(),
         number: utils.randomNumber(12) + 1,
       })
@@ -101,7 +101,7 @@ export function getHexagonBoard(size: '3' | '5'): Tile[] {
   }))
 }
 
-function getId(type: string, position: hexUtils.AxialPosition[]) {
+function getId(type: string, position: axial.AxialPosition[]) {
   return `${type}_${position.map((pos) => `${pos.q}|${pos.r}`)}`
 }
 

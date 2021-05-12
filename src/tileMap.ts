@@ -1,5 +1,5 @@
 import { Tile } from './game'
-import { AxialPosition } from './hexUtils'
+import { AxialPosition } from './axial'
 
 export type TileMap = { [key: string]: Tile }
 

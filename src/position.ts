@@ -1,9 +1,9 @@
-import * as hexUtils from './hexUtils'
+import * as axial from './axial'
 import * as utils from './utils'
 
-export type Position = hexUtils.AxialPosition[]
+export type Position = axial.AxialPosition[]
 
-function sortPositions(positions: hexUtils.AxialPosition[]) {
+function sortPositions(positions: axial.AxialPosition[]) {
   return [...positions].sort((a, b) => {
     if (a.q === b.q) {
       return a.r > b.r ? 1 : -1
@@ -12,7 +12,7 @@ function sortPositions(positions: hexUtils.AxialPosition[]) {
   })
 }
 
-export function createPosition(positions: hexUtils.AxialPosition[]): Position {
+export function createPosition(positions: axial.AxialPosition[]): Position {
   return sortPositions(positions)
 }
 
@@ -21,7 +21,7 @@ export function comparePositions(posA: Position, posB: Position) {
   // This way we can just compare the coordinates of each index
   utils.assert(() => posA.length === posB.length)
   for (let i = 0; i < posA.length; i++) {
-    if (!hexUtils.compareCoordinates(posA[i], posB[i])) {
+    if (!axial.compareCoordinates(posA[i], posB[i])) {
       return false
     }
   }
