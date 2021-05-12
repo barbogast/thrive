@@ -1,6 +1,7 @@
 import * as hexUtils from './hexUtils'
 import * as tileMap from './tileMap'
 import * as game from './game'
+import * as utils from './utils'
 
 export type RoadPosition = [hexUtils.AxialPosition, hexUtils.AxialPosition]
 
@@ -108,4 +109,61 @@ export function getTownsOnTile(
     }
   }
   return townsOnTile
+}
+
+function findRoad(
+  roads: game.Road[],
+  roadPosition: RoadPosition,
+): game.Road | void {
+  for (const road of roads) {
+    if (
+      road.position[0].q === roadPosition[0].q &&
+      road.position[0].r === roadPosition[0].r &&
+      road.position[1].q === roadPosition[1].q &&
+      road.position[1].r === roadPosition[1].r
+    ) {
+      return road
+    }
+  }
+}
+
+export function roadPositionConnectsToExistingRoad(
+  roads: game.Road[],
+  roadPosition: RoadPosition,
+  playerId: game.PlayerId,
+): boolean {
+  /*
+  Building of the road is allowed if it connects to an existing road or town.
+  The player wants to build the road between tiles A and B. To find existing roads
+  which would connect we need to determine both tiles that neighbor tile A and B.
+  We then have to look for roads which are between either neighboring tile and tile A or B.
+  */
+  const [tileA, tileB] = roadPosition
+
+  const neighborsOfA = hexUtils.allDirections.map((dir) =>
+    hexUtils.getNeighbor(tileA, dir),
+  )
+  const neighborsOfB = hexUtils.allDirections.map((dir) =>
+    hexUtils.getNeighbor(tileB, dir),
+  )
+
+  const neighborsOfBoth = neighborsOfA.filter((tA) =>
+    neighborsOfB.find((tB) => tA.q === tB.q && tA.r === tB.r),
+  )
+
+  utils.assert(() => neighborsOfBoth.length === 2)
+
+  for (const neighboaringTile of neighborsOfBoth) {
+    for (const tile of [tileA, tileB]) {
+      const maybeRoad = findRoad(
+        roads,
+        sortPositions([neighboaringTile, tile]) as RoadPosition,
+      )
+      if (maybeRoad && maybeRoad?.owner === playerId) {
+        return true
+      }
+    }
+  }
+
+  return false
 }
