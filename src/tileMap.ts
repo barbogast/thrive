@@ -1,9 +1,9 @@
 import { Tile } from './game'
-import { AxialPosition } from './axial'
+import { Coordinate } from './axial'
 
 export type TileMap = { [key: string]: Tile }
 
-function index(position: AxialPosition) {
+function index(position: Coordinate) {
   return `${position.q}_${position.r}`
 }
 export function fromArray(tiles: Tile[]): TileMap {
@@ -13,9 +13,6 @@ export function fromArray(tiles: Tile[]): TileMap {
   }, {} as TileMap)
 }
 
-export function findInPos(
-  tileMap: TileMap,
-  position: AxialPosition,
-): Tile | void {
+export function findInPos(tileMap: TileMap, position: Coordinate): Tile | void {
   return tileMap[index(position)]
 }

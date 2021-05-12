@@ -3,8 +3,8 @@ import * as axial from './axial'
 import * as utils from './utils'
 
 export function getTilePosition(
-  position: axial.AxialPosition,
-): axial.PixelPosition {
+  position: axial.Coordinate,
+): axial.PixelCoordinate {
   const { row, col } = axial.axialToOffset(position)
   const left = 250
   const top = 150
@@ -28,8 +28,8 @@ export function getTilePosition(
 }
 
 export function getMiddle(
-  positions: axial.AxialPosition[],
-): axial.PixelPosition {
+  positions: axial.Coordinate[],
+): axial.PixelCoordinate {
   const pxPositions = positions.map(getTilePosition)
   return {
     x: utils.average(pxPositions.map((pos) => pos.x)),

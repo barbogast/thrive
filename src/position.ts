@@ -1,9 +1,9 @@
 import * as axial from './axial'
 import * as utils from './utils'
 
-export type Position = axial.AxialPosition[]
+export type Position = axial.Coordinate[]
 
-function sortPositions(positions: axial.AxialPosition[]) {
+function sortPositions(positions: axial.Coordinate[]) {
   return [...positions].sort((a, b) => {
     if (a.q === b.q) {
       return a.r > b.r ? 1 : -1
@@ -12,7 +12,7 @@ function sortPositions(positions: axial.AxialPosition[]) {
   })
 }
 
-export function createPosition(positions: axial.AxialPosition[]): Position {
+export function createPosition(positions: axial.Coordinate[]): Position {
   return sortPositions(positions)
 }
 

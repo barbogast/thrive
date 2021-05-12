@@ -39,7 +39,7 @@ function findTown(towns: position.Position[], searchFor: position.Position) {
 
 function townIsOnTile(
   town: game.Town,
-  tilePosition: axial.AxialPosition,
+  tilePosition: axial.Coordinate,
 ): boolean {
   return Boolean(
     town.position.find((pos) => axial.compareCoordinates(pos, tilePosition)),
@@ -77,7 +77,7 @@ export function getTownPositions(tiles: tileMap.TileMap): position.Position[] {
 }
 
 export function getTownsOnTile(
-  tilePosition: axial.AxialPosition,
+  tilePosition: axial.Coordinate,
   towns: game.Town[],
 ): game.Town[] {
   const townsOnTile = []

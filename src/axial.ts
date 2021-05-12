@@ -1,21 +1,21 @@
 import { visualConfig } from './constants'
 
-export type PixelPosition = {
+export type PixelCoordinate = {
   x: number
   y: number
 }
 
-export type OffsetPosition = {
+export type OffsetCoordinate = {
   row: number
   col: number
 }
 
-export type AxialPosition = {
+export type Coordinate = {
   q: number
   r: number
 }
 
-export function offsetToAxial({ row, col }: OffsetPosition): AxialPosition {
+export function offsetToAxial({ row, col }: OffsetCoordinate): Coordinate {
   if (visualConfig().flatTopped) {
     return {
       q: row,
@@ -29,7 +29,7 @@ export function offsetToAxial({ row, col }: OffsetPosition): AxialPosition {
   }
 }
 
-export function axialToOffset({ q, r }: AxialPosition): OffsetPosition {
+export function axialToOffset({ q, r }: Coordinate): OffsetCoordinate {
   if (visualConfig().flatTopped) {
     return {
       row: q,
@@ -46,7 +46,7 @@ export function axialToOffset({ q, r }: AxialPosition): OffsetPosition {
 export type Direction = 0 | 1 | 2 | 3 | 4 | 5
 export const allDirections: Direction[] = [0, 1, 2, 3, 4, 5]
 
-const directions: AxialPosition[] = [
+const directions: Coordinate[] = [
   { q: 1, r: 0 },
   { q: 0, r: 1 },
   { q: -1, r: 1 },
@@ -56,17 +56,14 @@ const directions: AxialPosition[] = [
 ]
 export function getNeighbor(
   // https://www.redblobgames.com/grids/hexagons/#neighbors-axial
-  origin: AxialPosition,
+  origin: Coordinate,
   direction: Direction,
-): AxialPosition {
+): Coordinate {
   const dir = directions[direction]
   return { q: origin.q + dir.q, r: origin.r + dir.r }
 }
 
-export function getDirection(
-  pos1: AxialPosition,
-  pos2: AxialPosition,
-): Direction {
+export function getDirection(pos1: Coordinate, pos2: Coordinate): Direction {
   const dir = directions.findIndex(
     (d) => d.q === pos1.q - pos2.q && d.r === pos1.r - pos2.r,
   )
@@ -77,8 +74,8 @@ export function getDirection(
 }
 
 export function compareCoordinates(
-  coord1: AxialPosition,
-  coord2: AxialPosition,
+  coord1: Coordinate,
+  coord2: Coordinate,
 ): boolean {
   return coord1.q === coord2.q && coord1.r === coord2.r
 }

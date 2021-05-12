@@ -36,7 +36,7 @@ type Player = {
 }
 
 export type Tile = {
-  position: axial.AxialPosition
+  position: axial.Coordinate
   resource: TileType
   number: number | void
 }
@@ -101,7 +101,7 @@ export function getHexagonBoard(size: '3' | '5'): Tile[] {
   }))
 }
 
-function getId(type: string, position: axial.AxialPosition[]) {
+function getId(type: string, position: axial.Coordinate[]) {
   return `${type}_${position.map((pos) => `${pos.q}|${pos.r}`)}`
 }
 
