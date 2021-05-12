@@ -15,12 +15,6 @@ export type AxialPosition = {
   r: number
 }
 
-export type CubePosition = {
-  x: number
-  y: number
-  z: number
-}
-
 export function offsetToAxial({ row, col }: OffsetPosition): AxialPosition {
   if (visualConfig().flatTopped) {
     return {
@@ -47,53 +41,6 @@ export function axialToOffset({ q, r }: AxialPosition): OffsetPosition {
       col: r,
     }
   }
-}
-
-export function cubeToAxial(cube: CubePosition): AxialPosition {
-  var q = cube.x
-  var r = cube.z
-  return { q, r }
-}
-
-export function axialToCube(pos: AxialPosition): CubePosition {
-  var x = pos.q
-  var z = pos.r
-  var y = -x - z
-  return { x, y, z }
-}
-
-function cubeRound(cube: CubePosition): CubePosition {
-  // https://www.redblobgames.com/grids/hexagons/#rounding
-  var rx = Math.round(cube.x)
-  var ry = Math.round(cube.y)
-  var rz = Math.round(cube.z)
-
-  var x_diff = Math.abs(rx - cube.x)
-  var y_diff = Math.abs(ry - cube.y)
-  var z_diff = Math.abs(rz - cube.z)
-
-  if (x_diff > y_diff && x_diff > z_diff) {
-    rx = -ry - rz
-  } else if (y_diff > z_diff) {
-    ry = -rx - rz
-  } else {
-    rz = -rx - ry
-  }
-
-  return { x: rx, y: ry, z: rz }
-}
-
-function hexRound(pos: AxialPosition): AxialPosition {
-  // https://www.redblobgames.com/grids/hexagons/#rounding
-  return cubeToAxial(cubeRound(axialToCube(pos)))
-}
-
-function pixelToFlatHex(point: PixelPosition): AxialPosition {
-  var q = ((2 / 3) * point.x) / visualConfig().tileRadius
-  var r =
-    ((-1 / 3) * point.x + (Math.sqrt(3) / 3) * point.y) /
-    visualConfig().tileRadius
-  return hexRound({ q, r })
 }
 
 export type Direction = 0 | 1 | 2 | 3 | 4 | 5
