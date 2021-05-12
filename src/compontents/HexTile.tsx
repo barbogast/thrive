@@ -3,7 +3,7 @@ import { Group, RegularPolygon, Text } from 'react-konva'
 
 import { visualConfig } from '../constants'
 import * as game from '../game'
-import * as draw from '../draw'
+import * as axial from '../axial'
 import { TileType } from '../game'
 
 type Props = {
@@ -22,7 +22,7 @@ export function getColorForTileType(tileType: TileType): string {
 }
 
 function HexTile({ tile }: Props): JSX.Element {
-  const pxPosition = draw.getTilePosition(tile.position)
+  const pxPosition = axial.getTilePosition(tile.position)
   // const coord = `r: ${tile.position.q}\nc: ${tile.position.r}`
 
   return (

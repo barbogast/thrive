@@ -3,7 +3,6 @@ import { Rect } from 'react-konva'
 
 import { visualConfig } from '../constants'
 import * as game from '../game'
-import * as draw from '../draw'
 import * as axial from '../axial'
 import useStore, { Action } from '../state'
 
@@ -32,7 +31,7 @@ function Road({ road, currentAction }: Props): JSX.Element {
     5: 30,
   }
 
-  const middle = draw.getMiddle(road.position)
+  const middle = axial.getMiddle(road.position)
 
   const style = road.owner
     ? {

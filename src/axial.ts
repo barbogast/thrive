@@ -1,4 +1,5 @@
 import { visualConfig } from './constants'
+import * as utils from './utils'
 
 export type PixelCoordinate = {
   x: number
@@ -78,4 +79,35 @@ export function compareCoordinates(
   coord2: Coordinate,
 ): boolean {
   return coord1.q === coord2.q && coord1.r === coord2.r
+}
+
+export function getTilePosition(position: Coordinate): PixelCoordinate {
+  const { row, col } = axialToOffset(position)
+  const left = 250
+  const top = 150
+
+  const r = visualConfig().tileRadius
+  if (visualConfig().flatTopped) {
+    const height = Math.sqrt(3) * r
+    const isOffset = row % 2 !== 0 ? r : 0
+    return {
+      x: left + row * height,
+      y: top + col * (r * 2) + isOffset,
+    }
+  } else {
+    const height = Math.sqrt(3) * r
+    const isOffset = col % 2 !== 0 ? r : 0
+    return {
+      x: left + row * (r * 2) + isOffset,
+      y: top + left + col * height,
+    }
+  }
+}
+
+export function getMiddle(positions: Coordinate[]): PixelCoordinate {
+  const pxPositions = positions.map(getTilePosition)
+  return {
+    x: utils.average(pxPositions.map((pos) => pos.x)),
+    y: utils.average(pxPositions.map((pos) => pos.y)),
+  }
 }

@@ -2,7 +2,7 @@ import React from 'react'
 import { Circle } from 'react-konva'
 
 import * as game from '../game'
-import * as draw from '../draw'
+import * as axial from '../axial'
 import useStore from '../state'
 import { Action } from '../state'
 
@@ -17,7 +17,7 @@ function Town({ town, currentAction }: Props): JSX.Element {
   if (currentAction !== Action.buildTown && !town.owner) {
     return <></>
   }
-  const middle = draw.getMiddle(town.position)
+  const middle = axial.getMiddle(town.position)
   const style = town.owner
     ? {
         fill: town.owner,
