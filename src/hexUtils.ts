@@ -97,6 +97,8 @@ function pixelToFlatHex(point: PixelPosition): AxialPosition {
 }
 
 export type Direction = 0 | 1 | 2 | 3 | 4 | 5
+export const allDirections: Direction[] = [0, 1, 2, 3, 4, 5]
+
 const directions: AxialPosition[] = [
   { q: 1, r: 0 },
   { q: 0, r: 1 },

@@ -74,7 +74,7 @@ export function getTownPositions(tiles: tileMap.TileMap): TownPosition[] {
     that are not already present */
   const towns: TownPosition[] = []
   for (const tile of Object.values(tiles)) {
-    for (const direction of [0, 1, 2, 3, 4, 5] as hexUtils.Direction[]) {
+    for (const direction of hexUtils.allDirections) {
       const neighborPos1 = hexUtils.getNeighbor(tile.position, direction)
 
       const neighborPos2 = hexUtils.getNeighbor(
