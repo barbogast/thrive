@@ -23,8 +23,7 @@ export function getColorForTileType(tileType: TileType): string {
 
 function HexTile({ tile }: Props): JSX.Element {
   const pxPosition = draw.getTilePosition(tile.position)
-  // const axial = hexUtils.offsetToAxial(position)
-  // const coord = `r: ${axial.q}\nc: ${axial.r}`
+  // const coord = `r: ${tile.position.q}\nc: ${tile.position.r}`
 
   return (
     <Group x={pxPosition.x} y={pxPosition.y}>
