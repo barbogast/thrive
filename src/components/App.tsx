@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
-import useConnection from '../useConnection'
+import { Route } from 'wouter'
 
+import useConnection from '../useConnection'
 import useStore from '../state'
 import Playing from '../pages/Playing'
 
@@ -24,7 +25,7 @@ function App(): JSX.Element {
 
   return (
     <>
-      <Playing sendState={sendState} />
+      <Route path="/" component={() => <Playing sendState={sendState} />} />
       {peerId && <a href={peerLink}>{peerLink}</a>}
       <button onClick={connect}>Connect</button>
     </>
