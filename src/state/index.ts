@@ -71,6 +71,7 @@ const useStore = create<State & Setter>((set) => {
 
     nextTurn: () =>
       iSet((draft) => {
+        draft.uiState.currentAction = { type: ActionType.none }
         game.rollDice(draft.gameState)
         draft.gameState.currentPlayer = game.getNextPlayer(
           draft.gameState.currentPlayer,
