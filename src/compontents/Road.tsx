@@ -4,17 +4,17 @@ import { Rect } from 'react-konva'
 import { visualConfig } from '../constants'
 import * as game from '../game'
 import * as axial from '../axial'
-import useStore, { Action } from '../state'
+import useStore, { ActionType } from '../state'
 
 type Props = {
   road: game.Road
-  currentAction: Action
+  currentAction: ActionType
 }
 
 function Road({ road, currentAction }: Props): JSX.Element {
   const buildRoad = useStore((state) => state.buildRoad)
 
-  if (currentAction !== Action.buildRoad && !road.owner) {
+  if (currentAction !== ActionType.buildRoad && !road.owner) {
     return <></>
   }
 

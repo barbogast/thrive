@@ -4,17 +4,17 @@ import { Circle } from 'react-konva'
 import * as game from '../game'
 import * as axial from '../axial'
 import useStore from '../state'
-import { Action } from '../state'
+import { ActionType } from '../state'
 
 type Props = {
   town: game.Town
-  currentAction: Action
+  currentAction: ActionType
 }
 
 function Town({ town, currentAction }: Props): JSX.Element {
   const buildTown = useStore((state) => state.buildTown)
 
-  if (currentAction !== Action.buildTown && !town.owner) {
+  if (currentAction !== ActionType.buildTown && !town.owner) {
     return <></>
   }
   const middle = axial.getMiddle(town.position)

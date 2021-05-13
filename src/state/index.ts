@@ -3,7 +3,7 @@ import produce from 'immer'
 
 import * as game from '../game'
 
-export enum Action {
+export enum ActionType {
   buildRoad = 'buildRoad',
   buildTown = 'buildTown',
   none = 'none',
@@ -12,7 +12,7 @@ export enum Action {
 type State = {
   gameState: game.GameState
   uiState: {
-    currentAction: Action
+    currentAction: ActionType
   }
 }
 
@@ -21,7 +21,7 @@ type Setter = {
   buildTown: (id: string) => void
   buildRoad: (id: string) => void
   nextTurn: () => void
-  toggleCurrentAction: (action: Action) => void
+  toggleCurrentAction: (action: ActionType) => void
 }
 
 const useStore = create<State & Setter>((set) => {
@@ -36,7 +36,7 @@ const useStore = create<State & Setter>((set) => {
       currentDiceRoll: [],
     },
     uiState: {
-      currentAction: Action.none,
+      currentAction: ActionType.none,
     },
 
     initialise: () => iSet(() => ({ gameState: game.initialiseGame() })),
@@ -44,13 +44,13 @@ const useStore = create<State & Setter>((set) => {
     buildTown: (id: string) =>
       iSet((draft) => {
         game.buildTown(draft.gameState, id)
-        draft.uiState.currentAction = Action.none
+        draft.uiState.currentAction = ActionType.none
       }),
 
     buildRoad: (id: string) =>
       iSet((draft) => {
         game.buildRoad(draft.gameState, id)
-        draft.uiState.currentAction = Action.none
+        draft.uiState.currentAction = ActionType.none
       }),
 
     nextTurn: () =>
@@ -61,10 +61,10 @@ const useStore = create<State & Setter>((set) => {
         )
       }),
 
-    toggleCurrentAction: (action: Action) =>
+    toggleCurrentAction: (action: ActionType) =>
       iSet((draft) => {
         draft.uiState.currentAction =
-          action === draft.uiState.currentAction ? Action.none : action
+          action === draft.uiState.currentAction ? ActionType.none : action
       }),
   }
 })

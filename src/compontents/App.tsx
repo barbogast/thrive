@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Stage, useStrictMode } from 'react-konva'
 
 import * as game from '../game'
-import useStore, { Action } from '../state'
+import useStore, { ActionType } from '../state'
 import Board from './Board'
 import { getColorForTileType } from './HexTile'
 
@@ -114,20 +114,20 @@ function App(): JSX.Element {
       {currentDiceRoll.length ? currentDiceRoll.join(' | ') : ''}
       <br />
       <button
-        onClick={() => toggleCurrentAction(Action.buildRoad)}
+        onClick={() => toggleCurrentAction(ActionType.buildRoad)}
         style={{
           boxShadow:
-            currentAction === Action.buildRoad ? '0 0 0 2px black' : '',
+            currentAction === ActionType.buildRoad ? '0 0 0 2px black' : '',
         }}
       >
         Build road
       </button>
       &nbsp;&nbsp;
       <button
-        onClick={() => toggleCurrentAction(Action.buildTown)}
+        onClick={() => toggleCurrentAction(ActionType.buildTown)}
         style={{
           boxShadow:
-            currentAction === Action.buildTown ? '0 0 0 2px black' : '',
+            currentAction === ActionType.buildTown ? '0 0 0 2px black' : '',
         }}
       >
         Build town
