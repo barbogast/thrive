@@ -4,6 +4,7 @@ import { Route } from 'wouter'
 import useConnection from '../useConnection'
 import useStore from '../state'
 import Playing from '../pages/Playing'
+import MainMenu from '../pages/MainMenu'
 
 function App(): JSX.Element {
   const { initialise, state } = useStore((state) => ({
@@ -25,9 +26,12 @@ function App(): JSX.Element {
 
   return (
     <>
-      <Route path="/" component={() => <Playing sendState={sendState} />} />
-      {peerId && <a href={peerLink}>{peerLink}</a>}
-      <button onClick={connect}>Connect</button>
+      <Route path="/" component={MainMenu} />
+      <Route path="/play" component={() => <Playing sendState={sendState} />} />
+      <div>
+        {peerId && <a href={peerLink}>{peerLink}</a>}
+        <button onClick={connect}>Connect</button>
+      </div>
     </>
   )
 }
