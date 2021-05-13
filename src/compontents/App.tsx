@@ -4,9 +4,10 @@ import React, { useEffect } from 'react'
 import { Stage, useStrictMode } from 'react-konva'
 import useConnection from '../useConnection'
 
-import useStore, { ActionType } from '../state'
+import useStore from '../state'
 import Board from './Board'
-import Box from './Box'
+import Controls from './Controls'
+import Players from './Players'
 
 useStrictMode(true)
 
@@ -41,23 +42,8 @@ function onWheel(e: KonvaEventObject<WheelEvent>) {
 }
 
 function App(): JSX.Element {
-  const {
-    initialise,
-    nextTurn,
-    currentPlayer,
-    toggleCurrentAction,
-    currentAction,
-    currentDiceRoll,
-    players,
-    state,
-  } = useStore((state) => ({
+  const { initialise, state } = useStore((state) => ({
     initialise: state.initialise,
-    nextTurn: state.nextTurn,
-    currentPlayer: state.gameState.currentPlayer,
-    toggleCurrentAction: state.toggleCurrentAction,
-    currentAction: state.uiState.currentAction,
-    currentDiceRoll: state.gameState.currentDiceRoll,
-    players: state.gameState.players,
     state: state,
   }))
   useEffect(initialise, [])
@@ -77,36 +63,8 @@ function App(): JSX.Element {
     <>
       {peerId && <a href={peerLink}>{peerLink}</a>}
       <button onClick={connect}>Connect</button>
-      Current player: <Box color={currentPlayer} />
-      <br />
-      Current dice roll:{' '}
-      {currentDiceRoll.length ? currentDiceRoll.join(' | ') : ''}
-      <br />
-      <button
-        onClick={() => toggleCurrentAction(ActionType.buildRoad)}
-        style={{
-          boxShadow:
-            currentAction.type === ActionType.buildRoad
-              ? '0 0 0 2px black'
-              : '',
-        }}
-      >
-        Build road
-      </button>
-      &nbsp;&nbsp;
-      <button
-        onClick={() => toggleCurrentAction(ActionType.buildTown)}
-        style={{
-          boxShadow:
-            currentAction.type === ActionType.buildTown
-              ? '0 0 0 2px black'
-              : '',
-        }}
-      >
-        Build town
-      </button>
-      &nbsp;&nbsp;
-      <button onClick={nextTurn}>Finish turn</button>
+      <Players />
+      <Controls />
       <Stage
         width={window.innerWidth}
         height={window.innerHeight}
