@@ -194,9 +194,6 @@ function payResources(
 }
 
 export function buildTown(state: GameState, position: position.Position) {
-  if (board.findTown(state.towns, position)) {
-    return
-  }
   payResources(state, state.currentPlayer, getCost('town'))
   state.towns.push({
     id: getId('town', position),
@@ -214,9 +211,6 @@ export function buildRoad(state: GameState, position: position.Position) {
     ),
   )
 
-  if (board.findRoad(state.roads, position)) {
-    return
-  }
   payResources(state, state.currentPlayer, getCost('road'))
   state.roads.push({
     id: getId('road', position),

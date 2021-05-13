@@ -30,7 +30,7 @@ function Town({ position, owner }: Props): JSX.Element {
       x={middle.x}
       y={middle.y}
       radius={10}
-      onClick={() => buildTown(position)}
+      onClick={owner ? undefined : () => buildTown(position)}
       {...style}
     />
   )

@@ -42,7 +42,7 @@ function Road({ position, owner }: Props): JSX.Element {
       height={7}
       rotation={directionToDegree[direction]}
       {...style}
-      onClick={() => buildRoad(position)}
+      onClick={owner ? undefined : () => buildRoad(position)}
     />
   )
 }

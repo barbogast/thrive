@@ -103,17 +103,6 @@ export function findRoad(
   }
 }
 
-export function findTown(
-  towns: game.Town[],
-  townPosition: position.Position,
-): game.Road | void {
-  for (const town of towns) {
-    if (position.comparePositions(town.position, townPosition)) {
-      return town
-    }
-  }
-}
-
 export function roadPositionConnectsToExistingRoad(
   roads: game.Road[],
   roadPosition: position.Position,
