@@ -1,9 +1,9 @@
 import React from 'react'
 
 import useStore from '../state'
-import Board from '../compontents/Board'
-import Controls from '../compontents/Controls'
-import Players from '../compontents/Players'
+import Board from '../components/Board'
+import Controls from '../components/Controls'
+import Players from '../components/Players'
 
 type Props = {
   sendState: () => void
