@@ -34,7 +34,7 @@ type State = {
 
 type Setter = {
   initialise: () => void
-  buildTown: (id: string) => void
+  buildTown: (position: position.Position) => void
   buildRoad: (position: position.Position) => void
   nextTurn: () => void
   toggleCurrentAction: (action: ActionType) => void
@@ -57,9 +57,9 @@ const useStore = create<State & Setter>((set) => {
 
     initialise: () => iSet(() => ({ gameState: game.initialiseGame() })),
 
-    buildTown: (id: string) =>
+    buildTown: (position: position.Position) =>
       iSet((draft) => {
-        game.buildTown(draft.gameState, id)
+        game.buildTown(draft.gameState, position)
         draft.uiState.currentAction = { type: ActionType.none }
       }),
 

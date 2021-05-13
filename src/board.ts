@@ -28,7 +28,10 @@ export function getRoadPositions(tiles: tileMap.TileMap): position.Position[] {
   return roads
 }
 
-function findTown(towns: position.Position[], searchFor: position.Position) {
+function findTownPosition(
+  towns: position.Position[],
+  searchFor: position.Position,
+) {
   for (const town of towns) {
     if (position.comparePositions(town, searchFor)) {
       return true
@@ -67,7 +70,7 @@ export function getTownPositions(tiles: tileMap.TileMap): position.Position[] {
         neighborPos2,
       ])
 
-      if (!findTown(towns, town)) {
+      if (!findTownPosition(towns, town)) {
         towns.push(town)
       }
     }
@@ -96,6 +99,17 @@ export function findRoad(
   for (const road of roads) {
     if (position.comparePositions(road.position, roadPosition)) {
       return road
+    }
+  }
+}
+
+export function findTown(
+  towns: game.Town[],
+  townPosition: position.Position,
+): game.Road | void {
+  for (const town of towns) {
+    if (position.comparePositions(town.position, townPosition)) {
+      return town
     }
   }
 }

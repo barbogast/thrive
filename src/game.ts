@@ -51,7 +51,7 @@ export type Road = {
 export type Town = {
   id: string
   position: position.Position
-  owner: PlayerId | void
+  owner: PlayerId
 }
 
 export type GameState = {
@@ -139,11 +139,7 @@ export function initialiseGame(): GameState {
   return {
     tiles: tMap,
     roads: [],
-    towns: townPositions.map((position) => ({
-      position,
-      owner: undefined,
-      id: getId('road', position),
-    })),
+    towns: [],
     currentPlayer: PlayerId.green,
     currentDiceRoll: [],
     players: initialisePlayers(),
@@ -197,13 +193,16 @@ function payResources(
   }
 }
 
-export function buildTown(state: GameState, townId: string) {
-  const town = state.towns.find((town) => town.id === townId)!
-  if (town.owner) {
+export function buildTown(state: GameState, position: position.Position) {
+  if (board.findTown(state.towns, position)) {
     return
   }
   payResources(state, state.currentPlayer, getCost('town'))
-  town.owner = state.currentPlayer
+  state.towns.push({
+    id: getId('town', position),
+    position,
+    owner: state.currentPlayer,
+  })
 }
 
 export function buildRoad(state: GameState, position: position.Position) {

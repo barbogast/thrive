@@ -3,24 +3,21 @@ import { Circle } from 'react-konva'
 
 import * as game from '../game'
 import * as axial from '../axial'
+import * as position from '../position'
 import useStore from '../state'
-import { ActionType } from '../state'
 
 type Props = {
-  town: game.Town
-  currentAction: ActionType
+  position: position.Position
+  owner?: game.PlayerId | void
 }
 
-function Town({ town, currentAction }: Props): JSX.Element {
+function Town({ position, owner }: Props): JSX.Element {
   const buildTown = useStore((state) => state.buildTown)
 
-  if (currentAction !== ActionType.buildTown && !town.owner) {
-    return <></>
-  }
-  const middle = axial.getMiddle(town.position)
-  const style = town.owner
+  const middle = axial.getMiddle(position)
+  const style = owner
     ? {
-        fill: town.owner,
+        fill: owner,
       }
     : {
         stroke: 'black',
@@ -29,12 +26,11 @@ function Town({ town, currentAction }: Props): JSX.Element {
 
   return (
     <Circle
-      id={town.id}
       type="town"
       x={middle.x}
       y={middle.y}
       radius={10}
-      onClick={() => buildTown(town.id)}
+      onClick={() => buildTown(position)}
       {...style}
     />
   )

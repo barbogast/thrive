@@ -27,12 +27,17 @@ function Board(): JSX.Element {
           <Road key={i} position={r} />
         ))}
 
+      {currentAction.type === ActionType.buildTown &&
+        Object.values(currentAction.positions).map((r, i) => (
+          <Town key={i} position={r} />
+        ))}
+
       {Object.values(roads).map((r, i) => (
         <Road key={i} position={r.position} owner={r.owner} />
       ))}
 
       {Object.values(towns).map((t, i) => (
-        <Town key={i} town={t} currentAction={currentAction.type} />
+        <Town key={i} position={t.position} owner={t.owner} />
       ))}
     </Layer>
   )
