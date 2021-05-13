@@ -4,10 +4,9 @@ import React, { useEffect } from 'react'
 import { Stage, useStrictMode } from 'react-konva'
 import useConnection from '../useConnection'
 
-import * as game from '../game'
 import useStore, { ActionType } from '../state'
 import Board from './Board'
-import { getColorForTileType } from './HexTile'
+import Box from './Box'
 
 useStrictMode(true)
 
@@ -39,19 +38,6 @@ function onWheel(e: KonvaEventObject<WheelEvent>) {
   }
   stage.position(newPos)
   stage.batchDraw()
-}
-
-function Box({ color }: { color: string }): JSX.Element {
-  return (
-    <span
-      style={{
-        backgroundColor: color,
-        width: 10,
-        height: 10,
-        display: 'inline-block',
-      }}
-    ></span>
-  )
 }
 
 function App(): JSX.Element {
@@ -91,37 +77,6 @@ function App(): JSX.Element {
     <>
       {peerId && <a href={peerLink}>{peerLink}</a>}
       <button onClick={connect}>Connect</button>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
-        {Object.values(players).map((player) => {
-          return (
-            <div key={player.id}>
-              {player.id}
-              <ul>
-                <li>
-                  <Box color={getColorForTileType(game.Resource.wood)} />
-                  &nbsp; Wood: {player.resources.wood}
-                </li>
-                <li>
-                  <Box color={getColorForTileType(game.Resource.brick)} />
-                  &nbsp; Brick: {player.resources.brick}
-                </li>
-                <li>
-                  <Box color={getColorForTileType(game.Resource.grain)} />
-                  &nbsp; Grain: {player.resources.grain}
-                </li>
-                <li>
-                  <Box color={getColorForTileType(game.Resource.sheep)} />
-                  &nbsp; Sheep: {player.resources.sheep}
-                </li>
-                <li>
-                  <Box color={getColorForTileType(game.Resource.wood)} /> &nbsp;
-                  Ore: {player.resources.ore}
-                </li>
-              </ul>
-            </div>
-          )
-        })}
-      </div>
       Current player: <Box color={currentPlayer} />
       <br />
       Current dice roll:{' '}
