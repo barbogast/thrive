@@ -1,9 +1,9 @@
 import create from 'zustand'
 import produce from 'immer'
 
-import * as game from '../game'
-import * as position from '../position'
-import * as board from '../board'
+import * as game from './game'
+import * as position from './position'
+import * as board from './board'
 
 export const ActionType = {
   buildRoad: 'buildRoad',
