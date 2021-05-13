@@ -2,9 +2,7 @@ import React, { useEffect } from 'react'
 import useConnection from '../useConnection'
 
 import useStore from '../state'
-import Board from './Board'
-import Controls from './Controls'
-import Players from './Players'
+import Playing from '../pages/Playing'
 
 function App(): JSX.Element {
   const { initialise, state } = useStore((state) => ({
@@ -26,14 +24,9 @@ function App(): JSX.Element {
 
   return (
     <>
+      <Playing sendState={sendState} />
       {peerId && <a href={peerLink}>{peerLink}</a>}
       <button onClick={connect}>Connect</button>
-      <Players />
-      <Controls />
-      <Board />
-      &nbsp;&nbsp;
-      <button onClick={() => console.log(state)}>Log state</button>
-      <button onClick={() => sendState()}>Send state</button>
     </>
   )
 }
