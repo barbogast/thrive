@@ -38,6 +38,7 @@ type Setter = {
   buildRoad: (position: position.Position) => void
   nextTurn: () => void
   toggleCurrentAction: (action: ActionType) => void
+  updateGameState: (gameState: game.GameState) => void
 }
 
 const useStore = create<State & Setter>((set) => {
@@ -111,6 +112,11 @@ const useStore = create<State & Setter>((set) => {
             const exhaustiveCheck: never = actionType
             throw new Error(`Unhandled case: ${exhaustiveCheck}`)
         }
+      }),
+
+    updateGameState: (gameState) =>
+      iSet((draft) => {
+        draft.gameState = gameState
       }),
   }
 })

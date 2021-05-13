@@ -1,7 +1,8 @@
 import { KonvaEventObject } from 'konva-types/Node'
 import { Stage as StateType } from 'konva-types/Stage'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Stage, useStrictMode } from 'react-konva'
+import useConnection from '../useConnection'
 
 import * as game from '../game'
 import useStore, { ActionType } from '../state'
@@ -75,8 +76,21 @@ function App(): JSX.Element {
   }))
   useEffect(initialise, [])
 
+  const connect = () => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const gameId = urlParams.get('gameid')
+    if (!gameId) {
+      return
+    }
+    connectToPeer(gameId)
+  }
+  const { peerId, connectToPeer, sendState } = useConnection()
+  const peerLink = window.location.host + '?gameid=' + peerId
+
   return (
     <>
+      {peerId && <a href={peerLink}>{peerLink}</a>}
+      <button onClick={connect}>Connect</button>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         {Object.values(players).map((player) => {
           return (
@@ -148,6 +162,7 @@ function App(): JSX.Element {
       </Stage>
       &nbsp;&nbsp;
       <button onClick={() => console.log(state)}>Log state</button>
+      <button onClick={() => sendState()}>Send state</button>
     </>
   )
 }
