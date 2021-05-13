@@ -212,7 +212,7 @@ export function buildTown(state: GameState, townId: string) {
 }
 
 export function buildRoad(state: GameState, roadId: string) {
-  const road = state.roads.find((town) => town.id === roadId)!
+  const road = state.roads.find((road) => road.id === roadId)!
   console.log(
     board.roadPositionConnectsToExistingRoad(
       state.roads,
