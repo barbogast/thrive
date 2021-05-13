@@ -5,12 +5,13 @@ import * as utils from './utils'
 import * as position from './position'
 import { gameConfig } from './constants'
 
-export enum PlayerId {
-  green = 'green',
-  red = 'red',
-  yellow = 'yellow',
-  blue = 'blue',
+export const PlayerId = {
+  green: 'green',
+  red: 'red',
+  yellow: 'yellow',
+  blue: 'blue',
 }
+export type PlayerId = typeof PlayerId[keyof typeof PlayerId]
 
 export const Resource = {
   grain: 'grain',

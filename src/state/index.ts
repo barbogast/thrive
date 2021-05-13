@@ -3,11 +3,12 @@ import produce from 'immer'
 
 import * as game from '../game'
 
-export enum ActionType {
-  buildRoad = 'buildRoad',
-  buildTown = 'buildTown',
-  none = 'none',
-}
+export const ActionType = {
+  buildRoad: 'buildRoad',
+  buildTown: 'buildTown',
+  none: 'none',
+} as const
+export type ActionType = typeof ActionType[keyof typeof ActionType]
 
 type State = {
   gameState: game.GameState
