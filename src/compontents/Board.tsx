@@ -5,6 +5,7 @@ import useStore from '../state'
 import HexTile from './HexTile'
 import Road from './Road'
 import Town from './Town'
+import { ActionType } from '../state'
 
 function Board(): JSX.Element {
   const {
@@ -21,12 +22,17 @@ function Board(): JSX.Element {
         <HexTile key={i} tile={t} />
       ))}
 
+      {currentAction.type === ActionType.buildRoad &&
+        Object.values(currentAction.positions).map((r, i) => (
+          <Road key={i} position={r} />
+        ))}
+
       {Object.values(roads).map((r, i) => (
-        <Road key={i} road={r} currentAction={currentAction} />
+        <Road key={i} position={r.position} owner={r.owner} />
       ))}
 
       {Object.values(towns).map((t, i) => (
-        <Town key={i} town={t} currentAction={currentAction} />
+        <Town key={i} town={t} currentAction={currentAction.type} />
       ))}
     </Layer>
   )

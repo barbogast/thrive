@@ -4,21 +4,18 @@ import { Rect } from 'react-konva'
 import { visualConfig } from '../constants'
 import * as game from '../game'
 import * as axial from '../axial'
-import useStore, { ActionType } from '../state'
+import * as position from '../position'
+import useStore from '../state'
 
 type Props = {
-  road: game.Road
-  currentAction: ActionType
+  position: position.Position
+  owner?: game.PlayerId | void
 }
 
-function Road({ road, currentAction }: Props): JSX.Element {
+function Road({ position, owner }: Props): JSX.Element {
   const buildRoad = useStore((state) => state.buildRoad)
 
-  if (currentAction !== ActionType.buildRoad && !road.owner) {
-    return <></>
-  }
-
-  const [tile1, tile2] = road.position
+  const [tile1, tile2] = position
 
   const direction = axial.getDirection(tile1, tile2)
 
@@ -31,16 +28,9 @@ function Road({ road, currentAction }: Props): JSX.Element {
     5: 30,
   }
 
-  const middle = axial.getMiddle(road.position)
+  const middle = axial.getMiddle(position)
 
-  const style = road.owner
-    ? {
-        fill: road.owner,
-      }
-    : {
-        stroke: 'black',
-        strokeWidth: 1,
-      }
+  const style = owner ? { fill: owner } : { stroke: 'black', strokeWidth: 1 }
 
   return (
     <Rect
@@ -52,7 +42,7 @@ function Road({ road, currentAction }: Props): JSX.Element {
       height={7}
       rotation={directionToDegree[direction]}
       {...style}
-      onClick={() => buildRoad(road.id)}
+      onClick={() => buildRoad(position)}
     />
   )
 }

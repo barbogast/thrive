@@ -89,7 +89,7 @@ export function getTownsOnTile(
   return townsOnTile
 }
 
-function findRoad(
+export function findRoad(
   roads: game.Road[],
   roadPosition: position.Position,
 ): game.Road | void {

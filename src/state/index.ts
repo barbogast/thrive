@@ -2,6 +2,8 @@ import create from 'zustand'
 import produce from 'immer'
 
 import * as game from '../game'
+import * as position from '../position'
+import * as board from '../board'
 
 export const ActionType = {
   buildRoad: 'buildRoad',
@@ -10,17 +12,30 @@ export const ActionType = {
 } as const
 export type ActionType = typeof ActionType[keyof typeof ActionType]
 
+export type Action =
+  | {
+      type: 'none'
+    }
+  | {
+      type: 'buildRoad'
+      positions: position.Position[]
+    }
+  | {
+      type: 'buildTown'
+      positions: position.Position[]
+    }
+
 type State = {
   gameState: game.GameState
   uiState: {
-    currentAction: ActionType
+    currentAction: Action
   }
 }
 
 type Setter = {
   initialise: () => void
   buildTown: (id: string) => void
-  buildRoad: (id: string) => void
+  buildRoad: (position: position.Position) => void
   nextTurn: () => void
   toggleCurrentAction: (action: ActionType) => void
 }
@@ -37,7 +52,7 @@ const useStore = create<State & Setter>((set) => {
       currentDiceRoll: [],
     },
     uiState: {
-      currentAction: ActionType.none,
+      currentAction: { type: ActionType.none },
     },
 
     initialise: () => iSet(() => ({ gameState: game.initialiseGame() })),
@@ -45,13 +60,13 @@ const useStore = create<State & Setter>((set) => {
     buildTown: (id: string) =>
       iSet((draft) => {
         game.buildTown(draft.gameState, id)
-        draft.uiState.currentAction = ActionType.none
+        draft.uiState.currentAction = { type: ActionType.none }
       }),
 
-    buildRoad: (id: string) =>
+    buildRoad: (position: position.Position) =>
       iSet((draft) => {
-        game.buildRoad(draft.gameState, id)
-        draft.uiState.currentAction = ActionType.none
+        game.buildRoad(draft.gameState, position)
+        draft.uiState.currentAction = { type: ActionType.none }
       }),
 
     nextTurn: () =>
@@ -62,10 +77,39 @@ const useStore = create<State & Setter>((set) => {
         )
       }),
 
-    toggleCurrentAction: (action: ActionType) =>
+    toggleCurrentAction: (actionType: ActionType) =>
       iSet((draft) => {
-        draft.uiState.currentAction =
-          action === draft.uiState.currentAction ? ActionType.none : action
+        if (actionType === draft.uiState.currentAction.type) {
+          draft.uiState.currentAction = { type: ActionType.none }
+          return
+        }
+
+        switch (actionType) {
+          case ActionType.buildRoad: {
+            draft.uiState.currentAction = {
+              type: actionType,
+              positions: board.getRoadPositions(draft.gameState.tiles),
+            }
+            break
+          }
+
+          case ActionType.buildTown: {
+            draft.uiState.currentAction = {
+              type: actionType,
+              positions: board.getTownPositions(draft.gameState.tiles),
+            }
+            break
+          }
+
+          case ActionType.none: {
+            draft.uiState.currentAction = { type: actionType }
+            break
+          }
+
+          default:
+            const exhaustiveCheck: never = actionType
+            throw new Error(`Unhandled case: ${exhaustiveCheck}`)
+        }
       }),
   }
 })

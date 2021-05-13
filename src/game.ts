@@ -45,7 +45,7 @@ export type Tile = {
 export type Road = {
   id: string
   position: position.Position
-  owner: PlayerId | void
+  owner: PlayerId
 }
 
 export type Town = {
@@ -134,16 +134,11 @@ export function initialisePlayers() {
 export function initialiseGame(): GameState {
   const tiles = getHexagonBoard('3')
   const tMap = tileMap.fromArray(tiles)
-  const roadPositions = board.getRoadPositions(tMap)
   const townPositions = board.getTownPositions(tMap)
 
   return {
     tiles: tMap,
-    roads: roadPositions.map((position) => ({
-      position,
-      owner: undefined,
-      id: getId('road', position),
-    })),
+    roads: [],
     towns: townPositions.map((position) => ({
       position,
       owner: undefined,
@@ -211,19 +206,22 @@ export function buildTown(state: GameState, townId: string) {
   town.owner = state.currentPlayer
 }
 
-export function buildRoad(state: GameState, roadId: string) {
-  const road = state.roads.find((road) => road.id === roadId)!
+export function buildRoad(state: GameState, position: position.Position) {
   console.log(
     board.roadPositionConnectsToExistingRoad(
       state.roads,
-      road.position,
+      position,
       state.currentPlayer,
     ),
   )
 
-  if (road.owner) {
+  if (board.findRoad(state.roads, position)) {
     return
   }
   payResources(state, state.currentPlayer, getCost('road'))
-  road.owner = state.currentPlayer
+  state.roads.push({
+    id: getId('road', position),
+    position,
+    owner: state.currentPlayer,
+  })
 }

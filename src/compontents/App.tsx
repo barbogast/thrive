@@ -117,7 +117,9 @@ function App(): JSX.Element {
         onClick={() => toggleCurrentAction(ActionType.buildRoad)}
         style={{
           boxShadow:
-            currentAction === ActionType.buildRoad ? '0 0 0 2px black' : '',
+            currentAction.type === ActionType.buildRoad
+              ? '0 0 0 2px black'
+              : '',
         }}
       >
         Build road
@@ -127,7 +129,9 @@ function App(): JSX.Element {
         onClick={() => toggleCurrentAction(ActionType.buildTown)}
         style={{
           boxShadow:
-            currentAction === ActionType.buildTown ? '0 0 0 2px black' : '',
+            currentAction.type === ActionType.buildTown
+              ? '0 0 0 2px black'
+              : '',
         }}
       >
         Build town
