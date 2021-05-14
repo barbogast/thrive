@@ -1,6 +1,6 @@
 import React from 'react'
 
-import useStore from '../state'
+import { useStore } from '../state'
 import Board from '../components/Board'
 import Controls from '../components/Controls'
 import Players from '../components/Players'

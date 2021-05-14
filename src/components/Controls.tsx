@@ -1,7 +1,7 @@
 import React from 'react'
 
 import * as routing from '../routing'
-import useStore, { ActionType } from '../state'
+import { useStore, ActionType } from '../state'
 import Box from './Box'
 
 function Controls() {

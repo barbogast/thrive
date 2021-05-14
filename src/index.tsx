@@ -2,10 +2,13 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import App from './components/App'
+import WithInitialisedState from './components/WithInitialisedState'
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <WithInitialisedState>
+      <App />
+    </WithInitialisedState>
   </React.StrictMode>,
   document.getElementById('root'),
 )

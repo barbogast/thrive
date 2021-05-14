@@ -6,7 +6,7 @@ import * as game from '../game'
 import * as axial from '../axial'
 import * as position from '../position'
 import * as routing from '../routing'
-import useStore from '../state'
+import { useStore } from '../state'
 
 type Props = {
   position: position.Position

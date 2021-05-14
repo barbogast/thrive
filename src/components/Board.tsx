@@ -3,7 +3,7 @@ import { Layer, Stage, useStrictMode } from 'react-konva'
 import { KonvaEventObject } from 'konva-types/Node'
 import { Stage as StateType } from 'konva-types/Stage'
 
-import useStore from '../state'
+import { useStore } from '../state'
 import * as routing from '../routing'
 import HexTile from './HexTile'
 import Road from './Road'

@@ -3,7 +3,7 @@ import { Link } from 'wouter'
 import { nanoid } from 'nanoid'
 import { useLocation } from 'wouter'
 
-import useStore from '../state'
+import { useStore } from '../state'
 
 function MainMenu() {
   const [location, setLocation] = useLocation()

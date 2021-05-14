@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { getColorForTileType } from './HexTile'
-import useStore from '../state'
+import { useStore } from '../state'
 import Box from './Box'
 import * as game from '../game'
 import * as routing from '../routing'
