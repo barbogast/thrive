@@ -11,4 +11,5 @@ module.exports = {
   alias: {
     'konva-types': './node_modules/konva/types',
   },
+  routes: [{ match: 'routes', src: '.*', dest: '/index.html' }],
 }
