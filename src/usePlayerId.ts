@@ -7,7 +7,6 @@ function usePlayerId(): string {
     playerId: state.player?.id,
     setPlayerId: state.setPlayerId,
   }))
-  console.log({ playerId })
 
   if (!playerId) {
     playerId = nanoid()
