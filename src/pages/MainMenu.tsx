@@ -4,13 +4,20 @@ import { nanoid } from 'nanoid'
 import { useLocation } from 'wouter'
 
 import { useStore } from '../state'
+import usePlayerId from '../usePlayerId'
+import Box from '../components/Box'
 
 function MainMenu() {
   const [location, setLocation] = useLocation()
-  const { initialise, games } = useStore((state) => ({
-    initialise: state.initialise,
-    games: state.games,
-  }))
+  const playerId = usePlayerId()
+  const { initialise, games, friends, connectedFriends } = useStore(
+    (state) => ({
+      initialise: state.initialise,
+      games: state.games,
+      friends: state.friends,
+      connectedFriends: state.uiState.connectedFriends,
+    }),
+  )
 
   const createGame = () => {
     const gameId = nanoid()
@@ -18,6 +25,7 @@ function MainMenu() {
     setLocation(`/play/${gameId}`)
   }
 
+  const inviteLink = `${window.location.host + '?connect=' + playerId}`
   return (
     <>
       <button onClick={createGame}>Create game</button>
@@ -32,6 +40,23 @@ function MainMenu() {
             </li>
           ))}
         </ul>
+      </div>
+      <div>
+        Contacts
+        <div>
+          <ul>
+            {Object.values(friends).map((friend) => (
+              <li key={friend.id}>
+                {friend.id}
+                <Box
+                  color={connectedFriends.includes(friend.id) ? 'green' : 'red'}
+                />
+              </li>
+            ))}
+          </ul>
+          Invite new contacts by sharing this link:
+          <a href={inviteLink}>{inviteLink}</a>
+        </div>
       </div>
     </>
   )

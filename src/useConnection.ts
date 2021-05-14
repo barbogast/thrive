@@ -7,24 +7,28 @@ function useConnection() {
   const [peerId, setPeerId] = useState<string | void>()
   const playerId = usePlayerId()
   const peerRef = useRef<Peer>()
-  const { state, updateGameState } = useStore((state) => ({
-    state: state,
-    updateGameState: state.updateGameState,
-  }))
+  const { state, updateGameState, connectToPlayer, friendDisconnected } =
+    useStore((state) => ({
+      state: state,
+      updateGameState: state.updateGameState,
+      connectToPlayer: state.connectToPlayer,
+      friendDisconnected: state.friendDisconnected,
+    }))
 
-  const connectToPeer = (gameId: string) => {
+  const connectToPeer = (playerId: string) => {
     if (!peerRef.current) {
       return
     }
 
-    console.log(`Connecting to ${gameId}...`)
+    console.log(`Connecting to ${playerId}...`)
 
-    let conn = peerRef.current.connect(gameId)
+    let conn = peerRef.current.connect(playerId)
     conn.on('data', (data) => {
       console.log(`received: ${data}`)
     })
     conn.on('open', () => {
       conn.send('hi!')
+      conn.send({ method: 'connect', args: { playerId } })
     })
   }
 
@@ -46,7 +50,7 @@ function useConnection() {
   }
 
   useEffect(() => {
-    peerRef.current = new Peer(playerId)
+    peerRef.current = new Peer(playerId, { debug: 3 })
 
     peerRef.current.on('open', (id) => {
       setPeerId(id)
@@ -59,15 +63,29 @@ function useConnection() {
 
     // Handle incoming data connection
     peerRef.current.on('connection', (conn) => {
+      let connectedPlayerId: string
       console.log('incoming peer connection!')
       conn.on('data', (data) => {
-        console.log(`received: ${data}`, data)
+        console.log(`received:`, data)
         if (typeof data === 'object') {
+          if (data.method === 'connect') {
+            connectedPlayerId = data.args.playerId
+            connectToPlayer(connectedPlayerId)
+          }
           updateGameState('a', data)
         }
       })
       conn.on('open', () => {
         conn.send('hello!')
+      })
+
+      conn.on('close', () => {
+        friendDisconnected(connectedPlayerId)
+      })
+
+      conn.on('error', (err) => {
+        console.log('error', err, connectedPlayerId)
+        friendDisconnected(connectedPlayerId)
       })
     })
   }, [])

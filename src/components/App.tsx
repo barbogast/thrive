@@ -8,14 +8,13 @@ import MainMenu from '../pages/MainMenu'
 function App(): JSX.Element {
   const connect = () => {
     const urlParams = new URLSearchParams(window.location.search)
-    const gameId = urlParams.get('gameid')
-    if (!gameId) {
+    const playerId = urlParams.get('connect')
+    if (!playerId) {
       return
     }
-    connectToPeer(gameId)
+    connectToPeer(playerId)
   }
-  const { peerId, connectToPeer, sendState } = useConnection()
-  const peerLink = window.location.host + '?gameid=' + peerId
+  const { connectToPeer, sendState } = useConnection()
 
   return (
     <>
@@ -25,7 +24,6 @@ function App(): JSX.Element {
         component={() => <Playing sendState={sendState} />}
       />
       <div>
-        {peerId && <a href={peerLink}>{peerLink}</a>}
         <button onClick={connect}>Connect</button>
       </div>
     </>

@@ -31,16 +31,24 @@ type State = {
   player: {
     id: string | void
   }
+  friends: {
+    [id: string]: {
+      id: string
+    }
+  }
   games: {
     [gameId: string]: game.GameState
   }
   uiState: {
     currentAction: Action
+    connectedFriends: string[]
   }
 }
 
 type Setter = {
   setPlayerId: (playerId: string) => void
+  connectToPlayer: (playerId: string) => void
+  friendDisconnected: (playerId: string) => void
   initialise: (gameId: string) => void
   buildTown: (gameId: string, position: position.Position) => void
   buildRoad: (gameId: string, position: position.Position) => void
@@ -58,14 +66,27 @@ export function initialiseStore(onRehydrated: () => void) {
           player: {
             id: undefined,
           },
+          friends: {},
           games: {},
           uiState: {
             currentAction: { type: ActionType.none },
+            connectedFriends: [],
           },
 
           setPlayerId: (playerId: string) =>
             iSet((draft) => {
               draft.player = { id: playerId }
+            }),
+
+          connectToPlayer: (playerId: string) =>
+            iSet((draft) => {
+              draft.friends[playerId] = { id: playerId }
+              draft.uiState.connectedFriends.push(playerId)
+            }),
+
+          friendDisconnected: (playerId: string) =>
+            iSet((draft) => {
+              draft.uiState.connectedFriends.filter((id) => id !== playerId)
             }),
 
           initialise: (gameId: string) =>
@@ -141,7 +162,7 @@ export function initialiseStore(onRehydrated: () => void) {
       },
       {
         name: 'state',
-        whitelist: ['games', 'player'],
+        whitelist: ['games', 'player', 'friends'],
         onRehydrateStorage: () => onRehydrated,
       },
     ),
