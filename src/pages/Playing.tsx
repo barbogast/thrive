@@ -15,6 +15,7 @@ function Playing({ sendState }: Props) {
   }))
   return (
     <>
+      <button onClick={() => window.history.back()}>Back</button>
       <Players />
       <Controls />
       <Board />
