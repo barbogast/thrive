@@ -4,6 +4,7 @@ import { KonvaEventObject } from 'konva-types/Node'
 import { Stage as StateType } from 'konva-types/Stage'
 
 import useStore from '../state'
+import * as routing from '../routing'
 import HexTile from './HexTile'
 import Road from './Road'
 import Town from './Town'
@@ -42,11 +43,12 @@ function onWheel(e: KonvaEventObject<WheelEvent>) {
 }
 
 function Board(): JSX.Element {
+  const gameId = routing.useGameId()
   const {
     gameState: { tiles, roads, towns },
     currentAction,
   } = useStore((state) => ({
-    gameState: state.gameState,
+    gameState: state.games[gameId],
     currentAction: state.uiState.currentAction,
   }))
 

@@ -28,7 +28,7 @@ function useConnection() {
 
   const sendState = () => {
     console.log(peerRef.current?.connections)
-    console.log(state.gameState)
+    console.log(state.games)
     if (!peerRef.current) {
       return
     }
@@ -38,7 +38,7 @@ function useConnection() {
 
     for (const conns of Object.values(connections)) {
       for (const conn of conns) {
-        conn.send(state.gameState)
+        conn.send(state.games)
       }
     }
   }
@@ -61,7 +61,7 @@ function useConnection() {
       conn.on('data', (data) => {
         console.log(`received: ${data}`, data)
         if (typeof data === 'object') {
-          updateGameState(data)
+          updateGameState('a', data)
         }
       })
       conn.on('open', () => {

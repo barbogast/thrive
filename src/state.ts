@@ -27,19 +27,21 @@ export type Action =
     }
 
 type State = {
-  gameState: game.GameState
+  games: {
+    [gameId: string]: game.GameState
+  }
   uiState: {
     currentAction: Action
   }
 }
 
 type Setter = {
-  initialise: () => void
-  buildTown: (position: position.Position) => void
-  buildRoad: (position: position.Position) => void
-  nextTurn: () => void
-  toggleCurrentAction: (action: ActionType) => void
-  updateGameState: (gameState: game.GameState) => void
+  initialise: (gameId: string) => void
+  buildTown: (gameId: string, position: position.Position) => void
+  buildRoad: (gameId: string, position: position.Position) => void
+  nextTurn: (gameId: string) => void
+  toggleCurrentAction: (gameId: string, action: ActionType) => void
+  updateGameState: (gameId: string, gameState: game.GameState) => void
 }
 
 const useStore = create<State & Setter>(
@@ -47,42 +49,38 @@ const useStore = create<State & Setter>(
     (set) => {
       const iSet = (fn: (state: State) => void) => set(produce(fn))
       return {
-        gameState: {
-          tiles: {},
-          roads: [],
-          towns: [],
-          players: game.initialisePlayers(),
-          currentPlayer: game.PlayerId.green,
-          currentDiceRoll: [],
-        },
+        games: {},
         uiState: {
           currentAction: { type: ActionType.none },
         },
 
-        initialise: () => iSet(() => ({ gameState: game.initialiseGame() })),
-
-        buildTown: (position: position.Position) =>
+        initialise: (gameId: string) =>
           iSet((draft) => {
-            game.buildTown(draft.gameState, position)
+            draft.games[gameId] = game.initialiseGame()
+          }),
+
+        buildTown: (gameId: string, position: position.Position) =>
+          iSet((draft) => {
+            game.buildTown(draft.games[gameId], position)
             draft.uiState.currentAction = { type: ActionType.none }
           }),
 
-        buildRoad: (position: position.Position) =>
+        buildRoad: (gameId: string, position: position.Position) =>
           iSet((draft) => {
-            game.buildRoad(draft.gameState, position)
+            game.buildRoad(draft.games[gameId], position)
             draft.uiState.currentAction = { type: ActionType.none }
           }),
 
-        nextTurn: () =>
+        nextTurn: (gameId: string) =>
           iSet((draft) => {
             draft.uiState.currentAction = { type: ActionType.none }
-            game.rollDice(draft.gameState)
-            draft.gameState.currentPlayer = game.getNextPlayer(
-              draft.gameState.currentPlayer,
+            game.rollDice(draft.games[gameId])
+            draft.games[gameId].currentPlayer = game.getNextPlayer(
+              draft.games[gameId].currentPlayer,
             )
           }),
 
-        toggleCurrentAction: (actionType: ActionType) =>
+        toggleCurrentAction: (gameId: string, actionType: ActionType) =>
           iSet((draft) => {
             if (actionType === draft.uiState.currentAction.type) {
               draft.uiState.currentAction = { type: ActionType.none }
@@ -93,7 +91,7 @@ const useStore = create<State & Setter>(
               case ActionType.buildRoad: {
                 draft.uiState.currentAction = {
                   type: actionType,
-                  positions: board.getRoadPositions(draft.gameState.tiles),
+                  positions: board.getRoadPositions(draft.games[gameId].tiles),
                 }
                 break
               }
@@ -101,7 +99,7 @@ const useStore = create<State & Setter>(
               case ActionType.buildTown: {
                 draft.uiState.currentAction = {
                   type: actionType,
-                  positions: board.getTownPositions(draft.gameState.tiles),
+                  positions: board.getTownPositions(draft.games[gameId].tiles),
                 }
                 break
               }
@@ -117,9 +115,9 @@ const useStore = create<State & Setter>(
             }
           }),
 
-        updateGameState: (gameState) =>
+        updateGameState: (gameId: string, gameState: game.GameState) =>
           iSet((draft) => {
-            draft.gameState = gameState
+            draft.games[gameId] = gameState
           }),
       }
     },

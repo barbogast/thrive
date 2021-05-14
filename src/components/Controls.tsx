@@ -1,9 +1,11 @@
 import React from 'react'
 
+import * as routing from '../routing'
 import useStore, { ActionType } from '../state'
 import Box from './Box'
 
 function Controls() {
+  const gameId = routing.useGameId()
   const {
     nextTurn,
     currentPlayer,
@@ -12,10 +14,10 @@ function Controls() {
     currentDiceRoll,
   } = useStore((state) => ({
     nextTurn: state.nextTurn,
-    currentPlayer: state.gameState.currentPlayer,
+    currentPlayer: state.games[gameId].currentPlayer,
     toggleCurrentAction: state.toggleCurrentAction,
     currentAction: state.uiState.currentAction,
-    currentDiceRoll: state.gameState.currentDiceRoll,
+    currentDiceRoll: state.games[gameId].currentDiceRoll,
   }))
 
   return (
@@ -26,7 +28,7 @@ function Controls() {
       {currentDiceRoll.length ? currentDiceRoll.join(' | ') : ''}
       <br />
       <button
-        onClick={() => toggleCurrentAction(ActionType.buildRoad)}
+        onClick={() => toggleCurrentAction(gameId, ActionType.buildRoad)}
         style={{
           boxShadow:
             currentAction.type === ActionType.buildRoad
@@ -38,7 +40,7 @@ function Controls() {
       </button>
       &nbsp;&nbsp;
       <button
-        onClick={() => toggleCurrentAction(ActionType.buildTown)}
+        onClick={() => toggleCurrentAction(gameId, ActionType.buildTown)}
         style={{
           boxShadow:
             currentAction.type === ActionType.buildTown
@@ -49,7 +51,7 @@ function Controls() {
         Build town
       </button>
       &nbsp;&nbsp;
-      <button onClick={nextTurn}>Finish turn</button>
+      <button onClick={() => nextTurn(gameId)}>Finish turn</button>
     </div>
   )
 }

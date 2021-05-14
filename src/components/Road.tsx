@@ -5,6 +5,7 @@ import { visualConfig } from '../constants'
 import * as game from '../game'
 import * as axial from '../axial'
 import * as position from '../position'
+import * as routing from '../routing'
 import useStore from '../state'
 
 type Props = {
@@ -13,6 +14,7 @@ type Props = {
 }
 
 function Road({ position, owner }: Props): JSX.Element {
+  const gameId = routing.useGameId()
   const buildRoad = useStore((state) => state.buildRoad)
 
   const [tile1, tile2] = position
@@ -42,7 +44,7 @@ function Road({ position, owner }: Props): JSX.Element {
       height={7}
       rotation={directionToDegree[direction]}
       {...style}
-      onClick={owner ? undefined : () => buildRoad(position)}
+      onClick={owner ? undefined : () => buildRoad(gameId, position)}
     />
   )
 }

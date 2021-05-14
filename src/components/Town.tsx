@@ -4,6 +4,7 @@ import { Circle } from 'react-konva'
 import * as game from '../game'
 import * as axial from '../axial'
 import * as position from '../position'
+import * as routing from '../routing'
 import useStore from '../state'
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
 }
 
 function Town({ position, owner }: Props): JSX.Element {
+  const gameId = routing.useGameId()
   const buildTown = useStore((state) => state.buildTown)
 
   const middle = axial.getMiddle(position)
@@ -30,7 +32,7 @@ function Town({ position, owner }: Props): JSX.Element {
       x={middle.x}
       y={middle.y}
       radius={10}
-      onClick={owner ? undefined : () => buildTown(position)}
+      onClick={owner ? undefined : () => buildTown(gameId, position)}
       {...style}
     />
   )

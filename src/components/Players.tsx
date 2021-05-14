@@ -4,10 +4,12 @@ import { getColorForTileType } from './HexTile'
 import useStore from '../state'
 import Box from './Box'
 import * as game from '../game'
+import * as routing from '../routing'
 
 function Players() {
+  const gameId = routing.useGameId()
   const { players } = useStore((state) => ({
-    players: state.gameState.players,
+    players: state.games[gameId].players,
   }))
 
   return (
