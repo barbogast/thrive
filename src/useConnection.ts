@@ -1,9 +1,11 @@
 import Peer, { DataConnection } from 'peerjs'
 import { useEffect, useState, useRef } from 'react'
 import { useStore } from './state'
+import usePlayerId from './usePlayerId'
 
 function useConnection() {
   const [peerId, setPeerId] = useState<string | void>()
+  const playerId = usePlayerId()
   const peerRef = useRef<Peer>()
   const { state, updateGameState } = useStore((state) => ({
     state: state,
@@ -44,7 +46,7 @@ function useConnection() {
   }
 
   useEffect(() => {
-    peerRef.current = new Peer()
+    peerRef.current = new Peer(playerId)
 
     peerRef.current.on('open', (id) => {
       setPeerId(id)

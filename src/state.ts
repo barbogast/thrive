@@ -28,6 +28,9 @@ export type Action =
     }
 
 type State = {
+  player: {
+    id: string | void
+  }
   games: {
     [gameId: string]: game.GameState
   }
@@ -37,6 +40,7 @@ type State = {
 }
 
 type Setter = {
+  setPlayerId: (playerId: string) => void
   initialise: (gameId: string) => void
   buildTown: (gameId: string, position: position.Position) => void
   buildRoad: (gameId: string, position: position.Position) => void
@@ -51,6 +55,9 @@ export function initialiseStore(onRehydrated: () => void) {
       (set) => {
         const iSet = (fn: (state: State) => void) => set(produce(fn))
         return {
+          player: {
+            id: undefined,
+          },
           games: {},
           uiState: {
             currentAction: { type: ActionType.none },
