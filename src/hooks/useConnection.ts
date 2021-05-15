@@ -7,7 +7,7 @@ const log = console.log
 
 function useConnection() {
   const [peerId, setPeerId] = useState<string | void>()
-  const playerId = usePlayerId()
+  const myPlayerId = usePlayerId()
   const peerRef = useRef<Peer>()
   const { state, updateGameState, connectToPlayer, friendDisconnected } =
     useStore((state) => ({
@@ -17,20 +17,21 @@ function useConnection() {
       friendDisconnected: state.friendDisconnected,
     }))
 
-  const connectToPeer = (playerId: string) => {
+  const connectToPeer = (connectToId: string) => {
     if (!peerRef.current) {
       return
     }
 
-    log(`Connecting to ${playerId}...`)
+    log(`Connecting to ${myPlayerId}...`)
 
-    let conn = peerRef.current.connect(playerId)
+    let conn = peerRef.current.connect(connectToId)
     conn.on('data', (data) => {
       log(`received: ${data}`)
     })
 
     conn.on('open', () => {
-      conn.send({ method: 'connect', args: { playerId } })
+      connectToPlayer(connectToId)
+      conn.send({ method: 'connect', args: { playerId: myPlayerId } })
     })
   }
 
@@ -50,7 +51,7 @@ function useConnection() {
   }
 
   useEffect(() => {
-    peerRef.current = new Peer(playerId, { debug: 3 })
+    peerRef.current = new Peer(myPlayerId, { debug: 3 })
 
     peerRef.current.on('open', (id) => {
       setPeerId(id)
