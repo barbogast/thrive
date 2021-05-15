@@ -3,7 +3,13 @@ import { useEffect, useState, useRef } from 'react'
 import { useStore } from '../state'
 import usePlayerId from './usePlayerId'
 
-const log = console.log
+const DEBUG_LEVEL: 0 | 1 | 2 | 3 = 0
+
+const log =
+  // @ts-ignore: It's okay, relax
+  DEBUG_LEVEL === 1
+    ? () => {}
+    : (...args: unknown[]) => console.log('NET: ', ...args)
 
 function useConnection() {
   const [peerId, setPeerId] = useState<string | void>()
@@ -51,7 +57,7 @@ function useConnection() {
   }
 
   useEffect(() => {
-    peerRef.current = new Peer(myPlayerId, { debug: 3 })
+    peerRef.current = new Peer(myPlayerId, { debug: DEBUG_LEVEL })
 
     peerRef.current.on('open', (id) => {
       setPeerId(id)
