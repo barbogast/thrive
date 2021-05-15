@@ -1,7 +1,7 @@
-import create from 'zustand'
+import create, { StateCreator } from 'zustand'
 import { persist } from 'zustand/middleware'
 import createContext from 'zustand/context'
-import produce from 'immer'
+import produce, { Draft } from 'immer'
 
 import * as game from './game'
 import * as position from './position'
@@ -59,11 +59,17 @@ type Setter = {
   updateGameState: (gameId: string, gameState: game.GameState) => void
 }
 
+const immer =
+  <T extends State>(
+    config: StateCreator<T, (fn: (draft: Draft<T>) => void) => void>,
+  ): StateCreator<T> =>
+  (set, get, api) =>
+    config((fn) => set(produce<T>(fn)), get, api)
+
 export function initialiseStore(onRehydrated: () => void) {
   return create<State & Setter>(
     persist(
-      (set) => {
-        const iSet = (fn: (state: State) => void) => set(produce(fn))
+      immer((set) => {
         return {
           player: {
             id: undefined,
@@ -76,52 +82,52 @@ export function initialiseStore(onRehydrated: () => void) {
           },
 
           setPlayerId: (playerId: string) =>
-            iSet((draft) => {
+            set((draft) => {
               draft.player = { id: playerId }
             }),
 
           connectToPlayer: (playerId: string) =>
-            iSet((draft) => {
+            set((draft) => {
               draft.friends[playerId] = { id: playerId, isRemote: true }
               draft.uiState.connectedFriends.push(playerId)
             }),
 
           addLocalPlayer: (playerId: string) =>
-            iSet((draft) => {
+            set((draft) => {
               draft.friends[playerId] = { id: playerId, isRemote: false }
             }),
 
           friendDisconnected: (playerId: string) =>
-            iSet((draft) => {
+            set((draft) => {
               draft.uiState.connectedFriends.filter((id) => id !== playerId)
             }),
 
           initialise: (gameId: string, friendIds: string[]) =>
-            iSet((draft) => {
+            set((draft) => {
               draft.games[gameId] = game.initialiseGame(friendIds)
             }),
 
           buildTown: (gameId: string, position: position.Position) =>
-            iSet((draft) => {
+            set((draft) => {
               game.buildTown(draft.games[gameId], position)
               draft.uiState.currentAction = { type: ActionType.none }
             }),
 
           buildRoad: (gameId: string, position: position.Position) =>
-            iSet((draft) => {
+            set((draft) => {
               game.buildRoad(draft.games[gameId], position)
               draft.uiState.currentAction = { type: ActionType.none }
             }),
 
           nextTurn: (gameId: string) =>
-            iSet((draft) => {
+            set((draft) => {
               draft.uiState.currentAction = { type: ActionType.none }
               game.rollDice(draft.games[gameId])
               game.getNextPlayer(draft.games[gameId])
             }),
 
           toggleCurrentAction: (gameId: string, actionType: ActionType) =>
-            iSet((draft) => {
+            set((draft) => {
               if (actionType === draft.uiState.currentAction.type) {
                 draft.uiState.currentAction = { type: ActionType.none }
                 return
@@ -160,11 +166,11 @@ export function initialiseStore(onRehydrated: () => void) {
             }),
 
           updateGameState: (gameId: string, gameState: game.GameState) =>
-            iSet((draft) => {
+            set((draft) => {
               draft.games[gameId] = gameState
             }),
         }
-      },
+      }),
       {
         name: 'state',
         whitelist: ['games', 'player', 'friends'],
