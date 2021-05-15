@@ -1,5 +1,6 @@
 import Peer, { DataConnection } from 'peerjs'
 import { useEffect, useState, useRef } from 'react'
+import { GameState } from '../game'
 import { useStore } from '../state'
 import usePlayerId from './usePlayerId'
 
@@ -13,6 +14,10 @@ const log =
 
 function useConnection() {
   const [peerId, setPeerId] = useState<string | void>()
+  const [connections, setConnections] = useState<{
+    [friendId: string]: DataConnection
+  }>({})
+
   const myPlayerId = usePlayerId()
   const peerRef = useRef<Peer>()
   const {
@@ -39,8 +44,11 @@ function useConnection() {
         if (data.method === 'introduce') {
           connectedPlayerId = data.args.playerId
           connectToPlayer(connectedPlayerId)
+          log('add connection, ', connectedPlayerId)
+          setConnections((conns) => ({ ...conns, [connectedPlayerId]: conn }))
+        } else if (data.method === 'updateGameState') {
+          updateGameState(data.args.gameId, data.args.newState)
         }
-        updateGameState('a', data)
       }
     })
 
@@ -67,18 +75,17 @@ function useConnection() {
     initialiseConnection(conn)
   }
 
-  const sendState = () => {
+  const sendState = (gameId: string, newState: GameState) => {
     if (!peerRef.current) {
       return
     }
 
-    const connections: { [peerId: string]: DataConnection[] } =
-      peerRef.current.connections
-
-    for (const conns of Object.values(connections)) {
-      for (const conn of conns) {
-        conn.send(state.games)
+    for (const playerId of Object.keys(state.games[gameId].players)) {
+      if (!friends[playerId].isRemote) {
+        continue
       }
+      const conn = connections[playerId]
+      conn.send({ method: 'updateGameState', args: { gameId, newState } })
     }
   }
 
@@ -90,7 +97,9 @@ function useConnection() {
       log('My peer ID is: ' + id)
 
       for (const friendId in friends) {
-        connectToPeer(friendId)
+        if (friends[friendId].isRemote) {
+          connectToPeer(friendId)
+        }
       }
     })
 

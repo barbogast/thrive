@@ -1,10 +1,15 @@
 import React from 'react'
+import { GameState } from '../game'
 
 import * as routing from '../routing'
 import { useStore, ActionType } from '../state'
 import Box from './Box'
 
-function Controls() {
+type Props = {
+  sendState: (gameId: string, newState: GameState) => void
+}
+
+function Controls({ sendState }: Props) {
   const gameId = routing.useGameId()
   const {
     nextTurn,
@@ -51,7 +56,7 @@ function Controls() {
         Build town
       </button>
       &nbsp;&nbsp;
-      <button onClick={() => nextTurn(gameId)}>Finish turn</button>
+      <button onClick={() => nextTurn(gameId, sendState)}>Finish turn</button>
     </div>
   )
 }

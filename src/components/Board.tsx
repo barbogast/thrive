@@ -9,6 +9,7 @@ import HexTile from './HexTile'
 import Road from './Road'
 import Town from './Town'
 import { ActionType } from '../state'
+import { GameState } from '../game'
 
 useStrictMode(true)
 
@@ -42,7 +43,11 @@ function onWheel(e: KonvaEventObject<WheelEvent>) {
   stage.batchDraw()
 }
 
-function Board(): JSX.Element {
+type Props = {
+  sendState: (gameId: string, newState: GameState) => void
+}
+
+function Board({ sendState }: Props): JSX.Element {
   const gameId = routing.useGameId()
   const {
     gameState: { tiles, roads, towns },

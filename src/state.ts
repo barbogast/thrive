@@ -54,7 +54,10 @@ type Setter = {
   initialise: (gameId: string, friendIds: string[]) => void
   buildTown: (gameId: string, position: position.Position) => void
   buildRoad: (gameId: string, position: position.Position) => void
-  nextTurn: (gameId: string) => void
+  nextTurn: (
+    gameId: string,
+    sendState: (gameId: string, newState: game.GameState) => void,
+  ) => void
   toggleCurrentAction: (gameId: string, action: ActionType) => void
   updateGameState: (gameId: string, gameState: game.GameState) => void
 }
@@ -69,7 +72,7 @@ const immer =
 export function initialiseStore(onRehydrated: () => void) {
   return create<State & Setter>(
     persist(
-      immer((set) => {
+      immer((set, get) => {
         return {
           player: {
             id: undefined,
@@ -119,12 +122,17 @@ export function initialiseStore(onRehydrated: () => void) {
               draft.uiState.currentAction = { type: ActionType.none }
             }),
 
-          nextTurn: (gameId: string) =>
+          nextTurn: (
+            gameId: string,
+            sendState: (gameId: string, newState: game.GameState) => void,
+          ) => {
             set((draft) => {
               draft.uiState.currentAction = { type: ActionType.none }
               game.rollDice(draft.games[gameId])
               game.getNextPlayer(draft.games[gameId])
-            }),
+            })
+            sendState(gameId, get().games[gameId])
+          },
 
           toggleCurrentAction: (gameId: string, actionType: ActionType) =>
             set((draft) => {
