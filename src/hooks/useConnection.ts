@@ -15,13 +15,19 @@ function useConnection() {
   const [peerId, setPeerId] = useState<string | void>()
   const myPlayerId = usePlayerId()
   const peerRef = useRef<Peer>()
-  const { state, updateGameState, connectToPlayer, friendDisconnected } =
-    useStore((state) => ({
-      state: state,
-      updateGameState: state.updateGameState,
-      connectToPlayer: state.connectToPlayer,
-      friendDisconnected: state.friendDisconnected,
-    }))
+  const {
+    state,
+    updateGameState,
+    connectToPlayer,
+    friendDisconnected,
+    friends,
+  } = useStore((state) => ({
+    state: state,
+    updateGameState: state.updateGameState,
+    connectToPlayer: state.connectToPlayer,
+    friendDisconnected: state.friendDisconnected,
+    friends: state.friends,
+  }))
 
   const connectToPeer = (connectToId: string) => {
     if (!peerRef.current) {
@@ -38,6 +44,10 @@ function useConnection() {
     conn.on('open', () => {
       connectToPlayer(connectToId)
       conn.send({ method: 'connect', args: { playerId: myPlayerId } })
+    })
+
+    conn.on('error', (err) => {
+      console.error(err)
     })
   }
 
@@ -62,6 +72,10 @@ function useConnection() {
     peerRef.current.on('open', (id) => {
       setPeerId(id)
       log('My peer ID is: ' + id)
+
+      for (const friendId in friends) {
+        connectToPeer(friendId)
+      }
     })
 
     peerRef.current.on('error', (error) => {
