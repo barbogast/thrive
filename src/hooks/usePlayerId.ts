@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
 
-import { useStore } from './state'
+import { useStore } from '../state'
 
 function usePlayerId(): string {
   let { playerId, setPlayerId } = useStore((state) => ({

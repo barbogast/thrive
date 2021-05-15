@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route } from 'wouter'
 
-import useConnection from '../useConnection'
+import useConnection from '../hooks/useConnection'
 import Playing from '../pages/Playing'
 import MainMenu from '../pages/MainMenu'
 

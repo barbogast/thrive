@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid'
 import { useLocation } from 'wouter'
 
 import { useStore } from '../state'
-import usePlayerId from '../usePlayerId'
+import usePlayerId from '../hooks/usePlayerId'
 import Box from '../components/Box'
 
 function MainMenu() {

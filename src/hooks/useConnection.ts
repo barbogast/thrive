@@ -1,6 +1,6 @@
 import Peer, { DataConnection } from 'peerjs'
 import { useEffect, useState, useRef } from 'react'
-import { useStore } from './state'
+import { useStore } from '../state'
 import usePlayerId from './usePlayerId'
 
 function useConnection() {
