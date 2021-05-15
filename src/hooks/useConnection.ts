@@ -29,26 +29,42 @@ function useConnection() {
     friends: state.friends,
   }))
 
+  function initialiseConnection(conn: DataConnection) {
+    let connectedPlayerId: string
+    log('incoming peer connection!')
+
+    conn.on('data', (data) => {
+      log(`received:`, data)
+      if (typeof data === 'object') {
+        if (data.method === 'introduce') {
+          connectedPlayerId = data.args.playerId
+          connectToPlayer(connectedPlayerId)
+        }
+        updateGameState('a', data)
+      }
+    })
+
+    conn.on('open', () => {
+      conn.send({ method: 'introduce', args: { playerId: myPlayerId } })
+    })
+
+    conn.on('close', () => {
+      friendDisconnected(connectedPlayerId)
+    })
+
+    conn.on('error', (err) => {
+      console.log('error', err, connectedPlayerId)
+      friendDisconnected(connectedPlayerId)
+    })
+  }
+
   const connectToPeer = (connectToId: string) => {
     if (!peerRef.current) {
       return
     }
-
     log(`Connecting to ${myPlayerId}...`)
-
-    let conn = peerRef.current.connect(connectToId)
-    conn.on('data', (data) => {
-      log(`received: ${data}`)
-    })
-
-    conn.on('open', () => {
-      connectToPlayer(connectToId)
-      conn.send({ method: 'connect', args: { playerId: myPlayerId } })
-    })
-
-    conn.on('error', (err) => {
-      console.error(err)
-    })
+    const conn = peerRef.current.connect(connectToId)
+    initialiseConnection(conn)
   }
 
   const sendState = () => {
@@ -83,34 +99,7 @@ function useConnection() {
     })
 
     // Handle incoming data connection
-    peerRef.current.on('connection', (conn) => {
-      let connectedPlayerId: string
-      log('incoming peer connection!')
-
-      conn.on('data', (data) => {
-        log(`received:`, data)
-        if (typeof data === 'object') {
-          if (data.method === 'connect') {
-            connectedPlayerId = data.args.playerId
-            connectToPlayer(connectedPlayerId)
-          }
-          updateGameState('a', data)
-        }
-      })
-
-      conn.on('open', () => {
-        conn.send('hello!')
-      })
-
-      conn.on('close', () => {
-        friendDisconnected(connectedPlayerId)
-      })
-
-      conn.on('error', (err) => {
-        console.log('error', err, connectedPlayerId)
-        friendDisconnected(connectedPlayerId)
-      })
-    })
+    peerRef.current.on('connection', initialiseConnection)
   }, [])
 
   return { peerId, connectToPeer, sendState }
