@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'wouter'
 import { nanoid } from 'nanoid'
 import { useLocation } from 'wouter'
@@ -10,25 +10,33 @@ import Box from '../components/Box'
 function MainMenu() {
   const [location, setLocation] = useLocation()
   const playerId = usePlayerId()
-  const { initialise, games, friends, connectedFriends } = useStore(
-    (state) => ({
+  const { initialise, games, friends, connectedFriends, addLocalPlayer } =
+    useStore((state) => ({
       initialise: state.initialise,
       games: state.games,
       friends: state.friends,
       connectedFriends: state.uiState.connectedFriends,
-    }),
-  )
+      addLocalPlayer: state.addLocalPlayer,
+    }))
+  const [selectedFriends, setSelectedFriends] = useState<{
+    [friendId: string]: boolean
+  }>({})
 
   const createGame = () => {
+    const friends: string[] = []
+    Object.entries(selectedFriends).forEach(([friendId, isSelected]) => {
+      if (isSelected) {
+        friends.push(friendId)
+      }
+    })
     const gameId = nanoid()
-    initialise(gameId)
+    initialise(gameId, friends)
     setLocation(`/play/${gameId}`)
   }
 
   const inviteLink = `${window.location.host + '?connect=' + playerId}`
   return (
     <>
-      <button onClick={createGame}>Create game</button>
       <div>
         Existing games
         <ul>
@@ -47,15 +55,35 @@ function MainMenu() {
           <ul>
             {Object.values(friends).map((friend) => (
               <li key={friend.id}>
-                {friend.id}
-                <Box
-                  color={connectedFriends.includes(friend.id) ? 'green' : 'red'}
+                <input
+                  type="checkbox"
+                  checked={Boolean(selectedFriends[friend.id])}
+                  onChange={() =>
+                    setSelectedFriends((sel) => ({
+                      ...sel,
+                      [friend.id]: !sel[friend.id],
+                    }))
+                  }
                 />
+                {friend.id}
+                {friend.isRemote && (
+                  <Box
+                    color={
+                      connectedFriends.includes(friend.id) ? 'green' : 'red'
+                    }
+                  />
+                )}
               </li>
             ))}
           </ul>
           Invite new contacts by sharing this link:
           <a href={inviteLink}>{inviteLink}</a>
+          <br />
+          <button onClick={() => addLocalPlayer(nanoid())}>
+            Add local player
+          </button>
+          <br />
+          <button onClick={createGame}>Create game</button>
         </div>
       </div>
     </>

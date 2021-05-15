@@ -34,6 +34,7 @@ type State = {
   friends: {
     [id: string]: {
       id: string
+      isRemote: boolean
     }
   }
   games: {
@@ -49,7 +50,8 @@ type Setter = {
   setPlayerId: (playerId: string) => void
   connectToPlayer: (playerId: string) => void
   friendDisconnected: (playerId: string) => void
-  initialise: (gameId: string) => void
+  addLocalPlayer: (playerId: string) => void
+  initialise: (gameId: string, friendIds: string[]) => void
   buildTown: (gameId: string, position: position.Position) => void
   buildRoad: (gameId: string, position: position.Position) => void
   nextTurn: (gameId: string) => void
@@ -80,8 +82,13 @@ export function initialiseStore(onRehydrated: () => void) {
 
           connectToPlayer: (playerId: string) =>
             iSet((draft) => {
-              draft.friends[playerId] = { id: playerId }
+              draft.friends[playerId] = { id: playerId, isRemote: true }
               draft.uiState.connectedFriends.push(playerId)
+            }),
+
+          addLocalPlayer: (playerId: string) =>
+            iSet((draft) => {
+              draft.friends[playerId] = { id: playerId, isRemote: false }
             }),
 
           friendDisconnected: (playerId: string) =>
@@ -89,9 +96,9 @@ export function initialiseStore(onRehydrated: () => void) {
               draft.uiState.connectedFriends.filter((id) => id !== playerId)
             }),
 
-          initialise: (gameId: string) =>
+          initialise: (gameId: string, friendIds: string[]) =>
             iSet((draft) => {
-              draft.games[gameId] = game.initialiseGame()
+              draft.games[gameId] = game.initialiseGame(friendIds)
             }),
 
           buildTown: (gameId: string, position: position.Position) =>
@@ -110,9 +117,7 @@ export function initialiseStore(onRehydrated: () => void) {
             iSet((draft) => {
               draft.uiState.currentAction = { type: ActionType.none }
               game.rollDice(draft.games[gameId])
-              draft.games[gameId].currentPlayer = game.getNextPlayer(
-                draft.games[gameId].currentPlayer,
-              )
+              game.getNextPlayer(draft.games[gameId])
             }),
 
           toggleCurrentAction: (gameId: string, actionType: ActionType) =>

@@ -5,13 +5,7 @@ import * as utils from './utils'
 import * as position from './position'
 import { gameConfig } from './constants'
 
-export const PlayerId = {
-  green: 'green',
-  red: 'red',
-  yellow: 'yellow',
-  blue: 'blue',
-}
-export type PlayerId = typeof PlayerId[keyof typeof PlayerId]
+export type PlayerId = string
 
 export const Resource = {
   grain: 'grain',
@@ -31,7 +25,7 @@ export const TileType = {
 export type TileType = typeof TileType[keyof typeof TileType]
 
 type Player = {
-  id: PlayerId
+  id: string
   color: string
   resources: Resources
 }
@@ -58,6 +52,7 @@ export type GameState = {
   tiles: tileMap.TileMap
   roads: Road[]
   towns: Town[]
+  playerOrder: PlayerId[]
   currentPlayer: PlayerId
   currentDiceRoll: [number, number] | []
   players: { [key in PlayerId]: Player }
@@ -106,54 +101,37 @@ function getId(type: string, position: axial.Coordinate[]) {
   return `${type}_${position.map((pos) => `${pos.q}|${pos.r}`)}`
 }
 
-export function initialisePlayers() {
-  return {
-    [PlayerId.green]: {
-      id: PlayerId.green,
-      color: 'green',
+export function initialisePlayers(playerIds: string[]) {
+  const colors = ['green', 'red', 'yellow', 'blue']
+  const players: { [key in PlayerId]: Player } = {}
+  playerIds.forEach((id, i) => {
+    players[id] = {
+      id,
+      color: colors[i],
       resources: { brick: 10, grain: 10, ore: 10, sheep: 10, wood: 10 },
-    },
-    [PlayerId.red]: {
-      id: PlayerId.red,
-      color: 'red',
-      resources: { brick: 10, grain: 10, ore: 10, sheep: 10, wood: 10 },
-    },
-    [PlayerId.yellow]: {
-      id: PlayerId.yellow,
-      color: 'yellow',
-      resources: { brick: 10, grain: 10, ore: 10, sheep: 10, wood: 10 },
-    },
-    [PlayerId.blue]: {
-      id: PlayerId.blue,
-      color: 'blue',
-      resources: { brick: 10, grain: 10, ore: 10, sheep: 10, wood: 10 },
-    },
-  }
+    }
+  })
+  return players
 }
 
-export function initialiseGame(): GameState {
+export function initialiseGame(playerIds: string[]): GameState {
   const tiles = getHexagonBoard('3')
   const tMap = tileMap.fromArray(tiles)
-  const townPositions = board.getTownPositions(tMap)
 
   return {
     tiles: tMap,
     roads: [],
     towns: [],
-    currentPlayer: PlayerId.green,
+    currentPlayer: playerIds[0],
+    playerOrder: playerIds,
     currentDiceRoll: [],
-    players: initialisePlayers(),
+    players: initialisePlayers(playerIds),
   }
 }
 
-const playerOrder: PlayerId[] = [
-  PlayerId.green,
-  PlayerId.red,
-  PlayerId.yellow,
-  PlayerId.blue,
-]
-export function getNextPlayer(currentPlayer: PlayerId): PlayerId {
-  return playerOrder[(playerOrder.indexOf(currentPlayer) + 1) % 4]
+export function getNextPlayer(state: GameState) {
+  state.currentPlayer =
+    state.playerOrder[(state.playerOrder.indexOf(state.currentPlayer) + 1) % 4]
 }
 
 export function rollDice(state: GameState) {
