@@ -85,8 +85,11 @@ function useConnection() {
     initialiseConnection(conn)
   }
 
-  const sendState = (gameId: string, newState: GameState) => {
-    for (const playerId of Object.keys(state.games[gameId].players)) {
+  const send = (
+    playerIds: string[],
+    payload: { method: string; args: { [key: string]: unknown } },
+  ) => {
+    for (const playerId of playerIds) {
       if (!friends[playerId].isRemote) {
         continue
       }
@@ -95,8 +98,15 @@ function useConnection() {
         console.error(`Friend ${playerId} has no connection`)
         continue
       }
-      conn.send({ method: 'updateGameState', args: { gameId, newState } })
+      conn.send(payload)
     }
+  }
+
+  const sendState = (gameId: string, newState: GameState) => {
+    send(Object.keys(state.games[gameId].players), {
+      method: 'updateGameState',
+      args: { gameId, newState },
+    })
   }
 
   const updateMyName = (newName: string) => {
