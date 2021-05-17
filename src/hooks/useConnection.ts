@@ -47,7 +47,7 @@ function useConnection() {
       if (typeof data === 'object') {
         if (data.method === 'introduce') {
           connectedPlayerId = data.args.playerId
-          addFriendConnection(connectedPlayerId, conn)
+          addFriendConnection(connectedPlayerId, data.args.playerName, conn)
           log('add connection, ', connectedPlayerId)
         } else if (data.method === 'updateGameState') {
           updateGameState(data.args.gameId, data.args.newState)

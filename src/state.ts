@@ -42,6 +42,7 @@ type State = {
     [id: string]: {
       id: string
       isRemote: boolean
+      name: string
     }
   }
   games: {
@@ -56,8 +57,13 @@ type State = {
 type Setter = {
   setPlayerId: (playerId: string) => void
   setPlayerName: (playerName: string) => void
+  setFriendName: (friendId: string, name: string) => void
   toggleFriendSelection: (friendId: string) => void
-  addFriendConnection: (friendId: string, connection: DataConnection) => void
+  addFriendConnection: (
+    friendId: string,
+    name: string,
+    connection: DataConnection,
+  ) => void
   removeFriendConnection: (friendId: string) => void
   addLocalPlayer: (playerId: string) => void
   initialise: (gameId: string, friendIds: string[]) => void
@@ -117,6 +123,12 @@ export function initialiseStore(onRehydrated: () => void) {
             })
           },
 
+          setFriendName: (friendId: string, name: string) => {
+            set((draft) => {
+              draft.friends[friendId].name = name
+            })
+          },
+
           toggleFriendSelection: (friendId: string) =>
             set((draft) => {
               updateFriendState(draft, friendId, (friendState) => {
@@ -124,9 +136,13 @@ export function initialiseStore(onRehydrated: () => void) {
               })
             }),
 
-          addFriendConnection: (friendId: string, connection: DataConnection) =>
+          addFriendConnection: (
+            friendId: string,
+            name: string,
+            connection: DataConnection,
+          ) =>
             set((draft) => {
-              draft.friends[friendId] = { id: friendId, isRemote: true }
+              draft.friends[friendId] = { id: friendId, isRemote: true, name }
               updateFriendState(draft, friendId, (friendState) => {
                 friendState.connection = connection
               })
@@ -141,7 +157,11 @@ export function initialiseStore(onRehydrated: () => void) {
 
           addLocalPlayer: (playerId: string) =>
             set((draft) => {
-              draft.friends[playerId] = { id: playerId, isRemote: false }
+              draft.friends[playerId] = {
+                id: playerId,
+                isRemote: false,
+                name: '',
+              }
             }),
 
           initialise: (gameId: string, friendIds: string[]) =>
