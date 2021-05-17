@@ -30,6 +30,7 @@ export type Action =
 type State = {
   player: {
     id: string | void
+    name: string
   }
   friends: {
     [id: string]: {
@@ -48,6 +49,7 @@ type State = {
 
 type Setter = {
   setPlayerId: (playerId: string) => void
+  setPlayerName: (playerName: string) => void
   connectToPlayer: (playerId: string) => void
   friendDisconnected: (playerId: string) => void
   addLocalPlayer: (playerId: string) => void
@@ -76,6 +78,7 @@ export function initialiseStore(onRehydrated: () => void) {
         return {
           player: {
             id: undefined,
+            name: '',
           },
           friends: {},
           games: {},
@@ -86,8 +89,14 @@ export function initialiseStore(onRehydrated: () => void) {
 
           setPlayerId: (playerId: string) =>
             set((draft) => {
-              draft.player = { id: playerId }
+              draft.player.id = playerId
             }),
+
+          setPlayerName: (playerName: string) => {
+            set((draft) => {
+              draft.player.name = playerName
+            })
+          },
 
           connectToPlayer: (playerId: string) =>
             set((draft) => {

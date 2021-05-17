@@ -5,6 +5,7 @@ import { useLocation } from 'wouter'
 
 import { useStore } from '../state'
 import usePlayerId from '../hooks/usePlayerId'
+import PlayerName from '../components/PlayerName'
 import Box from '../components/Box'
 
 function MainMenu() {
@@ -37,6 +38,7 @@ function MainMenu() {
   const inviteLink = `${window.location.host + '?connect=' + playerId}`
   return (
     <>
+      <PlayerName />
       <div>
         Existing games
         <ul>

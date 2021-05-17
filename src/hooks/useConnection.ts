@@ -26,12 +26,14 @@ function useConnection() {
     connectToPlayer,
     friendDisconnected,
     friends,
+    myPlayerName,
   } = useStore((state) => ({
     state: state,
     updateGameState: state.updateGameState,
     connectToPlayer: state.connectToPlayer,
     friendDisconnected: state.friendDisconnected,
     friends: state.friends,
+    myPlayerName: state.player.name,
   }))
 
   function initialiseConnection(conn: DataConnection) {
@@ -53,7 +55,10 @@ function useConnection() {
     })
 
     conn.on('open', () => {
-      conn.send({ method: 'introduce', args: { playerId: myPlayerId } })
+      conn.send({
+        method: 'introduce',
+        args: { playerId: myPlayerId, playerName: myPlayerName },
+      })
     })
 
     conn.on('close', () => {
