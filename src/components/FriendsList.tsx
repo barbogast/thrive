@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { useStore } from '../state'
-import Box from '../components/Box'
+import Friend from './Friend'
 
 function MainMenu() {
   const { friends, friendState, setFriendName, toggleFriendSelection } =
@@ -21,15 +21,12 @@ function MainMenu() {
             checked={Boolean(friendState[friend.id]?.isSelected)}
             onChange={() => toggleFriendSelection(friend.id)}
           />
-          {friend.id} {friend.name}
+          <Friend friend={friend} friendState={friendState[friend.id]} />
           {!friend.isRemote && (
             <input
               value={friend.name}
               onChange={(e) => setFriendName(friend.id, e.target.value)}
             />
-          )}
-          {friend.isRemote && (
-            <Box color={friendState[friend.id]?.connection ? 'green' : 'red'} />
           )}
         </li>
       ))}

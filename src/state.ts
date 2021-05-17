@@ -28,7 +28,13 @@ export type Action =
       positions: position.Position[]
     }
 
-type FriendState = {
+export type Friend = {
+  id: string
+  isRemote: boolean
+  name: string
+}
+
+export type FriendState = {
   isSelected: boolean
   connection?: DataConnection
 }
@@ -39,11 +45,7 @@ type State = {
     name: string
   }
   friends: {
-    [id: string]: {
-      id: string
-      isRemote: boolean
-      name: string
-    }
+    [id: string]: Friend
   }
   games: {
     [gameId: string]: game.GameState
