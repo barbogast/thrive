@@ -11,15 +11,21 @@ import FriendsList from '../components/FriendsList'
 function MainMenu() {
   const [location, setLocation] = useLocation()
   const playerId = usePlayerId()
-  const { initialise, games, friends, friendState, addLocalPlayer } = useStore(
-    (state) => ({
-      initialise: state.initialise,
-      games: state.games,
-      friends: state.friends,
-      addLocalPlayer: state.addLocalPlayer,
-      friendState: state.uiState.friendState,
-    }),
-  )
+  const {
+    initialise,
+    games,
+    friends,
+    friendState,
+    addLocalPlayer,
+    removeSelectedPlayers,
+  } = useStore((state) => ({
+    initialise: state.initialise,
+    games: state.games,
+    friends: state.friends,
+    addLocalPlayer: state.addLocalPlayer,
+    removeSelectedPlayers: state.removeSelectedPlayers,
+    friendState: state.uiState.friendState,
+  }))
 
   const createGame = () => {
     const friendsToInvite = Object.values(friends)
@@ -54,6 +60,7 @@ function MainMenu() {
           <button onClick={() => addLocalPlayer(nanoid())}>
             Add local player
           </button>{' '}
+          <button onClick={removeSelectedPlayers}>Remove players</button>{' '}
           <button onClick={createGame}>Create game</button>
           <br />
           Invite new contacts by sharing this link:

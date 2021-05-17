@@ -66,6 +66,7 @@ type Setter = {
   ) => void
   removeFriendConnection: (friendId: string) => void
   addLocalPlayer: (playerId: string) => void
+  removeSelectedPlayers: () => void
   initialise: (gameId: string, friendIds: string[]) => void
   buildTown: (gameId: string, position: position.Position) => void
   buildRoad: (gameId: string, position: position.Position) => void
@@ -161,6 +162,19 @@ export function initialiseStore(onRehydrated: () => void) {
                 id: playerId,
                 isRemote: false,
                 name: '',
+              }
+            }),
+
+          removeSelectedPlayers: () =>
+            set((draft) => {
+              for (const [friendId, friendState] of Object.entries(
+                draft.uiState.friendState,
+              )) {
+                if (friendState.isSelected) {
+                  draft.uiState.friendState[friendId].connection?.close()
+                  delete draft.uiState.friendState[friendId]
+                  delete draft.friends[friendId]
+                }
               }
             }),
 
