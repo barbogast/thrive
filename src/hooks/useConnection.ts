@@ -28,6 +28,7 @@ function useConnection() {
     friends,
     friendState,
     myPlayerName,
+    setFriendName,
   } = useStore((state) => ({
     state: state,
     updateGameState: state.updateGameState,
@@ -36,6 +37,7 @@ function useConnection() {
     friends: state.friends,
     friendState: state.uiState.friendState,
     myPlayerName: state.player.name,
+    setFriendName: state.setFriendName,
   }))
 
   function initialiseConnection(conn: DataConnection) {
@@ -49,6 +51,8 @@ function useConnection() {
           connectedPlayerId = data.args.playerId
           addFriendConnection(connectedPlayerId, data.args.playerName, conn)
           log('add connection, ', connectedPlayerId)
+        } else if (data.method === 'updateMyName') {
+          setFriendName(connectedPlayerId, data.args.newName)
         } else if (data.method === 'updateGameState') {
           updateGameState(data.args.gameId, data.args.newState)
         }
@@ -95,6 +99,20 @@ function useConnection() {
     }
   }
 
+  const updateMyName = (newName: string) => {
+    for (const friendId of Object.keys(state.friends)) {
+      if (!friends[friendId].isRemote) {
+        continue
+      }
+      const conn = friendState[friendId].connection
+      if (!conn) {
+        console.error(`Friend ${friendId} has no connection`)
+        continue
+      }
+      conn.send({ method: 'updateMyName', args: { newName } })
+    }
+  }
+
   useEffect(() => {
     peerRef.current = new Peer(myPlayerId, { debug: DEBUG_LEVEL })
 
@@ -117,7 +135,7 @@ function useConnection() {
     peerRef.current.on('connection', initialiseConnection)
   }, [])
 
-  return { peerId, connectToPeer, sendState }
+  return { peerId, connectToPeer, sendState, updateMyName }
 }
 
 export default useConnection

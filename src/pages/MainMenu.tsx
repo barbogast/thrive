@@ -8,7 +8,11 @@ import usePlayerId from '../hooks/usePlayerId'
 import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
 
-function MainMenu() {
+type Props = {
+  updateMyName: (newName: string) => void
+}
+
+function MainMenu({ updateMyName }: Props) {
   const [location, setLocation] = useLocation()
   const playerId = usePlayerId()
   const {
@@ -40,7 +44,7 @@ function MainMenu() {
   const inviteLink = `${window.location.host + '?connect=' + playerId}`
   return (
     <>
-      <PlayerName />
+      <PlayerName updateMyName={updateMyName} playerId={playerId} />
       <div>
         Existing games
         <ul>
