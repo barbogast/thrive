@@ -51,14 +51,13 @@ function MainMenu() {
         Contacts
         <div>
           <FriendsList />
-          Invite new contacts by sharing this link:
-          <a href={inviteLink}>{inviteLink}</a>
-          <br />
           <button onClick={() => addLocalPlayer(nanoid())}>
             Add local player
-          </button>
-          <br />
+          </button>{' '}
           <button onClick={createGame}>Create game</button>
+          <br />
+          Invite new contacts by sharing this link:
+          <a href={inviteLink}>{inviteLink}</a>
         </div>
       </div>
     </>
