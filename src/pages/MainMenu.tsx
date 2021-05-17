@@ -16,14 +16,12 @@ function MainMenu() {
     games,
     friends,
     friendState,
-    connectedFriends,
     addLocalPlayer,
     toggleFriendSelection,
   } = useStore((state) => ({
     initialise: state.initialise,
     games: state.games,
     friends: state.friends,
-    connectedFriends: state.uiState.connectedFriends,
     addLocalPlayer: state.addLocalPlayer,
     friendState: state.uiState.friendState,
     toggleFriendSelection: state.toggleFriendSelection,
@@ -69,9 +67,7 @@ function MainMenu() {
                 {friend.id}
                 {friend.isRemote && (
                   <Box
-                    color={
-                      connectedFriends.includes(friend.id) ? 'green' : 'red'
-                    }
+                    color={friendState[friend.id]?.connection ? 'green' : 'red'}
                   />
                 )}
               </li>

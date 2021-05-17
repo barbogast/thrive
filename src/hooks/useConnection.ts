@@ -23,16 +23,18 @@ function useConnection() {
   const {
     state,
     updateGameState,
-    connectToPlayer,
-    friendDisconnected,
+    addFriendConnection,
+    removeFriendConnection,
     friends,
+    friendState,
     myPlayerName,
   } = useStore((state) => ({
     state: state,
     updateGameState: state.updateGameState,
-    connectToPlayer: state.connectToPlayer,
-    friendDisconnected: state.friendDisconnected,
+    addFriendConnection: state.addFriendConnection,
+    removeFriendConnection: state.removeFriendConnection,
     friends: state.friends,
+    friendState: state.uiState.friendState,
     myPlayerName: state.player.name,
   }))
 
@@ -45,9 +47,8 @@ function useConnection() {
       if (typeof data === 'object') {
         if (data.method === 'introduce') {
           connectedPlayerId = data.args.playerId
-          connectToPlayer(connectedPlayerId)
+          addFriendConnection(connectedPlayerId, conn)
           log('add connection, ', connectedPlayerId)
-          setConnections((conns) => ({ ...conns, [connectedPlayerId]: conn }))
         } else if (data.method === 'updateGameState') {
           updateGameState(data.args.gameId, data.args.newState)
         }
@@ -62,12 +63,12 @@ function useConnection() {
     })
 
     conn.on('close', () => {
-      friendDisconnected(connectedPlayerId)
+      removeFriendConnection(connectedPlayerId)
     })
 
     conn.on('error', (err) => {
       console.log('error', err, connectedPlayerId)
-      friendDisconnected(connectedPlayerId)
+      removeFriendConnection(connectedPlayerId)
     })
   }
 
@@ -89,7 +90,11 @@ function useConnection() {
       if (!friends[playerId].isRemote) {
         continue
       }
-      const conn = connections[playerId]
+      const conn = friendState[playerId].connection
+      if (!conn) {
+        console.error(`Friend ${playerId} has no connection`)
+        continue
+      }
       conn.send({ method: 'updateGameState', args: { gameId, newState } })
     }
   }

@@ -2,6 +2,7 @@ import create, { StateCreator } from 'zustand'
 import { persist } from 'zustand/middleware'
 import createContext from 'zustand/context'
 import produce, { Draft } from 'immer'
+import { DataConnection } from 'peerjs'
 
 import * as game from './game'
 import * as position from './position'
@@ -46,18 +47,18 @@ type State = {
     friendState: {
       [id: string]: {
         isSelected: boolean
+        connection?: DataConnection
       }
     }
-    connectedFriends: string[]
   }
 }
 
 type Setter = {
   setPlayerId: (playerId: string) => void
   setPlayerName: (playerName: string) => void
-  connectToPlayer: (playerId: string) => void
-  friendDisconnected: (playerId: string) => void
   toggleFriendSelection: (friendId: string) => void
+  addFriendConnection: (friendId: string, connection: DataConnection) => void
+  removeFriendConnection: (friendId: string) => void
   addLocalPlayer: (playerId: string) => void
   initialise: (gameId: string, friendIds: string[]) => void
   buildTown: (gameId: string, position: position.Position) => void
@@ -105,12 +106,6 @@ export function initialiseStore(onRehydrated: () => void) {
             })
           },
 
-          connectToPlayer: (playerId: string) =>
-            set((draft) => {
-              draft.friends[playerId] = { id: playerId, isRemote: true }
-              draft.uiState.connectedFriends.push(playerId)
-            }),
-
           toggleFriendSelection: (friendId: string) =>
             set((draft) => {
               if (!draft.uiState.friendState[friendId]) {
@@ -120,14 +115,26 @@ export function initialiseStore(onRehydrated: () => void) {
                 !draft.uiState.friendState[friendId].isSelected
             }),
 
+          addFriendConnection: (friendId: string, connection: DataConnection) =>
+            set((draft) => {
+              draft.friends[friendId] = { id: friendId, isRemote: true }
+              if (!draft.uiState.friendState[friendId]) {
+                draft.uiState.friendState[friendId] = { isSelected: false }
+              }
+              draft.uiState.friendState[friendId].connection = connection
+            }),
+
+          removeFriendConnection: (friendId: string) =>
+            set((draft) => {
+              if (!draft.uiState.friendState[friendId]) {
+                draft.uiState.friendState[friendId] = { isSelected: false }
+              }
+              delete draft.uiState.friendState[friendId].connection
+            }),
+
           addLocalPlayer: (playerId: string) =>
             set((draft) => {
               draft.friends[playerId] = { id: playerId, isRemote: false }
-            }),
-
-          friendDisconnected: (playerId: string) =>
-            set((draft) => {
-              draft.uiState.connectedFriends.filter((id) => id !== playerId)
             }),
 
           initialise: (gameId: string, friendIds: string[]) =>
@@ -213,4 +220,5 @@ export function initialiseStore(onRehydrated: () => void) {
   )
 }
 
-export const { Provider, useStore } = createContext<State & Setter>()
+// @ts-ignore
+export const { Provider, useStore, context } = createContext<State & Setter>()
