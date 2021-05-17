@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'wouter'
 import { nanoid } from 'nanoid'
 import { useLocation } from 'wouter'
@@ -11,27 +11,31 @@ import Box from '../components/Box'
 function MainMenu() {
   const [location, setLocation] = useLocation()
   const playerId = usePlayerId()
-  const { initialise, games, friends, connectedFriends, addLocalPlayer } =
-    useStore((state) => ({
-      initialise: state.initialise,
-      games: state.games,
-      friends: state.friends,
-      connectedFriends: state.uiState.connectedFriends,
-      addLocalPlayer: state.addLocalPlayer,
-    }))
-  const [selectedFriends, setSelectedFriends] = useState<{
-    [friendId: string]: boolean
-  }>({})
+  const {
+    initialise,
+    games,
+    friends,
+    friendState,
+    connectedFriends,
+    addLocalPlayer,
+    toggleFriendSelection,
+  } = useStore((state) => ({
+    initialise: state.initialise,
+    games: state.games,
+    friends: state.friends,
+    connectedFriends: state.uiState.connectedFriends,
+    addLocalPlayer: state.addLocalPlayer,
+    friendState: state.uiState.friendState,
+    toggleFriendSelection: state.toggleFriendSelection,
+  }))
 
   const createGame = () => {
-    const friends: string[] = []
-    Object.entries(selectedFriends).forEach(([friendId, isSelected]) => {
-      if (isSelected) {
-        friends.push(friendId)
-      }
-    })
+    const friendsToInvite = Object.values(friends)
+      .filter((friend) => friendState[friend.id]?.isSelected)
+      .map((friend) => friend.id)
+
     const gameId = nanoid()
-    initialise(gameId, friends)
+    initialise(gameId, friendsToInvite)
     setLocation(`/play/${gameId}`)
   }
 
@@ -59,13 +63,8 @@ function MainMenu() {
               <li key={friend.id}>
                 <input
                   type="checkbox"
-                  checked={Boolean(selectedFriends[friend.id])}
-                  onChange={() =>
-                    setSelectedFriends((sel) => ({
-                      ...sel,
-                      [friend.id]: !sel[friend.id],
-                    }))
-                  }
+                  checked={Boolean(friendState[friend.id]?.isSelected)}
+                  onChange={() => toggleFriendSelection(friend.id)}
                 />
                 {friend.id}
                 {friend.isRemote && (

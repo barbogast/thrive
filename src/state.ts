@@ -43,6 +43,11 @@ type State = {
   }
   uiState: {
     currentAction: Action
+    friendState: {
+      [id: string]: {
+        isSelected: boolean
+      }
+    }
     connectedFriends: string[]
   }
 }
@@ -52,6 +57,7 @@ type Setter = {
   setPlayerName: (playerName: string) => void
   connectToPlayer: (playerId: string) => void
   friendDisconnected: (playerId: string) => void
+  toggleFriendSelection: (friendId: string) => void
   addLocalPlayer: (playerId: string) => void
   initialise: (gameId: string, friendIds: string[]) => void
   buildTown: (gameId: string, position: position.Position) => void
@@ -85,6 +91,7 @@ export function initialiseStore(onRehydrated: () => void) {
           uiState: {
             currentAction: { type: ActionType.none },
             connectedFriends: [],
+            friendState: {},
           },
 
           setPlayerId: (playerId: string) =>
@@ -102,6 +109,15 @@ export function initialiseStore(onRehydrated: () => void) {
             set((draft) => {
               draft.friends[playerId] = { id: playerId, isRemote: true }
               draft.uiState.connectedFriends.push(playerId)
+            }),
+
+          toggleFriendSelection: (friendId: string) =>
+            set((draft) => {
+              if (!draft.uiState.friendState[friendId]) {
+                draft.uiState.friendState[friendId] = { isSelected: false }
+              }
+              draft.uiState.friendState[friendId].isSelected =
+                !draft.uiState.friendState[friendId].isSelected
             }),
 
           addLocalPlayer: (playerId: string) =>
