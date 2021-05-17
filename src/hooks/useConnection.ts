@@ -90,9 +90,10 @@ function useConnection() {
     payload: { method: string; args: { [key: string]: unknown } },
   ) => {
     for (const playerId of playerIds) {
-      if (!friends[playerId].isRemote) {
+      if (playerId === myPlayerId || !friends[playerId].isRemote) {
         continue
       }
+
       const conn = friendState[playerId].connection
       if (!conn) {
         console.error(`Friend ${playerId} has no connection`)

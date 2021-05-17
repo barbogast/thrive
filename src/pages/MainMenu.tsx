@@ -37,7 +37,7 @@ function MainMenu({ updateMyName }: Props) {
       .map((friend) => friend.id)
 
     const gameId = nanoid()
-    initialise(gameId, friendsToInvite)
+    initialise(gameId, friendsToInvite.concat(playerId))
     setLocation(`/play/${gameId}`)
   }
 
