@@ -6,26 +6,20 @@ import { useLocation } from 'wouter'
 import { useStore } from '../state'
 import usePlayerId from '../hooks/usePlayerId'
 import PlayerName from '../components/PlayerName'
-import Box from '../components/Box'
+import FriendsList from '../components/FriendsList'
 
 function MainMenu() {
   const [location, setLocation] = useLocation()
   const playerId = usePlayerId()
-  const {
-    initialise,
-    games,
-    friends,
-    friendState,
-    addLocalPlayer,
-    toggleFriendSelection,
-  } = useStore((state) => ({
-    initialise: state.initialise,
-    games: state.games,
-    friends: state.friends,
-    addLocalPlayer: state.addLocalPlayer,
-    friendState: state.uiState.friendState,
-    toggleFriendSelection: state.toggleFriendSelection,
-  }))
+  const { initialise, games, friends, friendState, addLocalPlayer } = useStore(
+    (state) => ({
+      initialise: state.initialise,
+      games: state.games,
+      friends: state.friends,
+      addLocalPlayer: state.addLocalPlayer,
+      friendState: state.uiState.friendState,
+    }),
+  )
 
   const createGame = () => {
     const friendsToInvite = Object.values(friends)
@@ -56,23 +50,7 @@ function MainMenu() {
       <div>
         Contacts
         <div>
-          <ul>
-            {Object.values(friends).map((friend) => (
-              <li key={friend.id}>
-                <input
-                  type="checkbox"
-                  checked={Boolean(friendState[friend.id]?.isSelected)}
-                  onChange={() => toggleFriendSelection(friend.id)}
-                />
-                {friend.id}
-                {friend.isRemote && (
-                  <Box
-                    color={friendState[friend.id]?.connection ? 'green' : 'red'}
-                  />
-                )}
-              </li>
-            ))}
-          </ul>
+          <FriendsList />
           Invite new contacts by sharing this link:
           <a href={inviteLink}>{inviteLink}</a>
           <br />
