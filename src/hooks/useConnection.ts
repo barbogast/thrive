@@ -82,10 +82,6 @@ function useConnection() {
   }
 
   const sendState = (gameId: string, newState: GameState) => {
-    if (!peerRef.current) {
-      return
-    }
-
     for (const playerId of Object.keys(state.games[gameId].players)) {
       if (!friends[playerId].isRemote) {
         continue
