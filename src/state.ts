@@ -28,6 +28,11 @@ export type Action =
       positions: position.Position[]
     }
 
+type FriendState = {
+  isSelected: boolean
+  connection?: DataConnection
+}
+
 type State = {
   player: {
     id: string | void
@@ -44,12 +49,7 @@ type State = {
   }
   uiState: {
     currentAction: Action
-    friendState: {
-      [id: string]: {
-        isSelected: boolean
-        connection?: DataConnection
-      }
-    }
+    friendState: { [friendId: string]: FriendState }
   }
 }
 
@@ -77,6 +77,17 @@ const immer =
   ): StateCreator<T> =>
   (set, get, api) =>
     config((fn) => set(produce<T>(fn)), get, api)
+
+function updateFriendState(
+  draft: State,
+  friendId: string,
+  cb: (friendState: FriendState) => void,
+) {
+  if (!draft.uiState.friendState[friendId]) {
+    draft.uiState.friendState[friendId] = { isSelected: false }
+  }
+  cb(draft.uiState.friendState[friendId])
+}
 
 export function initialiseStore(onRehydrated: () => void) {
   return create<State & Setter>(
@@ -108,28 +119,24 @@ export function initialiseStore(onRehydrated: () => void) {
 
           toggleFriendSelection: (friendId: string) =>
             set((draft) => {
-              if (!draft.uiState.friendState[friendId]) {
-                draft.uiState.friendState[friendId] = { isSelected: false }
-              }
-              draft.uiState.friendState[friendId].isSelected =
-                !draft.uiState.friendState[friendId].isSelected
+              updateFriendState(draft, friendId, (friendState) => {
+                friendState.isSelected = !friendState.isSelected
+              })
             }),
 
           addFriendConnection: (friendId: string, connection: DataConnection) =>
             set((draft) => {
               draft.friends[friendId] = { id: friendId, isRemote: true }
-              if (!draft.uiState.friendState[friendId]) {
-                draft.uiState.friendState[friendId] = { isSelected: false }
-              }
-              draft.uiState.friendState[friendId].connection = connection
+              updateFriendState(draft, friendId, (friendState) => {
+                friendState.connection = connection
+              })
             }),
 
           removeFriendConnection: (friendId: string) =>
             set((draft) => {
-              if (!draft.uiState.friendState[friendId]) {
-                draft.uiState.friendState[friendId] = { isSelected: false }
-              }
-              delete draft.uiState.friendState[friendId].connection
+              updateFriendState(draft, friendId, (friendState) => {
+                delete friendState.connection
+              })
             }),
 
           addLocalPlayer: (playerId: string) =>
