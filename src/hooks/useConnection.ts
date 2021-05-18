@@ -20,16 +20,7 @@ function useConnection() {
 
   const myPlayerId = usePlayerId()
   const peerRef = useRef<Peer>()
-  const {
-    state,
-    updateGameState,
-    addFriendConnection,
-    removeFriendConnection,
-    friends,
-    friendState,
-    myPlayerName,
-    setFriendName,
-  } = useStore((state) => ({
+  const store = useStore((state) => ({
     state: state,
     updateGameState: state.updateGameState,
     addFriendConnection: state.addFriendConnection,
@@ -49,12 +40,16 @@ function useConnection() {
       if (typeof data === 'object') {
         if (data.method === 'introduce') {
           connectedPlayerId = data.args.playerId
-          addFriendConnection(connectedPlayerId, data.args.playerName, conn)
+          store.addFriendConnection(
+            connectedPlayerId,
+            data.args.playerName,
+            conn,
+          )
           log('add connection, ', connectedPlayerId)
         } else if (data.method === 'updateMyName') {
-          setFriendName(connectedPlayerId, data.args.newName)
+          store.setFriendName(connectedPlayerId, data.args.newName)
         } else if (data.method === 'updateGameState') {
-          updateGameState(data.args.gameId, data.args.newState)
+          store.updateGameState(data.args.gameId, data.args.newState)
         }
       }
     })
@@ -62,17 +57,17 @@ function useConnection() {
     conn.on('open', () => {
       conn.send({
         method: 'introduce',
-        args: { playerId: myPlayerId, playerName: myPlayerName },
+        args: { playerId: myPlayerId, playerName: store.myPlayerName },
       })
     })
 
     conn.on('close', () => {
-      removeFriendConnection(connectedPlayerId)
+      store.removeFriendConnection(connectedPlayerId)
     })
 
     conn.on('error', (err) => {
       console.log('error', err, connectedPlayerId)
-      removeFriendConnection(connectedPlayerId)
+      store.removeFriendConnection(connectedPlayerId)
     })
   }
 
@@ -90,11 +85,11 @@ function useConnection() {
     payload: { method: string; args: { [key: string]: unknown } },
   ) => {
     for (const playerId of playerIds) {
-      if (playerId === myPlayerId || !friends[playerId].isRemote) {
+      if (playerId === myPlayerId || !store.friends[playerId].isRemote) {
         continue
       }
 
-      const conn = friendState[playerId].connection
+      const conn = store.friendState[playerId].connection
       if (!conn) {
         console.error(`Friend ${playerId} has no connection`)
         continue
@@ -104,18 +99,18 @@ function useConnection() {
   }
 
   const sendState = (gameId: string, newState: GameState) => {
-    send(Object.keys(state.games[gameId].players), {
+    send(Object.keys(store.state.games[gameId].players), {
       method: 'updateGameState',
       args: { gameId, newState },
     })
   }
 
   const updateMyName = (newName: string) => {
-    for (const friendId of Object.keys(state.friends)) {
-      if (!friends[friendId].isRemote) {
+    for (const friendId of Object.keys(store.state.friends)) {
+      if (!store.friends[friendId].isRemote) {
         continue
       }
-      const conn = friendState[friendId].connection
+      const conn = store.friendState[friendId].connection
       if (!conn) {
         console.error(`Friend ${friendId} has no connection`)
         continue
@@ -131,8 +126,8 @@ function useConnection() {
       setPeerId(id)
       log('My peer ID is: ' + id)
 
-      for (const friendId in friends) {
-        if (friends[friendId].isRemote) {
+      for (const friendId in store.friends) {
+        if (store.friends[friendId].isRemote) {
           connectToPeer(friendId)
         }
       }

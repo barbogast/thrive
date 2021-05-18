@@ -11,13 +11,7 @@ type Props = {
 
 function Controls({ sendState }: Props) {
   const gameId = routing.useGameId()
-  const {
-    nextTurn,
-    currentPlayer,
-    toggleCurrentAction,
-    currentAction,
-    currentDiceRoll,
-  } = useStore((state) => ({
+  const store = useStore((state) => ({
     nextTurn: state.nextTurn,
     currentPlayer: state.games[gameId].currentPlayer,
     toggleCurrentAction: state.toggleCurrentAction,
@@ -27,16 +21,16 @@ function Controls({ sendState }: Props) {
 
   return (
     <div>
-      Current player: <Box color={currentPlayer} />
+      Current player: <Box color={store.currentPlayer} />
       <br />
       Current dice roll:{' '}
-      {currentDiceRoll.length ? currentDiceRoll.join(' | ') : ''}
+      {store.currentDiceRoll.length ? store.currentDiceRoll.join(' | ') : ''}
       <br />
       <button
-        onClick={() => toggleCurrentAction(gameId, ActionType.buildRoad)}
+        onClick={() => store.toggleCurrentAction(gameId, ActionType.buildRoad)}
         style={{
           boxShadow:
-            currentAction.type === ActionType.buildRoad
+            store.currentAction.type === ActionType.buildRoad
               ? '0 0 0 2px black'
               : '',
         }}
@@ -45,10 +39,10 @@ function Controls({ sendState }: Props) {
       </button>
       &nbsp;&nbsp;
       <button
-        onClick={() => toggleCurrentAction(gameId, ActionType.buildTown)}
+        onClick={() => store.toggleCurrentAction(gameId, ActionType.buildTown)}
         style={{
           boxShadow:
-            currentAction.type === ActionType.buildTown
+            store.currentAction.type === ActionType.buildTown
               ? '0 0 0 2px black'
               : '',
         }}
@@ -56,7 +50,9 @@ function Controls({ sendState }: Props) {
         Build town
       </button>
       &nbsp;&nbsp;
-      <button onClick={() => nextTurn(gameId, sendState)}>Finish turn</button>
+      <button onClick={() => store.nextTurn(gameId, sendState)}>
+        Finish turn
+      </button>
     </div>
   )
 }

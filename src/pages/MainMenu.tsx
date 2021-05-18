@@ -15,14 +15,7 @@ type Props = {
 function MainMenu({ updateMyName }: Props) {
   const [location, setLocation] = useLocation()
   const playerId = usePlayerId()
-  const {
-    initialise,
-    games,
-    friends,
-    friendState,
-    addLocalPlayer,
-    removeSelectedPlayers,
-  } = useStore((state) => ({
+  const store = useStore((state) => ({
     initialise: state.initialise,
     games: state.games,
     friends: state.friends,
@@ -32,12 +25,12 @@ function MainMenu({ updateMyName }: Props) {
   }))
 
   const createGame = () => {
-    const friendsToInvite = Object.values(friends)
-      .filter((friend) => friendState[friend.id]?.isSelected)
+    const friendsToInvite = Object.values(store.friends)
+      .filter((friend) => store.friendState[friend.id]?.isSelected)
       .map((friend) => friend.id)
 
     const gameId = nanoid()
-    initialise(gameId, friendsToInvite.concat(playerId))
+    store.initialise(gameId, friendsToInvite.concat(playerId))
     setLocation(`/play/${gameId}`)
   }
 
@@ -48,7 +41,7 @@ function MainMenu({ updateMyName }: Props) {
       <div>
         Existing games
         <ul>
-          {Object.keys(games).map((gameId) => (
+          {Object.keys(store.games).map((gameId) => (
             <li key={gameId}>
               <Link href={`/play/${gameId}`}>
                 <a className="link">Play {gameId}</a>
@@ -61,10 +54,10 @@ function MainMenu({ updateMyName }: Props) {
         Contacts
         <div>
           <FriendsList />
-          <button onClick={() => addLocalPlayer(nanoid())}>
+          <button onClick={() => store.addLocalPlayer(nanoid())}>
             Add local player
           </button>{' '}
-          <button onClick={removeSelectedPlayers}>Remove players</button>{' '}
+          <button onClick={store.removeSelectedPlayers}>Remove players</button>{' '}
           <button onClick={createGame}>Create game</button>
           <br />
           Invite new contacts by sharing this link:
