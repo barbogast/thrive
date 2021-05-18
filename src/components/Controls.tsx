@@ -1,15 +1,11 @@
 import React from 'react'
-import { GameState } from '../game'
+import { useController } from '../hooks/useConnection'
 
 import * as routing from '../routing'
 import { useStore, ActionType } from '../state'
 import Box from './Box'
 
-type Props = {
-  sendState: (gameId: string, newState: GameState) => void
-}
-
-function Controls({ sendState }: Props) {
+function Controls() {
   const gameId = routing.useGameId()
   const store = useStore((state) => ({
     nextTurn: state.nextTurn,
@@ -18,6 +14,7 @@ function Controls({ sendState }: Props) {
     currentAction: state.uiState.currentAction,
     currentDiceRoll: state.games[gameId].currentDiceRoll,
   }))
+  const controller = useController()
 
   return (
     <div>
@@ -50,7 +47,7 @@ function Controls({ sendState }: Props) {
         Build town
       </button>
       &nbsp;&nbsp;
-      <button onClick={() => store.nextTurn(gameId, sendState)}>
+      <button onClick={() => store.nextTurn(gameId, controller.sendState)}>
         Finish turn
       </button>
     </div>

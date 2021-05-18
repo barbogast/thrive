@@ -14,18 +14,12 @@ function App(): JSX.Element {
     }
     connectToPeer(playerId)
   }
-  const { connectToPeer, sendState, updateMyName } = useConnection()
+  const { connectToPeer } = useConnection()
 
   return (
     <>
-      <Route
-        path="/"
-        component={() => <MainMenu updateMyName={updateMyName} />}
-      />
-      <Route
-        path="/play/:gameId"
-        component={() => <Playing sendState={sendState} />}
-      />
+      <Route path="/" component={MainMenu} />
+      <Route path="/play/:gameId" component={Playing} />
       <div>
         <button onClick={connect}>Connect</button>
       </div>

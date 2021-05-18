@@ -1,22 +1,19 @@
 import React, { useState } from 'react'
+import { useController } from '../hooks/useConnection'
 
 import { useStore } from '../state'
 
-type Props = {
-  playerId: string
-  updateMyName: (newName: string) => void
-}
-
-function PlayerName({ playerId, updateMyName }: Props) {
+function PlayerName() {
   const { playerName, setPlayerName } = useStore((state) => ({
     setPlayerName: state.setPlayerName,
     playerName: state.player.name,
   }))
+  const contoller = useController()
   const [value, setValue] = useState<string>(playerName)
 
   const save = (name: string) => {
     setPlayerName(value)
-    updateMyName(name)
+    contoller.updateMyName(name)
   }
 
   return (
