@@ -15,7 +15,10 @@ type Props = {
 
 const Road: React.FC<Props> = function Road({ position, owner }) {
   const gameId = routing.useGameId()
-  const buildRoad = useStore((state) => state.buildRoad)
+  const store = useStore((state) => ({
+    buildRoad: state.buildRoad,
+    color: owner ? state.games[gameId].players[owner].color : undefined,
+  }))
 
   const [tile1, tile2] = position
 
@@ -32,7 +35,9 @@ const Road: React.FC<Props> = function Road({ position, owner }) {
 
   const middle = axial.getMiddle(position)
 
-  const style = owner ? { fill: owner } : { stroke: 'black', strokeWidth: 1 }
+  const style = owner
+    ? { fill: store.color }
+    : { stroke: 'black', strokeWidth: 1 }
 
   return (
     <Rect
@@ -44,7 +49,7 @@ const Road: React.FC<Props> = function Road({ position, owner }) {
       height={7}
       rotation={directionToDegree[direction]}
       {...style}
-      onClick={owner ? undefined : () => buildRoad(gameId, position)}
+      onClick={owner ? undefined : () => store.buildRoad(gameId, position)}
     />
   )
 }

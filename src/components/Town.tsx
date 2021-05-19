@@ -14,12 +14,14 @@ type Props = {
 
 const Town: React.FC<Props> = function Town({ position, owner }) {
   const gameId = routing.useGameId()
-  const buildTown = useStore((state) => state.buildTown)
-
+  const store = useStore((state) => ({
+    buildTown: state.buildTown,
+    color: owner ? state.games[gameId].players[owner].color : undefined,
+  }))
   const middle = axial.getMiddle(position)
   const style = owner
     ? {
-        fill: owner,
+        fill: store.color,
       }
     : {
         stroke: 'black',
@@ -32,7 +34,7 @@ const Town: React.FC<Props> = function Town({ position, owner }) {
       x={middle.x}
       y={middle.y}
       radius={10}
-      onClick={owner ? undefined : () => buildTown(gameId, position)}
+      onClick={owner ? undefined : () => store.buildTown(gameId, position)}
       {...style}
     />
   )

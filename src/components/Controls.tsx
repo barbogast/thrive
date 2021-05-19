@@ -2,54 +2,80 @@ import React from 'react'
 import { useSendState } from '../hooks/useConnection'
 
 import * as routing from '../routing'
-import { useStore, ActionType } from '../state'
+import * as game from '../game'
+import { useStore, UiActionType } from '../state'
 import Box from './Box'
 
 const Controls: React.FC = function Controls() {
   const gameId = routing.useGameId()
   const store = useStore((state) => ({
     nextTurn: state.nextTurn,
-    currentPlayer: state.games[gameId].currentPlayer,
     toggleCurrentAction: state.toggleCurrentAction,
-    currentAction: state.uiState.currentAction,
+    currentAction: state.games[gameId].sequence.scheduledActions[0],
     currentDiceRoll: state.games[gameId].currentDiceRoll,
+    rollDice: state.rollDice,
+    currentPlayerColor:
+      state.games[gameId].players[
+        state.games[gameId].sequence.scheduledActions[0].playerId
+      ].color,
   }))
   const sendState = useSendState()
+  const allowedActions = game.getAllowedUiActions(store.currentAction)
 
   return (
     <div>
-      Current player: <Box color={store.currentPlayer} />
+      Current player <Box color={store.currentPlayerColor} />:{' '}
+      {store.currentAction.type}
       <br />
-      Current dice roll:{' '}
-      {store.currentDiceRoll.length ? store.currentDiceRoll.join(' | ') : ''}
+      {store.currentAction.type !== game.GameActionType.rollDice
+        ? 'Current dice roll: ' + store.currentDiceRoll.join(' | ')
+        : ''}
       <br />
-      <button
-        onClick={() => store.toggleCurrentAction(ActionType.buildRoad)}
-        style={{
-          boxShadow:
-            store.currentAction.type === ActionType.buildRoad
-              ? '0 0 0 2px black'
-              : '',
-        }}
-      >
-        Build road
-      </button>
+      {allowedActions.includes(UiActionType.buildRoad) ? (
+        <button
+          onClick={() => store.toggleCurrentAction(UiActionType.buildRoad)}
+          style={{
+            boxShadow:
+              store.currentAction.type === UiActionType.buildRoad
+                ? '0 0 0 2px black'
+                : '',
+          }}
+        >
+          Build road
+        </button>
+      ) : (
+        <></>
+      )}
       &nbsp;&nbsp;
-      <button
-        onClick={() => store.toggleCurrentAction(ActionType.buildTown)}
-        style={{
-          boxShadow:
-            store.currentAction.type === ActionType.buildTown
-              ? '0 0 0 2px black'
-              : '',
-        }}
-      >
-        Build town
-      </button>
+      {allowedActions.includes(UiActionType.buildTown) ? (
+        <button
+          onClick={() => store.toggleCurrentAction(UiActionType.buildTown)}
+          style={{
+            boxShadow:
+              store.currentAction.type === UiActionType.buildTown
+                ? '0 0 0 2px black'
+                : '',
+          }}
+        >
+          Build town
+        </button>
+      ) : (
+        <></>
+      )}
       &nbsp;&nbsp;
-      <button onClick={() => store.nextTurn(gameId, sendState)}>
-        Finish turn
-      </button>
+      {allowedActions.includes(UiActionType.endTurn) ? (
+        <button onClick={() => store.nextTurn(gameId, sendState)}>
+          Finish turn
+        </button>
+      ) : (
+        <></>
+      )}
+      &nbsp;&nbsp;
+      {allowedActions.includes(UiActionType.rollDice) ? (
+        <button onClick={() => store.rollDice(gameId)}>Roll dice</button>
+      ) : (
+        <></>
+      )}
     </div>
   )
 }

@@ -7,14 +7,16 @@ import { DataConnection } from 'peerjs'
 import * as game from './game'
 import * as position from './position'
 
-export const ActionType = {
+export const UiActionType = {
   buildRoad: 'buildRoad',
   buildTown: 'buildTown',
+  rollDice: 'rollDice',
+  endTurn: 'endTurn',
   none: 'none',
 } as const
-export type ActionType = typeof ActionType[keyof typeof ActionType]
+export type UiActionType = typeof UiActionType[keyof typeof UiActionType]
 
-export type Action =
+export type UiAction =
   | {
       type: 'none'
     }
@@ -23,6 +25,12 @@ export type Action =
     }
   | {
       type: 'buildTown'
+    }
+  | {
+      type: 'rollDice'
+    }
+  | {
+      type: 'endTurn'
     }
 
 export type Friend = {
@@ -48,7 +56,7 @@ export type State = {
     [gameId: string]: game.GameState
   }
   uiState: {
-    currentAction: Action
+    currentAction: UiAction
     friendState: { [friendId: string]: FriendState }
   }
 }
@@ -73,7 +81,8 @@ export type Setter = {
     gameId: string,
     sendState: (gameId: string, newState: game.GameState) => void,
   ) => void
-  toggleCurrentAction: (action: ActionType) => void
+  rollDice: (gameId: string) => void
+  toggleCurrentAction: (action: UiActionType) => void
   updateGameState: (gameId: string, gameState: game.GameState) => void
 }
 
@@ -109,7 +118,7 @@ export function initialiseStore(
           friends: {},
           games: {},
           uiState: {
-            currentAction: { type: ActionType.none },
+            currentAction: { type: UiActionType.none },
             connectedFriends: [],
             friendState: {},
           },
@@ -189,13 +198,13 @@ export function initialiseStore(
           buildTown: (gameId: string, position: position.Position) =>
             set((draft) => {
               game.buildTown(draft.games[gameId], position)
-              draft.uiState.currentAction = { type: ActionType.none }
+              draft.uiState.currentAction = { type: UiActionType.none }
             }),
 
           buildRoad: (gameId: string, position: position.Position) =>
             set((draft) => {
               game.buildRoad(draft.games[gameId], position)
-              draft.uiState.currentAction = { type: ActionType.none }
+              draft.uiState.currentAction = { type: UiActionType.none }
             }),
 
           nextTurn: (
@@ -203,18 +212,23 @@ export function initialiseStore(
             sendState: (gameId: string, newState: game.GameState) => void,
           ) => {
             set((draft) => {
-              draft.uiState.currentAction = { type: ActionType.none }
-              game.rollDice(draft.games[gameId])
-              game.getNextPlayer(draft.games[gameId])
+              draft.uiState.currentAction = { type: UiActionType.none }
+              game.endTurn(draft.games[gameId])
             })
             sendState(gameId, get().games[gameId])
           },
 
-          toggleCurrentAction: (actionType: ActionType) =>
+          rollDice: (gameId: string) => {
+            set((draft) => {
+              game.rollDice(draft.games[gameId])
+            })
+          },
+
+          toggleCurrentAction: (actionType: UiActionType) =>
             set((draft) => {
               draft.uiState.currentAction =
                 actionType === draft.uiState.currentAction.type
-                  ? { type: ActionType.none }
+                  ? { type: UiActionType.none }
                   : { type: actionType }
             }),
 

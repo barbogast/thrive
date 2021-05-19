@@ -4,6 +4,7 @@ import * as board from './board'
 import * as utils from './utils'
 import * as position from './position'
 import { gameConfig } from './constants'
+import { UiActionType } from './state'
 
 export type PlayerId = string
 
@@ -48,14 +49,30 @@ export type Town = {
   owner: PlayerId
 }
 
+export const GameActionType = {
+  buildRoad: 'buildRoad',
+  buildTown: 'buildTown',
+  rollDice: 'rollDice',
+  buildBuyTrade: 'buildBuyTrade',
+} as const
+export type GameActionType = typeof GameActionType[keyof typeof GameActionType]
+
+export type GameAction = {
+  type: GameActionType
+  playerId: string
+}
+
 export type GameState = {
   tiles: tileMap.TileMap
   roads: Road[]
   towns: Town[]
   playerOrder: PlayerId[]
-  currentPlayer: PlayerId
   currentDiceRoll: [number, number] | []
   players: { [key in PlayerId]: Player }
+  sequence: {
+    phaseType: 'setStartingTowns' | 'normal'
+    scheduledActions: GameAction[]
+  }
 }
 
 function getResource() {
@@ -113,6 +130,24 @@ function initialisePlayers(playerIds: string[]) {
   return players
 }
 
+function generateStartingPhaseSequence(playerIds: string[]) {
+  const sequence = []
+
+  // First town + road
+  for (const playerId of playerIds) {
+    sequence.push({ type: 'buildTown', playerId } as const)
+    sequence.push({ type: 'buildRoad', playerId } as const)
+  }
+
+  // Second town + road with inverted player order
+  for (const playerId of [...playerIds].reverse()) {
+    sequence.push({ type: 'buildTown', playerId } as const)
+    sequence.push({ type: 'buildRoad', playerId } as const)
+  }
+
+  return sequence
+}
+
 export function initialiseGame(playerIds: string[]): GameState {
   const tiles = getHexagonBoard('3')
   const tMap = tileMap.fromArray(tiles)
@@ -121,16 +156,24 @@ export function initialiseGame(playerIds: string[]): GameState {
     tiles: tMap,
     roads: [],
     towns: [],
-    currentPlayer: playerIds[0],
     playerOrder: playerIds,
     currentDiceRoll: [],
     players: initialisePlayers(playerIds),
+    sequence: {
+      phaseType: 'setStartingTowns',
+      scheduledActions: generateStartingPhaseSequence(playerIds),
+    },
   }
 }
 
-export function getNextPlayer(state: GameState): void {
-  state.currentPlayer =
-    state.playerOrder[(state.playerOrder.indexOf(state.currentPlayer) + 1) % 4]
+export function endTurn(state: GameState): void {
+  const currentAction = state.sequence.scheduledActions[0]
+  const nextPlayer =
+    state.playerOrder[
+      (state.playerOrder.indexOf(currentAction.playerId) + 1) %
+        state.playerOrder.length
+    ]
+  state.sequence.scheduledActions = [{ type: 'rollDice', playerId: nextPlayer }]
 }
 
 export function rollDice(state: GameState): void {
@@ -156,6 +199,31 @@ export function rollDice(state: GameState): void {
   }
 
   state.currentDiceRoll = [diceResult1, diceResult2]
+  state.sequence.scheduledActions = [
+    {
+      type: 'buildBuyTrade',
+      playerId: state.sequence.scheduledActions[0].playerId,
+    },
+  ]
+}
+
+export function getAllowedUiActions(
+  currentGameAction: GameAction,
+): UiActionType[] {
+  switch (currentGameAction.type) {
+    case GameActionType.buildRoad:
+      return ['buildRoad']
+    case GameActionType.buildTown:
+      return ['buildTown']
+    case GameActionType.rollDice:
+      return ['rollDice']
+    case GameActionType.buildBuyTrade:
+      return ['buildTown', 'buildRoad', 'endTurn']
+    default: {
+      const exhaustiveCheck: never = currentGameAction.type
+      throw new Error(`Unhandled case: ${exhaustiveCheck}`)
+    }
+  }
 }
 
 function payResources(
@@ -170,13 +238,34 @@ function payResources(
   }
 }
 
+function finishAction(state: GameState, type: GameActionType) {
+  const currentAction = state.sequence.scheduledActions[0]
+  if (currentAction.type === type) {
+    state.sequence.scheduledActions.shift()
+    if (
+      state.sequence.phaseType === 'setStartingTowns' &&
+      state.sequence.scheduledActions.length === 0
+    ) {
+      state.sequence.phaseType = 'normal'
+      state.sequence.scheduledActions = [
+        { type: 'rollDice', playerId: currentAction.playerId },
+      ]
+    }
+  }
+}
+
 export function buildTown(state: GameState, position: position.Position): void {
-  payResources(state, state.currentPlayer, getCost('town'))
+  payResources(
+    state,
+    state.sequence.scheduledActions[0].playerId,
+    getCost('town'),
+  )
   state.towns.push({
     id: getId('town', position),
     position,
-    owner: state.currentPlayer,
+    owner: state.sequence.scheduledActions[0].playerId,
   })
+  finishAction(state, GameActionType.buildTown)
 }
 
 export function buildRoad(state: GameState, position: position.Position): void {
@@ -185,14 +274,19 @@ export function buildRoad(state: GameState, position: position.Position): void {
     board.roadPositionConnectsToExistingRoad(
       state.roads,
       position,
-      state.currentPlayer,
+      state.sequence.scheduledActions[0].playerId,
     ),
   )
 
-  payResources(state, state.currentPlayer, getCost('road'))
+  payResources(
+    state,
+    state.sequence.scheduledActions[0].playerId,
+    getCost('road'),
+  )
   state.roads.push({
     id: getId('road', position),
     position,
-    owner: state.currentPlayer,
+    owner: state.sequence.scheduledActions[0].playerId,
   })
+  finishAction(state, GameActionType.buildRoad)
 }

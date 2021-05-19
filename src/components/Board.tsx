@@ -9,7 +9,7 @@ import * as board from '../board'
 import HexTile from './HexTile'
 import Road from './Road'
 import Town from './Town'
-import { ActionType, context } from '../state'
+import { UiActionType, context } from '../state'
 
 useStrictMode(true)
 
@@ -47,21 +47,30 @@ const Board: React.FC = function Board() {
   const gameId = routing.useGameId()
   const {
     gameState: { tiles, roads, towns },
-    currentAction,
+    uiAction,
+    sequenceAction,
   } = useStore((state) => ({
     gameState: state.games[gameId],
-    currentAction: state.uiState.currentAction,
+    uiAction: state.uiState.currentAction,
+    sequenceAction: state.games[gameId].sequence.scheduledActions[0],
   }))
 
+  const buildRoad =
+    uiAction.type === UiActionType.buildRoad ||
+    sequenceAction.type === 'buildRoad'
+  const buildTown =
+    uiAction.type === UiActionType.buildTown ||
+    sequenceAction.type === 'buildTown'
+
   const positions = useMemo(() => {
-    if (currentAction.type === ActionType.buildRoad) {
+    if (buildRoad) {
       return board.getRoadPositions(tiles)
-    } else if (currentAction.type === ActionType.buildTown) {
+    } else if (buildTown) {
       return board.getTownPositions(tiles)
     } else {
       return []
     }
-  }, [tiles, currentAction.type])
+  }, [tiles, buildRoad, buildTown])
 
   return (
     <context.Consumer>
@@ -78,10 +87,10 @@ const Board: React.FC = function Board() {
                 <HexTile key={i} tile={t} />
               ))}
 
-              {currentAction.type === ActionType.buildRoad &&
+              {buildRoad &&
                 positions.map((r, i) => <Road key={i} position={r} />)}
 
-              {currentAction.type === ActionType.buildTown &&
+              {buildTown &&
                 positions.map((r, i) => <Town key={i} position={r} />)}
 
               {Object.values(roads).map((r, i) => (
