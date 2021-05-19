@@ -67,7 +67,7 @@ export type Setter = {
     connection: DataConnection,
   ) => void
   removeFriendConnection: (friendId: string) => void
-  addLocalPlayer: (playerId: string) => void
+  addLocalPlayer: (playerId: string, name: string) => void
   removeSelectedPlayers: () => void
   initialise: (gameId: string, friendIds: string[]) => GetState<State & Setter>
   buildTown: (gameId: string, position: position.Position) => void
@@ -160,12 +160,12 @@ export function initialiseStore(
               })
             }),
 
-          addLocalPlayer: (playerId: string) =>
+          addLocalPlayer: (playerId: string, name: string) =>
             set((draft) => {
               draft.friends[playerId] = {
                 id: playerId,
                 isRemote: false,
-                name: '',
+                name,
               }
             }),
 

@@ -2,7 +2,7 @@ import Peer, { DataConnection } from 'peerjs'
 import { useEffect, useRef } from 'react'
 import { GetState } from 'zustand'
 import { GameState } from '../game'
-import { State, Setter, useStore } from '../state'
+import { State, Setter, useStore, Friend } from '../state'
 import usePlayerId from './usePlayerId'
 
 const DEBUG_LEVEL: 0 | 1 | 2 | 3 = 0
@@ -17,6 +17,10 @@ type RemoteCallPayload =
   | {
       method: 'introduce'
       args: { playerId: string; playerName: string }
+    }
+  | {
+      method: 'inviteToGame'
+      args: { gameId: string; localPlayers: Friend[]; newState: GameState }
     }
   | {
       method: 'updateGameState'
@@ -82,11 +86,19 @@ export function useInviteToGame(): (
 ) => void {
   const send = useSend()
   return (get, friendsToInvite: string[], gameId: string) => {
+    const gameState = get().games[gameId]
+    const friends = get().friends
+    const localPlayers = Object.keys(gameState.players)
+      .filter((playerId) => playerId !== get().player.id)
+      .map((playerId) => friends[playerId])
+      .filter((player) => !player.isRemote)
+
     send(friendsToInvite, {
-      method: 'updateGameState',
+      method: 'inviteToGame',
       args: {
         gameId,
         newState: get().games[gameId],
+        localPlayers,
       },
     })
   }
@@ -106,6 +118,7 @@ function useConnection(): {
     friendState: state.uiState.friendState,
     myPlayerName: state.player.name,
     setFriendName: state.setFriendName,
+    addLocalPlayer: state.addLocalPlayer,
   }))
 
   function initialiseConnection(conn: DataConnection) {
@@ -128,6 +141,14 @@ function useConnection(): {
             conn,
           )
           log('add connection, ', connectedPlayerId)
+          break
+        }
+
+        case 'inviteToGame': {
+          for (const friend of data.args.localPlayers) {
+            store.addLocalPlayer(friend.id, friend.name)
+          }
+          store.updateGameState(data.args.gameId, data.args.newState)
           break
         }
 
