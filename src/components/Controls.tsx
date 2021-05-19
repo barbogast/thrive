@@ -24,7 +24,7 @@ const Controls: React.FC = function Controls() {
       {store.currentDiceRoll.length ? store.currentDiceRoll.join(' | ') : ''}
       <br />
       <button
-        onClick={() => store.toggleCurrentAction(gameId, ActionType.buildRoad)}
+        onClick={() => store.toggleCurrentAction(ActionType.buildRoad)}
         style={{
           boxShadow:
             store.currentAction.type === ActionType.buildRoad
@@ -36,7 +36,7 @@ const Controls: React.FC = function Controls() {
       </button>
       &nbsp;&nbsp;
       <button
-        onClick={() => store.toggleCurrentAction(gameId, ActionType.buildTown)}
+        onClick={() => store.toggleCurrentAction(ActionType.buildTown)}
         style={{
           boxShadow:
             store.currentAction.type === ActionType.buildTown

@@ -6,7 +6,6 @@ import { DataConnection } from 'peerjs'
 
 import * as game from './game'
 import * as position from './position'
-import * as board from './board'
 
 export const ActionType = {
   buildRoad: 'buildRoad',
@@ -21,11 +20,9 @@ export type Action =
     }
   | {
       type: 'buildRoad'
-      positions: position.Position[]
     }
   | {
       type: 'buildTown'
-      positions: position.Position[]
     }
 
 export type Friend = {
@@ -76,7 +73,7 @@ export type Setter = {
     gameId: string,
     sendState: (gameId: string, newState: game.GameState) => void,
   ) => void
-  toggleCurrentAction: (gameId: string, action: ActionType) => void
+  toggleCurrentAction: (action: ActionType) => void
   updateGameState: (gameId: string, gameState: game.GameState) => void
 }
 
@@ -213,44 +210,12 @@ export function initialiseStore(
             sendState(gameId, get().games[gameId])
           },
 
-          toggleCurrentAction: (gameId: string, actionType: ActionType) =>
+          toggleCurrentAction: (actionType: ActionType) =>
             set((draft) => {
-              if (actionType === draft.uiState.currentAction.type) {
-                draft.uiState.currentAction = { type: ActionType.none }
-                return
-              }
-
-              switch (actionType) {
-                case ActionType.buildRoad: {
-                  draft.uiState.currentAction = {
-                    type: actionType,
-                    positions: board.getRoadPositions(
-                      draft.games[gameId].tiles,
-                    ),
-                  }
-                  break
-                }
-
-                case ActionType.buildTown: {
-                  draft.uiState.currentAction = {
-                    type: actionType,
-                    positions: board.getTownPositions(
-                      draft.games[gameId].tiles,
-                    ),
-                  }
-                  break
-                }
-
-                case ActionType.none: {
-                  draft.uiState.currentAction = { type: actionType }
-                  break
-                }
-
-                default: {
-                  const exhaustiveCheck: never = actionType
-                  throw new Error(`Unhandled case: ${exhaustiveCheck}`)
-                }
-              }
+              draft.uiState.currentAction =
+                actionType === draft.uiState.currentAction.type
+                  ? { type: ActionType.none }
+                  : { type: actionType }
             }),
 
           updateGameState: (gameId: string, gameState: game.GameState) =>

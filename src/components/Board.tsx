@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Layer, Stage, useStrictMode } from 'react-konva'
 import { KonvaEventObject } from 'konva-types/Node'
 import { Stage as StateType } from 'konva-types/Stage'
 
 import { useStore } from '../state'
 import * as routing from '../routing'
+import * as board from '../board'
 import HexTile from './HexTile'
 import Road from './Road'
 import Town from './Town'
@@ -52,6 +53,16 @@ const Board: React.FC = function Board() {
     currentAction: state.uiState.currentAction,
   }))
 
+  const positions = useMemo(() => {
+    if (currentAction.type === ActionType.buildRoad) {
+      return board.getRoadPositions(tiles)
+    } else if (currentAction.type === ActionType.buildTown) {
+      return board.getTownPositions(tiles)
+    } else {
+      return []
+    }
+  }, [tiles, currentAction.type])
+
   return (
     <context.Consumer>
       {(value: unknown) => (
@@ -68,14 +79,10 @@ const Board: React.FC = function Board() {
               ))}
 
               {currentAction.type === ActionType.buildRoad &&
-                Object.values(currentAction.positions).map((r, i) => (
-                  <Road key={i} position={r} />
-                ))}
+                positions.map((r, i) => <Road key={i} position={r} />)}
 
               {currentAction.type === ActionType.buildTown &&
-                Object.values(currentAction.positions).map((r, i) => (
-                  <Town key={i} position={r} />
-                ))}
+                positions.map((r, i) => <Town key={i} position={r} />)}
 
               {Object.values(roads).map((r, i) => (
                 <Road key={i} position={r.position} owner={r.owner} />
