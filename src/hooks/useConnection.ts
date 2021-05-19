@@ -1,5 +1,5 @@
 import Peer, { DataConnection } from 'peerjs'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { GameState } from '../game'
 import { useStore } from '../state'
 import usePlayerId from './usePlayerId'
@@ -59,11 +59,8 @@ export function useController(): {
 }
 
 function useConnection(): {
-  peerId: string | void
   connectToPeer: (connectToId: string) => void
 } {
-  const [peerId, setPeerId] = useState<string | void>()
-
   const myPlayerId = usePlayerId()
   const peerRef = useRef<Peer>()
   const store = useStore((state) => ({
@@ -130,7 +127,6 @@ function useConnection(): {
     peerRef.current = new Peer(myPlayerId, { debug: DEBUG_LEVEL })
 
     peerRef.current.on('open', (id) => {
-      setPeerId(id)
       log('My peer ID is: ' + id)
 
       for (const friendId in store.friends) {
@@ -148,7 +144,7 @@ function useConnection(): {
     peerRef.current.on('connection', initialiseConnection)
   }, [])
 
-  return { peerId, connectToPeer }
+  return { connectToPeer }
 }
 
 export default useConnection
