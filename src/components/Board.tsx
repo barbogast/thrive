@@ -53,36 +53,42 @@ const Board: React.FC = function Board() {
   }))
 
   return (
-    <Stage
-      width={window.innerWidth}
-      height={window.innerHeight}
-      onWheel={onWheel}
-      draggable
-    >
-      <Layer>
-        {Object.values(tiles).map((t, i) => (
-          <HexTile key={i} tile={t} />
-        ))}
+    <context.Consumer>
+      {(value: unknown) => (
+        <Stage
+          width={window.innerWidth}
+          height={window.innerHeight}
+          onWheel={onWheel}
+          draggable
+        >
+          <context.Provider value={value}>
+            <Layer>
+              {Object.values(tiles).map((t, i) => (
+                <HexTile key={i} tile={t} />
+              ))}
 
-        {currentAction.type === ActionType.buildRoad &&
-          Object.values(currentAction.positions).map((r, i) => (
-            <Road key={i} position={r} />
-          ))}
+              {currentAction.type === ActionType.buildRoad &&
+                Object.values(currentAction.positions).map((r, i) => (
+                  <Road key={i} position={r} />
+                ))}
 
-        {currentAction.type === ActionType.buildTown &&
-          Object.values(currentAction.positions).map((r, i) => (
-            <Town key={i} position={r} />
-          ))}
+              {currentAction.type === ActionType.buildTown &&
+                Object.values(currentAction.positions).map((r, i) => (
+                  <Town key={i} position={r} />
+                ))}
 
-        {Object.values(roads).map((r, i) => (
-          <Road key={i} position={r.position} owner={r.owner} />
-        ))}
+              {Object.values(roads).map((r, i) => (
+                <Road key={i} position={r.position} owner={r.owner} />
+              ))}
 
-        {Object.values(towns).map((t, i) => (
-          <Town key={i} position={t.position} owner={t.owner} />
-        ))}
-      </Layer>
-    </Stage>
+              {Object.values(towns).map((t, i) => (
+                <Town key={i} position={t.position} owner={t.owner} />
+              ))}
+            </Layer>
+          </context.Provider>
+        </Stage>
+      )}
+    </context.Consumer>
   )
 }
 
