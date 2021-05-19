@@ -89,8 +89,7 @@ export function getSquareBoard(): Tile[] {
 
 export function getHexagonBoard(size: '3' | '5'): Tile[] {
   const positions = gameConfig().hexagonPositions
-
-  return positions[size].map((p) => ({
+  return positions[size].map((p: axial.Coordinate) => ({
     position: p,
     resource: p.q === 0 && p.r === 0 ? TileType.desert : getResource(),
     number: p.q === 0 && p.r === 0 ? undefined : utils.randomNumber(12) + 1,
