@@ -101,7 +101,7 @@ function getId(type: string, position: axial.Coordinate[]) {
   return `${type}_${position.map((pos) => `${pos.q}|${pos.r}`)}`
 }
 
-export function initialisePlayers(playerIds: string[]) {
+function initialisePlayers(playerIds: string[]) {
   const colors = ['green', 'red', 'yellow', 'blue']
   const players: { [key in PlayerId]: Player } = {}
   playerIds.forEach((id, i) => {
@@ -129,12 +129,12 @@ export function initialiseGame(playerIds: string[]): GameState {
   }
 }
 
-export function getNextPlayer(state: GameState) {
+export function getNextPlayer(state: GameState): void {
   state.currentPlayer =
     state.playerOrder[(state.playerOrder.indexOf(state.currentPlayer) + 1) % 4]
 }
 
-export function rollDice(state: GameState) {
+export function rollDice(state: GameState): void {
   // Roll with 2 dices
   const diceResult1 = utils.randomNumber(5) + 1
   const diceResult2 = utils.randomNumber(5) + 1
@@ -171,7 +171,7 @@ function payResources(
   }
 }
 
-export function buildTown(state: GameState, position: position.Position) {
+export function buildTown(state: GameState, position: position.Position): void {
   payResources(state, state.currentPlayer, getCost('town'))
   state.towns.push({
     id: getId('town', position),
@@ -180,7 +180,7 @@ export function buildTown(state: GameState, position: position.Position) {
   })
 }
 
-export function buildRoad(state: GameState, position: position.Position) {
+export function buildRoad(state: GameState, position: position.Position): void {
   console.log(
     board.roadPositionConnectsToExistingRoad(
       state.roads,

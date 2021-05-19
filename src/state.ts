@@ -1,4 +1,4 @@
-import create, { StateCreator } from 'zustand'
+import create, { StateCreator, UseStore } from 'zustand'
 import { persist } from 'zustand/middleware'
 import createContext from 'zustand/context'
 import produce, { Draft } from 'immer'
@@ -98,7 +98,9 @@ function updateFriendState(
   cb(draft.uiState.friendState[friendId])
 }
 
-export function initialiseStore(onRehydrated: () => void) {
+export function initialiseStore(
+  onRehydrated: () => void,
+): UseStore<State & Setter> {
   return create<State & Setter>(
     persist(
       immer((set, get) => {
@@ -242,9 +244,10 @@ export function initialiseStore(onRehydrated: () => void) {
                   break
                 }
 
-                default:
+                default: {
                   const exhaustiveCheck: never = actionType
                   throw new Error(`Unhandled case: ${exhaustiveCheck}`)
+                }
               }
             }),
 
@@ -263,5 +266,6 @@ export function initialiseStore(onRehydrated: () => void) {
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const { Provider, useStore, context } = createContext<State & Setter>()

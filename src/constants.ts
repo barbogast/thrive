@@ -1,12 +1,11 @@
-export function visualConfig() {
-  return {
+export const visualConfig = () =>
+  ({
     tileRadius: 50,
     flatTopped: false,
-  }
-}
+  } as const)
 
-export function gameConfig() {
-  return {
+export const gameConfig = () =>
+  ({
     hexagonPositions: {
       '3': [
         { q: -1, r: 0 },
@@ -62,5 +61,4 @@ export function gameConfig() {
         wood: 1,
       },
     },
-  }
-}
+  } as const)

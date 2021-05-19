@@ -16,7 +16,7 @@ export function createPosition(positions: axial.Coordinate[]): Position {
   return sortPositions(positions)
 }
 
-export function comparePositions(posA: Position, posB: Position) {
+export function comparePositions(posA: Position, posB: Position): boolean {
   // We assume that all positions have been created in a sorted manner.
   // This way we can just compare the coordinates of each index
   utils.assert(() => posA.length === posB.length)
