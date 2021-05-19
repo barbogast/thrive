@@ -29,7 +29,7 @@ const useSend = () => {
         continue
       }
 
-      const conn = store.friendState[playerId].connection
+      const conn = store.friendState[playerId]?.connection
       if (!conn) {
         console.error(`Friend ${playerId} has no connection`)
         continue
