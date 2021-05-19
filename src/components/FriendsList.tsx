@@ -20,7 +20,7 @@ const FriendsList: React.FC = function FriendsList() {
             checked={Boolean(store.friendState[friend.id]?.isSelected)}
             onChange={() => store.toggleFriendSelection(friend.id)}
           />
-          <Friend friend={friend} friendState={store.friendState[friend.id]} />
+          <Friend friendId={friend.id} />
           {!friend.isRemote && (
             <input
               value={friend.name}

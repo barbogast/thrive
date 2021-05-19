@@ -50,11 +50,7 @@ const MainMenu: React.FC = function MainMenu() {
                 <a className="link">Play {gameId}</a>
               </Link>
               {Object.keys(game.players).map((playerId) => (
-                <Friend
-                  key={playerId}
-                  friend={store.friends[playerId]}
-                  friendState={store.friendState[playerId]}
-                />
+                <Friend key={playerId} friendId={playerId} />
               ))}
             </li>
           ))}

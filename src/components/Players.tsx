@@ -9,10 +9,8 @@ import Friend from './Friend'
 
 const Players: React.FC = function Players() {
   const gameId = routing.useGameId()
-  const { players, friends, friendState } = useStore((state) => ({
+  const { players } = useStore((state) => ({
     players: state.games[gameId].players,
-    friends: state.friends,
-    friendState: state.uiState.friendState,
   }))
 
   return (
@@ -20,10 +18,7 @@ const Players: React.FC = function Players() {
       {Object.values(players).map((player) => {
         return (
           <div key={player.id}>
-            <Friend
-              friend={friends[player.id]}
-              friendState={friendState[player.id]}
-            />
+            <Friend friendId={player.id} />
             <ul>
               <li>
                 <Box color={getColorForTileType(game.Resource.wood)} />
