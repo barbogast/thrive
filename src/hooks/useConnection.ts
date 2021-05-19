@@ -13,6 +13,20 @@ const log =
     ? () => {} // eslint-disable-line @typescript-eslint/no-empty-function
     : (...args: unknown[]) => console.log('NET: ', ...args)
 
+type RemoteCallPayload =
+  | {
+      method: 'introduce'
+      args: { playerId: string; playerName: string }
+    }
+  | {
+      method: 'updateGameState'
+      args: { gameId: string; newState: GameState }
+    }
+  | {
+      method: 'updateMyName'
+      args: { newName: string }
+    }
+
 const useSend = () => {
   const store = useStore((state) => ({
     friends: state.friends,
@@ -20,11 +34,7 @@ const useSend = () => {
   }))
   const myPlayerId = usePlayerId()
 
-  return (
-    playerIds: string[],
-    method: string,
-    args: { [key: string]: unknown },
-  ) => {
+  return (playerIds: string[], call: RemoteCallPayload) => {
     for (const playerId of playerIds) {
       if (playerId === myPlayerId || !store.friends[playerId].isRemote) {
         continue
@@ -35,7 +45,7 @@ const useSend = () => {
         console.error(`Friend ${playerId} has no connection`)
         continue
       }
-      conn.send({ method, args })
+      conn.send(call)
     }
   }
 }
@@ -44,9 +54,12 @@ export function useSendState(): (gameId: string, newState: GameState) => void {
   const store = useStore((state) => ({ games: state.games }))
   const send = useSend()
   return (gameId: string, newState: GameState) => {
-    send(Object.keys(store.games[gameId].players), 'updateGameState', {
-      gameId,
-      newState,
+    send(Object.keys(store.games[gameId].players), {
+      method: 'updateGameState',
+      args: {
+        gameId,
+        newState,
+      },
     })
   }
 }
@@ -55,7 +68,10 @@ export function useUpdateMyName(): (newName: string) => void {
   const store = useStore((state) => ({ friends: state.friends }))
   const send = useSend()
   return (newName: string) => {
-    send(Object.keys(store.friends), 'updateMyName', { newName })
+    send(Object.keys(store.friends), {
+      method: 'updateMyName',
+      args: { newName },
+    })
   }
 }
 
@@ -66,9 +82,12 @@ export function useInviteToGame(): (
 ) => void {
   const send = useSend()
   return (get, friendsToInvite: string[], gameId: string) => {
-    send(friendsToInvite, 'updateGameState', {
-      gameId,
-      newState: get().games[gameId],
+    send(friendsToInvite, {
+      method: 'updateGameState',
+      args: {
+        gameId,
+        newState: get().games[gameId],
+      },
     })
   }
 }
@@ -93,7 +112,7 @@ function useConnection(): {
     let connectedPlayerId: string
     log('incoming peer connection!')
 
-    conn.on('data', (data) => {
+    conn.on('data', (data: RemoteCallPayload) => {
       log(`received:`, data)
       if (typeof data === 'object') {
         if (data.method === 'introduce') {
