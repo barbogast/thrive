@@ -5,7 +5,7 @@ import * as routing from '../routing'
 import { useStore, ActionType } from '../state'
 import Box from './Box'
 
-function Controls() {
+const Controls: React.FC = function Controls() {
   const gameId = routing.useGameId()
   const store = useStore((state) => ({
     nextTurn: state.nextTurn,

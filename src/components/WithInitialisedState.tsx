@@ -6,7 +6,9 @@ type Props = {
   children: ReactChildren | ReactChild
 }
 
-function WithInitialisedState({ children }: Props): JSX.Element {
+const WithInitialisedState: React.FC<Props> = function WithInitialisedState({
+  children,
+}) {
   const [rehydrated, setRehydrated] = useState(false)
   const [useStore] = useState(() => initialiseStore(() => setRehydrated(true)))
   if (!rehydrated) {

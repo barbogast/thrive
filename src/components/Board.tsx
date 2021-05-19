@@ -42,7 +42,7 @@ function onWheel(e: KonvaEventObject<WheelEvent>) {
   stage.batchDraw()
 }
 
-function Board(): JSX.Element {
+const Board: React.FC = function Board() {
   const gameId = routing.useGameId()
   const {
     gameState: { tiles, roads, towns },

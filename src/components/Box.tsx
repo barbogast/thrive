@@ -1,6 +1,10 @@
 import React from 'react'
 
-function Box({ color }: { color: string }): JSX.Element {
+type Props = {
+  color: string
+}
+
+const Box: React.FC<Props> = function Box({ color }) {
   return (
     <span
       style={{

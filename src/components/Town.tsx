@@ -12,7 +12,7 @@ type Props = {
   owner?: game.PlayerId | void
 }
 
-function Town({ position, owner }: Props): JSX.Element {
+const Town: React.FC<Props> = function Town({ position, owner }) {
   const gameId = routing.useGameId()
   const buildTown = useStore((state) => state.buildTown)
 

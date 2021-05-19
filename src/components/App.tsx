@@ -5,7 +5,7 @@ import useConnection from '../hooks/useConnection'
 import Playing from '../pages/Playing'
 import MainMenu from '../pages/MainMenu'
 
-function App(): JSX.Element {
+const App: React.FC = function App() {
   const connect = () => {
     const urlParams = new URLSearchParams(window.location.search)
     const playerId = urlParams.get('connect')

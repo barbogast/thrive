@@ -7,7 +7,7 @@ import * as game from '../game'
 import * as routing from '../routing'
 import Friend from './Friend'
 
-function Players() {
+const Players: React.FC = function Players() {
   const gameId = routing.useGameId()
   const { players, friends, friendState } = useStore((state) => ({
     players: state.games[gameId].players,

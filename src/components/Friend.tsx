@@ -8,7 +8,7 @@ type Props = {
   friendState: FriendState | void
 }
 
-function Friend({ friend, friendState }: Props) {
+const Friend: React.FC<Props> = function Friend({ friend, friendState }) {
   if (!friend || !friendState) {
     return <> </>
   }

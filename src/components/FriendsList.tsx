@@ -3,7 +3,7 @@ import React from 'react'
 import { useStore } from '../state'
 import Friend from './Friend'
 
-function MainMenu() {
+const FriendsList: React.FC = function FriendsList() {
   const store = useStore((state) => ({
     friends: state.friends,
     friendState: state.uiState.friendState,
@@ -33,4 +33,4 @@ function MainMenu() {
   )
 }
 
-export default MainMenu
+export default FriendsList

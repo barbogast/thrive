@@ -5,7 +5,7 @@ import Board from '../components/Board'
 import Controls from '../components/Controls'
 import Players from '../components/Players'
 
-function Playing() {
+const Playing: React.FC = function Playing() {
   const { state } = useStore((state) => ({
     state: state,
   }))

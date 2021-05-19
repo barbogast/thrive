@@ -21,7 +21,7 @@ export function getColorForTileType(tileType: TileType): string {
   }[tileType]
 }
 
-function HexTile({ tile }: Props): JSX.Element {
+const HexTile: React.FC<Props> = function HexTile({ tile }) {
   const pxPosition = axial.getTilePosition(tile.position)
   // const coord = `r: ${tile.position.q}\nc: ${tile.position.r}`
 

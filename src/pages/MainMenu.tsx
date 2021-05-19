@@ -8,7 +8,7 @@ import usePlayerId from '../hooks/usePlayerId'
 import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
 
-function MainMenu() {
+const MainMenu: React.FC = function MainMenu() {
   const [location, setLocation] = useLocation()
   const playerId = usePlayerId()
   const store = useStore((state) => ({

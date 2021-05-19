@@ -3,7 +3,7 @@ import { useController } from '../hooks/useConnection'
 
 import { useStore } from '../state'
 
-function PlayerName() {
+const PlayerName: React.FC = function PlayerName() {
   const { playerName, setPlayerName } = useStore((state) => ({
     setPlayerName: state.setPlayerName,
     playerName: state.player.name,
