@@ -18,23 +18,23 @@ function onWheel(e: KonvaEventObject<WheelEvent>) {
   const stage = e.currentTarget as StateType
 
   e.evt.preventDefault()
-  var oldScale = stage.scaleX()
+  const oldScale = stage.scaleX()
 
-  var pointer = stage.getPointerPosition()
+  const pointer = stage.getPointerPosition()
 
   if (!pointer) {
     return
   }
-  var mousePointTo = {
+  const mousePointTo = {
     x: (pointer.x - stage.x()) / oldScale,
     y: (pointer.y - stage.y()) / oldScale,
   }
 
-  var newScale = e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy
+  const newScale = e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy
 
   stage.scale({ x: newScale, y: newScale })
 
-  var newPos = {
+  const newPos = {
     x: pointer.x - mousePointTo.x * newScale,
     y: pointer.y - mousePointTo.y * newScale,
   }

@@ -9,7 +9,7 @@ import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
 
 const MainMenu: React.FC = function MainMenu() {
-  const [location, setLocation] = useLocation()
+  const [, setLocation] = useLocation()
   const playerId = usePlayerId()
   const store = useStore((state) => ({
     initialise: state.initialise,

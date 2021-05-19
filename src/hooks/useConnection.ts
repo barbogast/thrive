@@ -9,10 +9,13 @@ const DEBUG_LEVEL: 0 | 1 | 2 | 3 = 0
 const log =
   // @ts-ignore: It's okay, relax
   DEBUG_LEVEL === 1
-    ? () => {}
+    ? () => {} // eslint-disable-line @typescript-eslint/no-empty-function
     : (...args: unknown[]) => console.log('NET: ', ...args)
 
-export function useController() {
+export function useController(): {
+  sendState: (gameId: string, newState: GameState) => void
+  updateMyName: (newName: string) => void
+} {
   const store = useStore((state) => ({
     friends: state.friends,
     friendState: state.uiState.friendState,
@@ -55,7 +58,10 @@ export function useController() {
   return { sendState, updateMyName }
 }
 
-function useConnection() {
+function useConnection(): {
+  peerId: string | void
+  connectToPeer: (connectToId: string) => void
+} {
   const [peerId, setPeerId] = useState<string | void>()
 
   const myPlayerId = usePlayerId()
