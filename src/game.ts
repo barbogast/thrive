@@ -180,6 +180,7 @@ export function buildTown(state: GameState, position: position.Position): void {
 }
 
 export function buildRoad(state: GameState, position: position.Position): void {
+  // eslint-disable-next-line no-console
   console.log(
     board.roadPositionConnectsToExistingRoad(
       state.roads,

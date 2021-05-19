@@ -23,6 +23,7 @@ module.exports = {
   },
   plugins: ['react', '@typescript-eslint'],
   rules: {
+    'no-console': ['error', { allow: ['warn', 'error'] }],
     'prefer-const': ['error', { destructuring: 'all' }],
     '@typescript-eslint/explicit-module-boundary-types': [
       'error',

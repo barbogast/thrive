@@ -16,7 +16,7 @@ const Playing: React.FC = function Playing() {
       <Players />
       <Controls />
       <Board />
-      &nbsp;&nbsp;
+      {/* eslint-disable-next-line no-console */}
       <button onClick={() => console.log(state)}>Log state</button>
     </>
   )

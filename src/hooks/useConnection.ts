@@ -10,8 +10,8 @@ const DEBUG_LEVEL: 0 | 1 | 2 | 3 = 0
 const log =
   // @ts-ignore: It's okay, relax
   DEBUG_LEVEL === 1
-    ? () => {} // eslint-disable-line @typescript-eslint/no-empty-function
-    : (...args: unknown[]) => console.log('NET: ', ...args)
+    ? () => {} // eslint-disable-line @typescript-eslint/no-empty-function,no-console
+    : (...args: unknown[]) => console.log('NET: ', ...args) // eslint-disable-line no-console
 
 type RemoteCallPayload =
   | {
@@ -181,7 +181,7 @@ function useConnection(): {
     })
 
     conn.on('error', (err) => {
-      console.log('error', err, connectedPlayerId)
+      console.error('error', err, connectedPlayerId)
       store.removeFriendConnection(connectedPlayerId)
     })
   }

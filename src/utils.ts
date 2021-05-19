@@ -12,7 +12,7 @@ export function assert(callback: () => boolean): void {
   try {
     isCorrect = callback()
   } catch (e) {
-    console.log(e)
+    console.error(e)
     isCorrect = false
   }
   if (!isCorrect) {
