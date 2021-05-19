@@ -31,6 +31,7 @@
   "scripts": {
     "dev": "snowpack dev",
     "eslint": "eslint **/*.{ts,tsx}",
+    "tsc": "tsc",
     "build": "snowpack build"
   },
   "prettier": {
