@@ -7,6 +7,7 @@ import { useStore } from '../state'
 import usePlayerId from '../hooks/usePlayerId'
 import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
+import { useInviteToGame } from '../hooks/useConnection'
 
 const MainMenu: React.FC = function MainMenu() {
   const [, setLocation] = useLocation()
@@ -19,6 +20,7 @@ const MainMenu: React.FC = function MainMenu() {
     removeSelectedPlayers: state.removeSelectedPlayers,
     friendState: state.uiState.friendState,
   }))
+  const inviteToGame = useInviteToGame()
 
   const createGame = () => {
     const friendsToInvite = Object.values(store.friends)
@@ -26,7 +28,9 @@ const MainMenu: React.FC = function MainMenu() {
       .map((friend) => friend.id)
 
     const gameId = nanoid()
-    store.initialise(gameId, friendsToInvite.concat(playerId))
+    const get = store.initialise(gameId, friendsToInvite.concat(playerId))
+    inviteToGame(get, friendsToInvite, gameId)
+
     setLocation(`/play/${gameId}`)
   }
 

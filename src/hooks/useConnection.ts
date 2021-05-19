@@ -1,7 +1,8 @@
 import Peer, { DataConnection } from 'peerjs'
 import { useEffect, useRef } from 'react'
+import { GetState } from 'zustand'
 import { GameState } from '../game'
-import { useStore } from '../state'
+import { State, Setter, useStore } from '../state'
 import usePlayerId from './usePlayerId'
 
 const DEBUG_LEVEL: 0 | 1 | 2 | 3 = 0
@@ -55,6 +56,20 @@ export function useUpdateMyName(): (newName: string) => void {
   const send = useSend()
   return (newName: string) => {
     send(Object.keys(store.friends), 'updateMyName', { newName })
+  }
+}
+
+export function useInviteToGame(): (
+  get: GetState<State & Setter>,
+  friendsToInvite: string[],
+  gameId: string,
+) => void {
+  const send = useSend()
+  return (get, friendsToInvite: string[], gameId: string) => {
+    send(friendsToInvite, 'updateGameState', {
+      gameId,
+      newState: get().games[gameId],
+    })
   }
 }
 

@@ -1,4 +1,4 @@
-import create, { StateCreator, UseStore } from 'zustand'
+import create, { GetState, StateCreator, UseStore } from 'zustand'
 import { persist } from 'zustand/middleware'
 import createContext from 'zustand/context'
 import produce, { Draft } from 'immer'
@@ -39,7 +39,7 @@ export type FriendState = {
   connection?: DataConnection
 }
 
-type State = {
+export type State = {
   player: {
     id: string | void
     name: string
@@ -56,7 +56,7 @@ type State = {
   }
 }
 
-type Setter = {
+export type Setter = {
   setPlayerId: (playerId: string) => void
   setPlayerName: (playerName: string) => void
   setFriendName: (friendId: string, name: string) => void
@@ -69,7 +69,7 @@ type Setter = {
   removeFriendConnection: (friendId: string) => void
   addLocalPlayer: (playerId: string) => void
   removeSelectedPlayers: () => void
-  initialise: (gameId: string, friendIds: string[]) => void
+  initialise: (gameId: string, friendIds: string[]) => GetState<State & Setter>
   buildTown: (gameId: string, position: position.Position) => void
   buildRoad: (gameId: string, position: position.Position) => void
   nextTurn: (
@@ -182,10 +182,12 @@ export function initialiseStore(
               }
             }),
 
-          initialise: (gameId: string, friendIds: string[]) =>
+          initialise: (gameId: string, friendIds: string[]) => {
             set((draft) => {
               draft.games[gameId] = game.initialiseGame(friendIds)
-            }),
+            })
+            return get
+          },
 
           buildTown: (gameId: string, position: position.Position) =>
             set((draft) => {
