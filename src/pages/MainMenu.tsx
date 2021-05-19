@@ -30,7 +30,9 @@ const MainMenu: React.FC = function MainMenu() {
     setLocation(`/play/${gameId}`)
   }
 
-  const inviteLink = `${window.location.host + '?connect=' + playerId}`
+  const inviteLink = `${window.location.protocol}//${
+    window.location.host + '?connect=' + playerId
+  }`
   return (
     <>
       <PlayerName />
