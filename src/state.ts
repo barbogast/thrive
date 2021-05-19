@@ -266,6 +266,5 @@ export function initialiseStore(
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const { Provider, useStore, context } = createContext<State & Setter>()

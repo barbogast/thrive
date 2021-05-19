@@ -30,7 +30,7 @@
   },
   "scripts": {
     "dev": "snowpack dev",
-    "eslint": "eslint **/*.{ts,tsx}",
+    "eslint": "eslint --ext=.tsx,.ts .",
     "tsc": "tsc",
     "build": "snowpack build"
   },

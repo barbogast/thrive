@@ -23,9 +23,15 @@ module.exports = {
   },
   plugins: ['react', '@typescript-eslint'],
   rules: {
+    'prefer-const': ['error', { destructuring: 'all' }],
     '@typescript-eslint/explicit-module-boundary-types': [
       'error',
-      { allowDirectConstAssertionInArrowFunctions: true },
+      {
+        allowDirectConstAssertionInArrowFunctions: true,
+        allowTypedFunctionExpressions: true,
+      },
     ],
+    '@typescript-eslint/ban-ts-comment': 'off',
+    'react/prop-types': 'off',
   },
 }
