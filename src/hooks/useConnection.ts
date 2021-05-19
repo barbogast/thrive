@@ -114,8 +114,13 @@ function useConnection(): {
 
     conn.on('data', (data: RemoteCallPayload) => {
       log(`received:`, data)
-      if (typeof data === 'object') {
-        if (data.method === 'introduce') {
+      if (typeof data !== 'object') {
+        console.error('Invalid payload', data)
+      }
+      data
+
+      switch (data.method) {
+        case 'introduce': {
           connectedPlayerId = data.args.playerId
           store.addFriendConnection(
             connectedPlayerId,
@@ -123,10 +128,22 @@ function useConnection(): {
             conn,
           )
           log('add connection, ', connectedPlayerId)
-        } else if (data.method === 'updateMyName') {
+          break
+        }
+
+        case 'updateMyName': {
           store.setFriendName(connectedPlayerId, data.args.newName)
-        } else if (data.method === 'updateGameState') {
+          break
+        }
+
+        case 'updateGameState': {
           store.updateGameState(data.args.gameId, data.args.newState)
+          break
+        }
+
+        default: {
+          const exhaustiveCheck: never = data
+          throw new Error(`Unhandled case: ${exhaustiveCheck}`)
         }
       }
     })
