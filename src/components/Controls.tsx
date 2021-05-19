@@ -1,5 +1,5 @@
 import React from 'react'
-import { useController } from '../hooks/useConnection'
+import { useSendState } from '../hooks/useConnection'
 
 import * as routing from '../routing'
 import { useStore, ActionType } from '../state'
@@ -14,7 +14,7 @@ const Controls: React.FC = function Controls() {
     currentAction: state.uiState.currentAction,
     currentDiceRoll: state.games[gameId].currentDiceRoll,
   }))
-  const controller = useController()
+  const sendState = useSendState()
 
   return (
     <div>
@@ -47,7 +47,7 @@ const Controls: React.FC = function Controls() {
         Build town
       </button>
       &nbsp;&nbsp;
-      <button onClick={() => store.nextTurn(gameId, controller.sendState)}>
+      <button onClick={() => store.nextTurn(gameId, sendState)}>
         Finish turn
       </button>
     </div>

@@ -12,20 +12,17 @@ const log =
     ? () => {} // eslint-disable-line @typescript-eslint/no-empty-function
     : (...args: unknown[]) => console.log('NET: ', ...args)
 
-export function useController(): {
-  sendState: (gameId: string, newState: GameState) => void
-  updateMyName: (newName: string) => void
-} {
+const useSend = () => {
   const store = useStore((state) => ({
     friends: state.friends,
     friendState: state.uiState.friendState,
-    games: state.games,
   }))
   const myPlayerId = usePlayerId()
 
-  const send = (
+  return (
     playerIds: string[],
-    payload: { method: string; args: { [key: string]: unknown } },
+    method: string,
+    args: { [key: string]: unknown },
   ) => {
     for (const playerId of playerIds) {
       if (playerId === myPlayerId || !store.friends[playerId].isRemote) {
@@ -37,25 +34,28 @@ export function useController(): {
         console.error(`Friend ${playerId} has no connection`)
         continue
       }
-      conn.send(payload)
+      conn.send({ method, args })
     }
   }
+}
 
-  const sendState = (gameId: string, newState: GameState) => {
-    send(Object.keys(store.games[gameId].players), {
-      method: 'updateGameState',
-      args: { gameId, newState },
+export function useSendState(): (gameId: string, newState: GameState) => void {
+  const store = useStore((state) => ({ games: state.games }))
+  const send = useSend()
+  return (gameId: string, newState: GameState) => {
+    send(Object.keys(store.games[gameId].players), 'updateGameState', {
+      gameId,
+      newState,
     })
   }
+}
 
-  const updateMyName = (newName: string) => {
-    send(Object.keys(store.friends), {
-      method: 'updateMyName',
-      args: { newName },
-    })
+export function useUpdateMyName(): (newName: string) => void {
+  const store = useStore((state) => ({ friends: state.friends }))
+  const send = useSend()
+  return (newName: string) => {
+    send(Object.keys(store.friends), 'updateMyName', { newName })
   }
-
-  return { sendState, updateMyName }
 }
 
 function useConnection(): {
