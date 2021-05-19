@@ -7,6 +7,7 @@ import { useStore } from '../state'
 import usePlayerId from '../hooks/usePlayerId'
 import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
+import Friend from '../components/Friend'
 import { useInviteToGame } from '../hooks/useConnection'
 
 const MainMenu: React.FC = function MainMenu() {
@@ -43,11 +44,18 @@ const MainMenu: React.FC = function MainMenu() {
       <div>
         Existing games
         <ul>
-          {Object.keys(store.games).map((gameId) => (
+          {Object.entries(store.games).map(([gameId, game]) => (
             <li key={gameId}>
               <Link href={`/play/${gameId}`}>
                 <a className="link">Play {gameId}</a>
               </Link>
+              {Object.keys(game.players).map((playerId) => (
+                <Friend
+                  key={playerId}
+                  friend={store.friends[playerId]}
+                  friendState={store.friendState[playerId]}
+                />
+              ))}
             </li>
           ))}
         </ul>
