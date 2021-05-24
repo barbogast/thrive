@@ -255,28 +255,41 @@ function finishAction(state: GameState, type: GameActionType) {
 }
 
 export function buildTown(state: GameState, position: position.Position): void {
-  payResources(
-    state,
-    state.sequence.scheduledActions[0].playerId,
-    getCost('town'),
-  )
+  const currentPlayerId = state.sequence.scheduledActions[0].playerId
+  if (!board.townPositionIs2RoadsApart(state.towns, position)) {
+    return
+  }
+
+  if (
+    state.sequence.phaseType === 'normal' &&
+    !board.townPositionConnectsToExistingRoad(
+      state.roads,
+      position,
+      currentPlayerId,
+    )
+  ) {
+    return
+  }
+
+  payResources(state, currentPlayerId, getCost('town'))
   state.towns.push({
     id: getId('town', position),
     position,
-    owner: state.sequence.scheduledActions[0].playerId,
+    owner: currentPlayerId,
   })
   finishAction(state, GameActionType.buildTown)
 }
 
 export function buildRoad(state: GameState, position: position.Position): void {
-  // eslint-disable-next-line no-console
-  console.log(
-    board.roadPositionConnectsToExistingRoad(
+  if (
+    !board.roadPositionConnectsToExistingRoad(
       state.roads,
       position,
       state.sequence.scheduledActions[0].playerId,
-    ),
-  )
+    )
+  ) {
+    return
+  }
 
   payResources(
     state,

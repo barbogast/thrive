@@ -27,3 +27,17 @@ export function comparePositions(posA: Position, posB: Position): boolean {
   }
   return true
 }
+
+// Returns true if all coordinates in partialPosition can be found in fullPosition,
+// even though partialPosition might not have all coordinates in fullPosition
+export function comparePartialPosition(
+  fullPosition: Position,
+  partialPosition: Position,
+): boolean {
+  for (const coord of partialPosition) {
+    if (!fullPosition.find((c) => axial.compareCoordinates(c, coord))) {
+      return false
+    }
+  }
+  return true
+}

@@ -143,3 +143,47 @@ export function roadPositionConnectsToExistingRoad(
 
   return false
 }
+
+export function townPositionConnectsToExistingRoad(
+  roads: game.Road[],
+  townPosition: position.Position,
+  playerId: game.PlayerId,
+): boolean {
+  const [tileA, tileB, tileC] = townPosition
+  const possibleRoads = [
+    position.createPosition([tileA, tileB]),
+    position.createPosition([tileA, tileC]),
+    position.createPosition([tileB, tileC]),
+  ]
+  for (const roadPosition of possibleRoads) {
+    const maybeRoad = findRoad(roads, roadPosition)
+    if (maybeRoad && maybeRoad.owner === playerId) {
+      return true
+    }
+  }
+
+  return false
+}
+
+export function townPositionIs2RoadsApart(
+  towns: game.Town[],
+  townPosition: position.Position,
+): boolean {
+  const [tileA, tileB, tileC] = townPosition
+
+  const collidingPositions = [
+    position.createPosition([tileA, tileB]),
+    position.createPosition([tileA, tileC]),
+    position.createPosition([tileB, tileC]),
+  ]
+
+  for (const town of towns) {
+    for (const collidingPos of collidingPositions) {
+      if (position.comparePartialPosition(town.position, collidingPos)) {
+        return false
+      }
+    }
+  }
+
+  return true
+}
