@@ -17,8 +17,10 @@ const Players: React.FC = function Players() {
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       {Object.values(players).map((player) => {
         return (
-          <div key={player.id}>
-            <Friend friendId={player.id} />
+          <div style={{ border: `1px solid ${player.color}` }} key={player.id}>
+            <div style={{ backgroundColor: player.color }}>
+              <Friend friendId={player.id} />
+            </div>
             <ul>
               <li>
                 <Box color={getColorForTileType(game.Resource.wood)} />
