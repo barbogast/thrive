@@ -124,7 +124,7 @@ function initialisePlayers(playerIds: string[]) {
     players[id] = {
       id,
       color: colors[i],
-      resources: { brick: 10, grain: 10, ore: 10, sheep: 10, wood: 10 },
+      resources: { brick: 0, grain: 0, ore: 0, sheep: 0, wood: 0 },
     }
   })
   return players
@@ -246,6 +246,14 @@ function finishAction(state: GameState, type: GameActionType) {
       state.sequence.phaseType === 'setStartingTowns' &&
       state.sequence.scheduledActions.length === 0
     ) {
+      for (const town of state.towns) {
+        for (const coordinate of town.position) {
+          const tile = board.findTile(state.tiles, coordinate)
+          if (tile && tile.resource !== 'desert') {
+            state.players[town.owner].resources[tile.resource] += 1
+          }
+        }
+      }
       state.sequence.phaseType = 'normal'
       state.sequence.scheduledActions = [
         { type: 'rollDice', playerId: currentAction.playerId },

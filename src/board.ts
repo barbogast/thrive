@@ -92,6 +92,15 @@ export function getTownsOnTile(
   return townsOnTile
 }
 
+export function findTile(
+  tiles: tileMap.TileMap,
+  coord: axial.Coordinate,
+): game.Tile | void {
+  return Object.values(tiles).find((t) =>
+    axial.compareCoordinates(t.position, coord),
+  )
+}
+
 export function findRoad(
   roads: game.Road[],
   roadPosition: position.Position,
