@@ -177,6 +177,9 @@ function useConnection(): {
     })
 
     conn.on('close', () => {
+      // Looks like peerjs doesn't correctly handle closing connections, so this doesn't work...
+      // https://stackoverflow.com/questions/64651890/peerjs-close-video-call-not-firing-close-event/67404616#67404616
+      // https://github.com/peers/peerjs/issues/822
       store.removeFriendConnection(connectedPlayerId)
     })
 

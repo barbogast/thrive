@@ -6,6 +6,7 @@ type Props = {
   children: ReactChildren | ReactChild
 }
 
+// Adapted from https://github.com/pmndrs/zustand/issues/346#issuecomment-831305132
 const WithInitialisedState: React.FC<Props> = function WithInitialisedState({
   children,
 }) {
