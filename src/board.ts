@@ -103,6 +103,27 @@ export function findRoad(
   }
 }
 
+export function townPositionConnectsToExistingRoad(
+  roads: game.Road[],
+  townPosition: position.Position,
+  playerId: game.PlayerId,
+): boolean {
+  const [tileA, tileB, tileC] = townPosition
+  const possibleRoads = [
+    position.createPosition([tileA, tileB]),
+    position.createPosition([tileA, tileC]),
+    position.createPosition([tileB, tileC]),
+  ]
+  for (const roadPosition of possibleRoads) {
+    const maybeRoad = findRoad(roads, roadPosition)
+    if (maybeRoad && maybeRoad.owner === playerId) {
+      return true
+    }
+  }
+
+  return false
+}
+
 export function roadPositionConnectsToExistingRoad(
   roads: game.Road[],
   roadPosition: position.Position,
@@ -132,27 +153,6 @@ export function roadPositionConnectsToExistingRoad(
     townPositionConnectsToExistingRoad(roads, townPos1, playerId) ||
     townPositionConnectsToExistingRoad(roads, townPos2, playerId)
   )
-}
-
-export function townPositionConnectsToExistingRoad(
-  roads: game.Road[],
-  townPosition: position.Position,
-  playerId: game.PlayerId,
-): boolean {
-  const [tileA, tileB, tileC] = townPosition
-  const possibleRoads = [
-    position.createPosition([tileA, tileB]),
-    position.createPosition([tileA, tileC]),
-    position.createPosition([tileB, tileC]),
-  ]
-  for (const roadPosition of possibleRoads) {
-    const maybeRoad = findRoad(roads, roadPosition)
-    if (maybeRoad && maybeRoad.owner === playerId) {
-      return true
-    }
-  }
-
-  return false
 }
 
 export function townPositionIs2RoadsApart(
