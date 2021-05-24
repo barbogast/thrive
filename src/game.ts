@@ -271,7 +271,9 @@ export function buildTown(state: GameState, position: position.Position): void {
     return
   }
 
-  payResources(state, currentPlayerId, getCost('town'))
+  if (state.sequence.phaseType === 'normal') {
+    payResources(state, currentPlayerId, getCost('town'))
+  }
   state.towns.push({
     id: getId('town', position),
     position,
@@ -292,11 +294,13 @@ export function buildRoad(state: GameState, position: position.Position): void {
     return
   }
 
-  payResources(
-    state,
-    state.sequence.scheduledActions[0].playerId,
-    getCost('road'),
-  )
+  if (state.sequence.phaseType === 'normal') {
+    payResources(
+      state,
+      state.sequence.scheduledActions[0].playerId,
+      getCost('road'),
+    )
+  }
   state.roads.push({
     id: getId('road', position),
     position,
