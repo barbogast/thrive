@@ -108,14 +108,9 @@ export function roadPositionConnectsToExistingRoad(
   roadPosition: position.Position,
   playerId: game.PlayerId,
 ): boolean {
-  /*
-  Building of the road is allowed if it connects to an existing road or town.
-  The player wants to build the road between tiles A and B. To find existing roads
-  which would connect we need to determine both tiles that neighbor tile A and B.
-  We then have to look for roads which are between either neighboring tile and tile A or B.
-  */
   const [tileA, tileB] = roadPosition
 
+  // Find all neighbors of both tiles the road touches
   const neighborsOfA = axial.allDirections.map((dir) =>
     axial.getNeighbor(tileA, dir),
   )
@@ -123,25 +118,20 @@ export function roadPositionConnectsToExistingRoad(
     axial.getNeighbor(tileB, dir),
   )
 
+  // Remember the neighbors which touch both tiles
   const neighborsOfBoth = neighborsOfA.filter((tA) =>
     neighborsOfB.find((tB) => axial.compareCoordinates(tA, tB)),
   )
-
   utils.assert(() => neighborsOfBoth.length === 2)
 
-  for (const neighboaringTile of neighborsOfBoth) {
-    for (const tile of [tileA, tileB]) {
-      const maybeRoad = findRoad(
-        roads,
-        position.createPosition([neighboaringTile, tile]),
-      )
-      if (maybeRoad && maybeRoad?.owner === playerId) {
-        return true
-      }
-    }
-  }
+  // Generate the townPositions on both ends of the road
+  const townPos1 = position.createPosition([tileA, tileB, neighborsOfBoth[0]])
+  const townPos2 = position.createPosition([tileA, tileB, neighborsOfBoth[1]])
 
-  return false
+  return (
+    townPositionConnectsToExistingRoad(roads, townPos1, playerId) ||
+    townPositionConnectsToExistingRoad(roads, townPos2, playerId)
+  )
 }
 
 export function townPositionConnectsToExistingRoad(
