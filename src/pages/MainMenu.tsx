@@ -20,17 +20,20 @@ const MainMenu: React.FC = function MainMenu() {
     addLocalPlayer: state.addLocalPlayer,
     removeSelectedPlayers: state.removeSelectedPlayers,
     friendState: state.uiState.friendState,
+    player: state.player,
   }))
   const inviteToGame = useInviteToGame()
 
   const createGame = () => {
     const friendsToInvite = Object.values(store.friends)
       .filter((friend) => store.friendState[friend.id]?.isSelected)
-      .map((friend) => friend.id)
+      .concat([
+        { id: store.player.id, name: store.player.name, isRemote: false },
+      ])
 
     const gameId = nanoid()
-    const get = store.initialise(gameId, friendsToInvite.concat(playerId))
-    inviteToGame(get, friendsToInvite, gameId)
+    const get = store.initialise(gameId, friendsToInvite)
+    inviteToGame(get, gameId)
 
     setLocation(`/play/${gameId}`)
   }

@@ -20,7 +20,7 @@ type RemoteCallPayload =
     }
   | {
       method: 'inviteToGame'
-      args: { gameId: string; localPlayers: Friend[]; newState: GameState }
+      args: { gameId: string; gameState: GameState }
     }
   | {
       method: 'updateGameState'
@@ -81,25 +81,18 @@ export function useUpdateMyName(): (newName: string) => void {
 
 export function useInviteToGame(): (
   get: GetState<State & Setter>,
-  friendsToInvite: string[],
   gameId: string,
 ) => void {
   const send = useSend()
-  return (get, friendsToInvite: string[], gameId: string) => {
+  const myPlayerId = usePlayerId()
+  return (get, gameId: string) => {
     const gameState = get().games[gameId]
-    const friends = get().friends
-    const localPlayers = Object.keys(gameState.players)
-      .filter((playerId) => playerId !== get().player.id)
-      .map((playerId) => friends[playerId])
-      .filter((player) => !player.isRemote)
-
+    const friendsToInvite = Object.keys(gameState.players).filter(
+      (id) => id !== myPlayerId,
+    )
     send(friendsToInvite, {
       method: 'inviteToGame',
-      args: {
-        gameId,
-        newState: get().games[gameId],
-        localPlayers,
-      },
+      args: { gameId, gameState },
     })
   }
 }
@@ -145,10 +138,7 @@ function useConnection(): {
         }
 
         case 'inviteToGame': {
-          for (const friend of data.args.localPlayers) {
-            store.addLocalPlayer(friend.id, friend.name)
-          }
-          store.updateGameState(data.args.gameId, data.args.newState)
+          store.updateGameState(data.args.gameId, data.args.gameState)
           break
         }
 

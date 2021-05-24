@@ -46,7 +46,7 @@ export type FriendState = {
 
 export type State = {
   player: {
-    id: string | void
+    id: string
     name: string
   }
   friends: {
@@ -74,7 +74,7 @@ export type Setter = {
   removeFriendConnection: (friendId: string) => void
   addLocalPlayer: (playerId: string, name: string) => void
   removeSelectedPlayers: () => void
-  initialise: (gameId: string, friendIds: string[]) => GetState<State & Setter>
+  initialise: (gameId: string, friends: Friend[]) => GetState<State & Setter>
   buildTown: (gameId: string, position: position.Position) => void
   buildRoad: (gameId: string, position: position.Position) => void
   nextTurn: (
@@ -112,7 +112,7 @@ export function initialiseStore(
       immer((set, get) => {
         return {
           player: {
-            id: undefined,
+            id: '',
             name: '',
           },
           friends: {},
@@ -188,9 +188,9 @@ export function initialiseStore(
               }
             }),
 
-          initialise: (gameId: string, friendIds: string[]) => {
+          initialise: (gameId: string, friends: Friend[]) => {
             set((draft) => {
-              draft.games[gameId] = game.initialiseGame(friendIds)
+              draft.games[gameId] = game.initialiseGame(friends)
             })
             return get
           },

@@ -4,7 +4,7 @@ import * as board from './board'
 import * as utils from './utils'
 import * as position from './position'
 import { gameConfig } from './constants'
-import { UiActionType } from './state'
+import { Friend, UiActionType } from './state'
 
 export type PlayerId = string
 
@@ -25,8 +25,7 @@ export const TileType = {
 } as const
 export type TileType = typeof TileType[keyof typeof TileType]
 
-type Player = {
-  id: string
+type Player = Friend & {
   color: string
   resources: Resources
 }
@@ -117,12 +116,12 @@ function getId(type: string, position: axial.Coordinate[]) {
   return `${type}_${position.map((pos) => `${pos.q}|${pos.r}`)}`
 }
 
-function initialisePlayers(playerIds: string[]) {
+function initialisePlayers(friends: Friend[]) {
   const colors = ['green', 'red', 'yellow', 'blue']
   const players: { [key in PlayerId]: Player } = {}
-  playerIds.forEach((id, i) => {
-    players[id] = {
-      id,
+  friends.forEach((friend, i) => {
+    players[friend.id] = {
+      ...friend,
       color: colors[i],
       resources: { brick: 0, grain: 0, ore: 0, sheep: 0, wood: 0 },
     }
@@ -148,20 +147,21 @@ function generateStartingPhaseSequence(playerIds: string[]) {
   return sequence
 }
 
-export function initialiseGame(playerIds: string[]): GameState {
+export function initialiseGame(friends: Friend[]): GameState {
   const tiles = getHexagonBoard('3')
   const tMap = tileMap.fromArray(tiles)
+  const playerOrder = friends.map((f) => f.id)
 
   return {
     tiles: tMap,
     roads: [],
     towns: [],
-    playerOrder: playerIds,
+    playerOrder,
     currentDiceRoll: [],
-    players: initialisePlayers(playerIds),
+    players: initialisePlayers(friends),
     sequence: {
       phaseType: 'setStartingTowns',
-      scheduledActions: generateStartingPhaseSequence(playerIds),
+      scheduledActions: generateStartingPhaseSequence(playerOrder),
     },
   }
 }
