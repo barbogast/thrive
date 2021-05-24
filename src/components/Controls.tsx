@@ -4,7 +4,6 @@ import { useSendState } from '../hooks/useConnection'
 import * as routing from '../routing'
 import * as game from '../game'
 import { useStore, UiActionType } from '../state'
-import Box from './Box'
 
 const Controls: React.FC = function Controls() {
   const gameId = routing.useGameId()
@@ -14,19 +13,12 @@ const Controls: React.FC = function Controls() {
     currentAction: state.games[gameId].sequence.scheduledActions[0],
     currentDiceRoll: state.games[gameId].currentDiceRoll,
     rollDice: state.rollDice,
-    currentPlayerColor:
-      state.games[gameId].players[
-        state.games[gameId].sequence.scheduledActions[0].playerId
-      ].color,
   }))
   const sendState = useSendState()
   const allowedActions = game.getAllowedUiActions(store.currentAction)
 
   return (
     <div>
-      Current player <Box color={store.currentPlayerColor} />:{' '}
-      {store.currentAction.type}
-      <br />
       {store.currentAction.type !== game.GameActionType.rollDice
         ? 'Current dice roll: ' + store.currentDiceRoll.join(' | ')
         : ''}
