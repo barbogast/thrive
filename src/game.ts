@@ -282,6 +282,7 @@ export function buildTown(state: GameState, position: position.Position): void {
 
 export function buildRoad(state: GameState, position: position.Position): void {
   if (
+    state.sequence.phaseType === 'normal' &&
     !board.roadPositionConnectsToExistingRoad(
       state.roads,
       position,
