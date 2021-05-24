@@ -1,33 +1,28 @@
 import React from 'react'
 
-import { useStore } from '../state'
+import { useStore, Friend } from '../state'
 import Box from '../components/Box'
 
 type Props = {
-  friendId: string
+  friend: Friend
 }
 
-const Friend: React.FC<Props> = function Friend({ friendId }) {
+const Friend: React.FC<Props> = function Friend({ friend }) {
   const store = useStore((state) => ({
     player: state.player,
-    friends: state.friends,
     friendState: state.uiState.friendState,
   }))
 
-  if (friendId === store.player.id) {
+  if (friend.id === store.player.id) {
     return <>{store.player.name}</>
   }
 
-  const friend = store.friends[friendId]
-  if (!friend) {
-    return <> </>
-  }
   return (
     <>
       {friend.name}
       {friend.isRemote && (
         <Box
-          color={store.friendState[friendId]?.connection ? 'green' : 'red'}
+          color={store.friendState[friend.id]?.connection ? 'green' : 'red'}
         />
       )}
     </>

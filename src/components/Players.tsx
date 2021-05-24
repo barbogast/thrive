@@ -19,7 +19,7 @@ const Players: React.FC = function Players() {
         return (
           <div style={{ border: `1px solid ${player.color}` }} key={player.id}>
             <div style={{ backgroundColor: player.color }}>
-              <Friend friendId={player.id} />
+              <Friend friend={player} />
             </div>
             <ul>
               <li>

@@ -52,8 +52,8 @@ const MainMenu: React.FC = function MainMenu() {
               <Link href={`/play/${gameId}`}>
                 <a className="link">Play {gameId}</a>
               </Link>
-              {Object.keys(game.players).map((playerId) => (
-                <Friend key={playerId} friendId={playerId} />
+              {Object.values(game.players).map((player) => (
+                <Friend key={player.id} friend={player} />
               ))}
             </li>
           ))}
