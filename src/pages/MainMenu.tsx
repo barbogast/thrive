@@ -4,32 +4,28 @@ import { nanoid } from 'nanoid'
 import { useLocation } from 'wouter'
 
 import { useStore } from '../state'
-import usePlayerId from '../hooks/usePlayerId'
 import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
-import Friend from '../components/Friend'
 import { useInviteToGame } from '../hooks/useConnection'
+import ConnectionStatus from '../components/ConnectionStatus'
 
 const MainMenu: React.FC = function MainMenu() {
   const [, setLocation] = useLocation()
-  const playerId = usePlayerId()
   const store = useStore((state) => ({
+    myId: state.myId,
     initialise: state.initialise,
     games: state.games,
     friends: state.friends,
     addLocalPlayer: state.addLocalPlayer,
     removeSelectedPlayers: state.removeSelectedPlayers,
     friendState: state.uiState.friendState,
-    player: state.player,
   }))
   const inviteToGame = useInviteToGame()
 
   const createGame = () => {
-    const friendsToInvite = Object.values(store.friends)
-      .filter((friend) => store.friendState[friend.id]?.isSelected)
-      .concat([
-        { id: store.player.id, name: store.player.name, isRemote: false },
-      ])
+    const friendsToInvite = Object.values(store.friends).filter(
+      (friend) => store.friendState[friend.id]?.isSelected,
+    )
 
     const gameId = nanoid()
     const get = store.initialise(gameId, friendsToInvite)
@@ -39,7 +35,7 @@ const MainMenu: React.FC = function MainMenu() {
   }
 
   const inviteLink = `${window.location.protocol}//${
-    window.location.host + '?connect=' + playerId
+    window.location.host + '?connect=' + store.myId
   }`
   return (
     <>
@@ -53,7 +49,14 @@ const MainMenu: React.FC = function MainMenu() {
                 <a className="link">Play {gameId}</a>
               </Link>
               {Object.values(game.players).map((player) => (
-                <Friend key={player.id} friend={player} />
+                <span key={player.id}>
+                  {player.name}
+                  {player.peerId !== store.myId ? (
+                    <ConnectionStatus id={player.peerId} />
+                  ) : (
+                    <></>
+                  )}
+                </span>
               ))}
             </li>
           ))}

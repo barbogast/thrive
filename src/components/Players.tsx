@@ -5,12 +5,13 @@ import { useStore } from '../state'
 import Box from './Box'
 import * as game from '../game'
 import * as routing from '../routing'
-import Friend from './Friend'
+import ConnectionStatus from './ConnectionStatus'
 
 const Players: React.FC = function Players() {
   const gameId = routing.useGameId()
-  const { players } = useStore((state) => ({
+  const { players, myId } = useStore((state) => ({
     players: state.games[gameId].players,
+    myId: state.myId,
   }))
 
   return (
@@ -19,7 +20,12 @@ const Players: React.FC = function Players() {
         return (
           <div style={{ border: `1px solid ${player.color}` }} key={player.id}>
             <div style={{ backgroundColor: player.color }}>
-              <Friend friend={player} />
+              {player.name}
+              {player.peerId !== myId ? (
+                <ConnectionStatus id={player.peerId} />
+              ) : (
+                <></>
+              )}
             </div>
             <ul>
               <li>

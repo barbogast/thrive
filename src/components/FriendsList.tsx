@@ -1,10 +1,11 @@
 import React from 'react'
 
 import { useStore } from '../state'
-import Friend from './Friend'
+import ConnectionStatus from './ConnectionStatus'
 
 const FriendsList: React.FC = function FriendsList() {
   const store = useStore((state) => ({
+    myId: state.myId,
     friends: state.friends,
     friendState: state.uiState.friendState,
     setFriendName: state.setFriendName,
@@ -20,8 +21,9 @@ const FriendsList: React.FC = function FriendsList() {
             checked={Boolean(store.friendState[friend.id]?.isSelected)}
             onChange={() => store.toggleFriendSelection(friend.id)}
           />
-          <Friend friend={friend} />
-          {!friend.isRemote && (
+          {friend.name}
+          {friend.peerId !== store.myId && <ConnectionStatus id={friend.id} />}
+          {friend.peerId === store.myId && (
             <input
               value={friend.name}
               onChange={(e) => store.setFriendName(friend.id, e.target.value)}

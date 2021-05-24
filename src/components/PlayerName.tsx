@@ -4,15 +4,15 @@ import { useUpdateMyName } from '../hooks/useConnection'
 import { useStore } from '../state'
 
 const PlayerName: React.FC = function PlayerName() {
-  const { playerName, setPlayerName } = useStore((state) => ({
-    setPlayerName: state.setPlayerName,
-    playerName: state.player.name,
+  const store = useStore((state) => ({
+    setMyName: state.setMyName,
+    myName: state.friends[state.myId].name,
   }))
   const updateMyName = useUpdateMyName()
-  const [value, setValue] = useState<string>(playerName)
+  const [value, setValue] = useState<string>(store.myName)
 
   const save = (name: string) => {
-    setPlayerName(value)
+    store.setMyName(value)
     updateMyName(name)
   }
 

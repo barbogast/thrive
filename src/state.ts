@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware'
 import createContext from 'zustand/context'
 import produce, { Draft } from 'immer'
 import { DataConnection } from 'peerjs'
+import { customAlphabet } from 'nanoid'
 
 import * as game from './game'
 import * as position from './position'
@@ -35,7 +36,7 @@ export type UiAction =
 
 export type Friend = {
   id: string
-  isRemote: boolean
+  peerId: string
   name: string
 }
 
@@ -45,10 +46,7 @@ export type FriendState = {
 }
 
 export type State = {
-  player: {
-    id: string
-    name: string
-  }
+  myId: string
   friends: {
     [id: string]: Friend
   }
@@ -62,8 +60,7 @@ export type State = {
 }
 
 export type Setter = {
-  setPlayerId: (playerId: string) => void
-  setPlayerName: (playerName: string) => void
+  setMyName: (name: string) => void
   setFriendName: (friendId: string, name: string) => void
   toggleFriendSelection: (friendId: string) => void
   addFriendConnection: (
@@ -110,12 +107,17 @@ export function initialiseStore(
   return create<State & Setter>(
     persist(
       immer((set, get) => {
+        // Omit special characters so the id can be used with peerjs (which dislikes "-")
+        const aphabet =
+          'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+        const getId = customAlphabet(aphabet, 21)
+
+        const myId = getId()
         return {
-          player: {
-            id: '',
-            name: '',
+          myId,
+          friends: {
+            [myId]: { id: myId, peerId: myId, name: '' },
           },
-          friends: {},
           games: {},
           uiState: {
             currentAction: { type: UiActionType.none },
@@ -123,14 +125,9 @@ export function initialiseStore(
             friendState: {},
           },
 
-          setPlayerId: (playerId: string) =>
+          setMyName: (name: string) => {
             set((draft) => {
-              draft.player.id = playerId
-            }),
-
-          setPlayerName: (playerName: string) => {
-            set((draft) => {
-              draft.player.name = playerName
+              draft.friends[draft.myId].name = name
             })
           },
 
@@ -153,7 +150,7 @@ export function initialiseStore(
             connection: DataConnection,
           ) =>
             set((draft) => {
-              draft.friends[friendId] = { id: friendId, isRemote: true, name }
+              draft.friends[friendId] = { id: friendId, peerId: friendId, name }
               updateFriendState(draft, friendId, (friendState) => {
                 friendState.connection = connection
               })
@@ -170,7 +167,7 @@ export function initialiseStore(
             set((draft) => {
               draft.friends[playerId] = {
                 id: playerId,
-                isRemote: false,
+                peerId: draft.myId,
                 name,
               }
             }),
@@ -240,7 +237,7 @@ export function initialiseStore(
       }),
       {
         name: 'state',
-        whitelist: ['games', 'player', 'friends'],
+        whitelist: ['games', 'myId', 'friends'],
         onRehydrateStorage: () => onRehydrated,
       },
     ),

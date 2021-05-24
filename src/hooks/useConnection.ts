@@ -3,7 +3,6 @@ import { useEffect, useRef } from 'react'
 import { GetState } from 'zustand'
 import { GameState } from '../game'
 import { State, Setter, useStore, Friend } from '../state'
-import usePlayerId from './usePlayerId'
 
 const DEBUG_LEVEL: 0 | 1 | 2 | 3 = 0
 
@@ -33,20 +32,19 @@ type RemoteCallPayload =
 
 const useSend = () => {
   const store = useStore((state) => ({
-    friends: state.friends,
+    myId: state.myId,
     friendState: state.uiState.friendState,
   }))
-  const myPlayerId = usePlayerId()
 
-  return (playerIds: string[], call: RemoteCallPayload) => {
-    for (const playerId of playerIds) {
-      if (playerId === myPlayerId || !store.friends[playerId].isRemote) {
+  return (friends: { [id: string]: Friend }, call: RemoteCallPayload) => {
+    for (const friend of Object.values(friends)) {
+      if (friend.peerId === store.myId) {
         continue
       }
 
-      const conn = store.friendState[playerId]?.connection
+      const conn = store.friendState[friend.id]?.connection
       if (!conn) {
-        console.error(`Friend ${playerId} has no connection`)
+        console.error(`Friend ${friend.id} has no connection`)
         continue
       }
       conn.send(call)
@@ -58,12 +56,9 @@ export function useSendState(): (gameId: string, newState: GameState) => void {
   const store = useStore((state) => ({ games: state.games }))
   const send = useSend()
   return (gameId: string, newState: GameState) => {
-    send(Object.keys(store.games[gameId].players), {
+    send(store.games[gameId].players, {
       method: 'updateGameState',
-      args: {
-        gameId,
-        newState,
-      },
+      args: { gameId, newState },
     })
   }
 }
@@ -72,7 +67,7 @@ export function useUpdateMyName(): (newName: string) => void {
   const store = useStore((state) => ({ friends: state.friends }))
   const send = useSend()
   return (newName: string) => {
-    send(Object.keys(store.friends), {
+    send(store.friends, {
       method: 'updateMyName',
       args: { newName },
     })
@@ -84,13 +79,9 @@ export function useInviteToGame(): (
   gameId: string,
 ) => void {
   const send = useSend()
-  const myPlayerId = usePlayerId()
   return (get, gameId: string) => {
     const gameState = get().games[gameId]
-    const friendsToInvite = Object.keys(gameState.players).filter(
-      (id) => id !== myPlayerId,
-    )
-    send(friendsToInvite, {
+    send(gameState.players, {
       method: 'inviteToGame',
       args: { gameId, gameState },
     })
@@ -100,7 +91,6 @@ export function useInviteToGame(): (
 function useConnection(): {
   connectToPeer: (connectToId: string) => void
 } {
-  const myPlayerId = usePlayerId()
   const peerRef = useRef<Peer>()
   const store = useStore((state) => ({
     state: state,
@@ -109,9 +99,9 @@ function useConnection(): {
     removeFriendConnection: state.removeFriendConnection,
     friends: state.friends,
     friendState: state.uiState.friendState,
-    myPlayerName: state.player.name,
     setFriendName: state.setFriendName,
     addLocalPlayer: state.addLocalPlayer,
+    myId: state.myId,
   }))
 
   function initialiseConnection(conn: DataConnection) {
@@ -162,7 +152,10 @@ function useConnection(): {
     conn.on('open', () => {
       conn.send({
         method: 'introduce',
-        args: { playerId: myPlayerId, playerName: store.myPlayerName },
+        args: {
+          playerId: store.myId,
+          playerName: store.friends[store.myId].name,
+        },
       })
     })
 
@@ -183,19 +176,19 @@ function useConnection(): {
     if (!peerRef.current) {
       return
     }
-    log(`Connecting to ${myPlayerId}...`)
+    log(`Connecting to ${store.myId}...`)
     const conn = peerRef.current.connect(connectToId)
     initialiseConnection(conn)
   }
 
   useEffect(() => {
-    peerRef.current = new Peer(myPlayerId, { debug: DEBUG_LEVEL })
+    peerRef.current = new Peer(store.myId, { debug: DEBUG_LEVEL })
 
     peerRef.current.on('open', (id) => {
       log('My peer ID is: ' + id)
 
       for (const friendId in store.friends) {
-        if (store.friends[friendId].isRemote) {
+        if (store.friends[friendId].peerId !== store.myId) {
           connectToPeer(friendId)
         }
       }
