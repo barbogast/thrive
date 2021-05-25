@@ -7,7 +7,7 @@ import { customAlphabet } from 'nanoid'
 
 import * as game from './game'
 import * as position from './position'
-import { sendState } from './hooks/useConnection'
+import { getControllers } from './hooks/useConnection'
 
 export const UiActionType = {
   buildRoad: 'buildRoad',
@@ -116,6 +116,8 @@ export function initialiseStore(
           'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
         const getId = customAlphabet(aphabet, 21)
 
+        const controllers = getControllers({ set, get })
+
         const myId = getId()
         return {
           set,
@@ -215,7 +217,7 @@ export function initialiseStore(
               draft.uiState.currentAction = { type: UiActionType.none }
               game.endTurn(draft.games[gameId])
             })
-            sendState({ set, get })(gameId, get().games[gameId])
+            controllers.sendState(gameId, get().games[gameId])
           },
 
           rollDice: (gameId: string) => {

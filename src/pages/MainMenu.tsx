@@ -6,7 +6,7 @@ import { useLocation } from 'wouter'
 import { useController, useStore } from '../state'
 import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
-import { getInviteToGame } from '../hooks/useConnection'
+import { getControllers } from '../hooks/useConnection'
 import ConnectionStatus from '../components/ConnectionStatus'
 
 const MainMenu: React.FC = function MainMenu() {
@@ -20,7 +20,7 @@ const MainMenu: React.FC = function MainMenu() {
     removeSelectedPlayers: state.removeSelectedPlayers,
     friendState: state.uiState.friendState,
   }))
-  const inviteToGame = useController(getInviteToGame)
+  const controllers = useController(getControllers)
 
   const createGame = () => {
     const friendsToInvite = Object.values(store.friends).filter(
@@ -29,7 +29,7 @@ const MainMenu: React.FC = function MainMenu() {
 
     const gameId = nanoid()
     store.initialise(gameId, friendsToInvite)
-    inviteToGame(gameId)
+    controllers.inviteToGame(gameId)
 
     setLocation(`/play/${gameId}`)
   }
