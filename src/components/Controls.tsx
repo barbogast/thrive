@@ -1,5 +1,4 @@
 import React from 'react'
-import { useSendState } from '../hooks/useConnection'
 
 import * as routing from '../routing'
 import * as game from '../game'
@@ -16,7 +15,6 @@ const Controls: React.FC = function Controls() {
     rollDice: state.rollDice,
     players: state.games[gameId].players,
   }))
-  const sendState = useSendState()
   const allowedActions = game.getAllowedUiActions(store.currentAction)
 
   const player = store.players[store.currentAction.playerId]
@@ -63,9 +61,7 @@ const Controls: React.FC = function Controls() {
       )}
       &nbsp;&nbsp;
       {allowedActions.includes(UiActionType.endTurn) ? (
-        <button onClick={() => store.nextTurn(gameId, sendState)}>
-          Finish turn
-        </button>
+        <button onClick={() => store.nextTurn(gameId)}>Finish turn</button>
       ) : (
         <></>
       )}

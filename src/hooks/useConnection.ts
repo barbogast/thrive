@@ -1,8 +1,7 @@
 import Peer, { DataConnection } from 'peerjs'
 import { useEffect, useRef } from 'react'
-import { GetState } from 'zustand'
 import { GameState } from '../game'
-import { State, Setter, useStore, Friend } from '../state'
+import { useStore, Friend, Store } from '../state'
 
 const DEBUG_LEVEL: 0 | 1 | 2 | 3 = 0
 
@@ -30,19 +29,14 @@ type RemoteCallPayload =
       args: { newName: string }
     }
 
-const useSend = () => {
-  const store = useStore((state) => ({
-    myId: state.myId,
-    friendState: state.uiState.friendState,
-  }))
-
+function send(store: Store) {
   return (friends: { [id: string]: Friend }, call: RemoteCallPayload) => {
     for (const friend of Object.values(friends)) {
-      if (friend.peerId === store.myId) {
+      if (friend.peerId === store.get().myId) {
         continue
       }
 
-      const conn = store.friendState[friend.id]?.connection
+      const conn = store.get().uiState.friendState[friend.id]?.connection
       if (!conn) {
         console.error(`Friend ${friend.id} has no connection`)
         continue
@@ -52,59 +46,36 @@ const useSend = () => {
   }
 }
 
-export function useSendState(): (gameId: string, newState: GameState) => void {
-  const store = useStore((state) => ({ games: state.games }))
-  const send = useSend()
-  return (gameId: string, newState: GameState) => {
-    send(store.games[gameId].players, {
+export function sendState(store: Store) {
+  return (gameId: string, newState: GameState): void => {
+    send(store)(store.get().games[gameId].players, {
       method: 'updateGameState',
       args: { gameId, newState },
     })
   }
 }
 
-export function useUpdateMyName(): (newName: string) => void {
-  const store = useStore((state) => ({ friends: state.friends }))
-  const send = useSend()
-  return (newName: string) => {
-    send(store.friends, {
+export function updateMyName(store: Store) {
+  return (newName: string): void => {
+    send(store)(store.get().friends, {
       method: 'updateMyName',
       args: { newName },
     })
   }
 }
 
-export function useInviteToGame(): (
-  get: GetState<State & Setter>,
-  gameId: string,
-) => void {
-  const send = useSend()
-  return (get, gameId: string) => {
-    const gameState = get().games[gameId]
-    send(gameState.players, {
+export const getInviteToGame = (store: Store) => {
+  return (gameId: string): void => {
+    const gameState = store.get().games[gameId]
+    send(store)(gameState.players, {
       method: 'inviteToGame',
       args: { gameId, gameState },
     })
   }
 }
 
-function useConnection(): {
-  connectToPeer: (connectToId: string) => void
-} {
-  const peerRef = useRef<Peer>()
-  const store = useStore((state) => ({
-    state: state,
-    updateGameState: state.updateGameState,
-    addFriendConnection: state.addFriendConnection,
-    removeFriendConnection: state.removeFriendConnection,
-    friends: state.friends,
-    friendState: state.uiState.friendState,
-    setFriendName: state.setFriendName,
-    addLocalPlayer: state.addLocalPlayer,
-    myId: state.myId,
-  }))
-
-  function initialiseConnection(conn: DataConnection) {
+function initialiseConnection(store: Store) {
+  return (conn: DataConnection) => {
     let connectedPlayerId: string
     log('incoming peer connection!')
 
@@ -118,27 +89,25 @@ function useConnection(): {
       switch (data.method) {
         case 'introduce': {
           connectedPlayerId = data.args.playerId
-          store.addFriendConnection(
-            connectedPlayerId,
-            data.args.playerName,
-            conn,
-          )
+          store
+            .get()
+            .addFriendConnection(connectedPlayerId, data.args.playerName, conn)
           log('add connection, ', connectedPlayerId)
           break
         }
 
         case 'inviteToGame': {
-          store.updateGameState(data.args.gameId, data.args.gameState)
+          store.get().updateGameState(data.args.gameId, data.args.gameState)
           break
         }
 
         case 'updateMyName': {
-          store.setFriendName(connectedPlayerId, data.args.newName)
+          store.get().setFriendName(connectedPlayerId, data.args.newName)
           break
         }
 
         case 'updateGameState': {
-          store.updateGameState(data.args.gameId, data.args.newState)
+          store.get().updateGameState(data.args.gameId, data.args.newState)
           break
         }
 
@@ -153,8 +122,8 @@ function useConnection(): {
       conn.send({
         method: 'introduce',
         args: {
-          playerId: store.myId,
-          playerName: store.friends[store.myId].name,
+          playerId: store.get().myId,
+          playerName: store.get().friends[store.get().myId].name,
         },
       })
     })
@@ -163,14 +132,26 @@ function useConnection(): {
       // Looks like peerjs doesn't correctly handle closing connections, so this doesn't work...
       // https://stackoverflow.com/questions/64651890/peerjs-close-video-call-not-firing-close-event/67404616#67404616
       // https://github.com/peers/peerjs/issues/822
-      store.removeFriendConnection(connectedPlayerId)
+      store.get().removeFriendConnection(connectedPlayerId)
     })
 
     conn.on('error', (err) => {
       console.error('error', err, connectedPlayerId)
-      store.removeFriendConnection(connectedPlayerId)
+      store.get().removeFriendConnection(connectedPlayerId)
     })
   }
+}
+
+function useConnection(): {
+  connectToPeer: (connectToId: string) => void
+} {
+  const peerRef = useRef<Peer>()
+  const store = useStore((state) => ({
+    get: state.get,
+    set: state.set,
+    friends: state.friends,
+    myId: state.myId,
+  }))
 
   const connectToPeer = (connectToId: string) => {
     if (!peerRef.current) {
@@ -178,7 +159,7 @@ function useConnection(): {
     }
     log(`Connecting to ${store.myId}...`)
     const conn = peerRef.current.connect(connectToId)
-    initialiseConnection(conn)
+    initialiseConnection(store)(conn)
   }
 
   useEffect(() => {
@@ -199,7 +180,7 @@ function useConnection(): {
     })
 
     // Handle incoming data connection
-    peerRef.current.on('connection', initialiseConnection)
+    peerRef.current.on('connection', initialiseConnection(store))
   }, [])
 
   return { connectToPeer }

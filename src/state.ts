@@ -7,6 +7,7 @@ import { customAlphabet } from 'nanoid'
 
 import * as game from './game'
 import * as position from './position'
+import { sendState } from './hooks/useConnection'
 
 export const UiActionType = {
   buildRoad: 'buildRoad',
@@ -59,7 +60,13 @@ export type State = {
   }
 }
 
+type Set = (fn: (draft: Draft<State & Setter>) => void) => void
+type Get = GetState<State & Setter>
+export type Store = { set: Set; get: Get }
+
 export type Setter = {
+  get: Get
+  set: Set
   setMyName: (name: string) => void
   setFriendName: (friendId: string, name: string) => void
   toggleFriendSelection: (friendId: string) => void
@@ -74,10 +81,7 @@ export type Setter = {
   initialise: (gameId: string, friends: Friend[]) => GetState<State & Setter>
   buildTown: (gameId: string, position: position.Position) => void
   buildRoad: (gameId: string, position: position.Position) => void
-  nextTurn: (
-    gameId: string,
-    sendState: (gameId: string, newState: game.GameState) => void,
-  ) => void
+  nextTurn: (gameId: string) => void
   rollDice: (gameId: string) => void
   toggleCurrentAction: (action: UiActionType) => void
   updateGameState: (gameId: string, gameState: game.GameState) => void
@@ -114,6 +118,8 @@ export function initialiseStore(
 
         const myId = getId()
         return {
+          set,
+          get,
           myId,
           friends: {
             [myId]: { id: myId, peerId: myId, name: '' },
@@ -204,15 +210,12 @@ export function initialiseStore(
               draft.uiState.currentAction = { type: UiActionType.none }
             }),
 
-          nextTurn: (
-            gameId: string,
-            sendState: (gameId: string, newState: game.GameState) => void,
-          ) => {
+          nextTurn: (gameId: string) => {
             set((draft) => {
               draft.uiState.currentAction = { type: UiActionType.none }
               game.endTurn(draft.games[gameId])
             })
-            sendState(gameId, get().games[gameId])
+            sendState({ set, get })(gameId, get().games[gameId])
           },
 
           rollDice: (gameId: string) => {
@@ -246,3 +249,12 @@ export function initialiseStore(
 
 // @ts-ignore
 export const { Provider, useStore, context } = createContext<State & Setter>()
+
+function storeSelector(state: State & Setter) {
+  return { get: state.get, set: state.set }
+}
+
+export function useController<F>(cb: (store: Store) => F): F {
+  const store = useStore(storeSelector)
+  return cb(store)
+}

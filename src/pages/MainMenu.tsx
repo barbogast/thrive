@@ -3,10 +3,10 @@ import { Link } from 'wouter'
 import { nanoid } from 'nanoid'
 import { useLocation } from 'wouter'
 
-import { useStore } from '../state'
+import { useController, useStore } from '../state'
 import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
-import { useInviteToGame } from '../hooks/useConnection'
+import { getInviteToGame } from '../hooks/useConnection'
 import ConnectionStatus from '../components/ConnectionStatus'
 
 const MainMenu: React.FC = function MainMenu() {
@@ -20,7 +20,7 @@ const MainMenu: React.FC = function MainMenu() {
     removeSelectedPlayers: state.removeSelectedPlayers,
     friendState: state.uiState.friendState,
   }))
-  const inviteToGame = useInviteToGame()
+  const inviteToGame = useController(getInviteToGame)
 
   const createGame = () => {
     const friendsToInvite = Object.values(store.friends).filter(
@@ -28,8 +28,8 @@ const MainMenu: React.FC = function MainMenu() {
     )
 
     const gameId = nanoid()
-    const get = store.initialise(gameId, friendsToInvite)
-    inviteToGame(get, gameId)
+    store.initialise(gameId, friendsToInvite)
+    inviteToGame(gameId)
 
     setLocation(`/play/${gameId}`)
   }
