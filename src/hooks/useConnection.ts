@@ -49,9 +49,9 @@ function send(stores: Stores) {
 
 export function sendState(stores: Stores) {
   return (gameId: string): void => {
-    send(stores)(stores.local.get().games[gameId].players, {
+    send(stores)(stores.game.get().games[gameId].players, {
       method: 'updateGameState',
-      args: { gameId, newState: stores.local.get().games[gameId] },
+      args: { gameId, newState: stores.game.get().games[gameId] },
     })
   }
 }
@@ -67,7 +67,7 @@ export function updateMyName(stores: Stores) {
 
 export function inviteToGame(stores: Stores) {
   return (gameId: string): void => {
-    const gameState = stores.local.get().games[gameId]
+    const gameState = stores.game.get().games[gameId]
     send(stores)(gameState.players, {
       method: 'inviteToGame',
       args: { gameId, gameState },

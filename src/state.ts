@@ -1,11 +1,15 @@
-import create, { GetState, StateCreator, UseStore } from 'zustand'
+import create, {
+  GetState,
+  StateCreator,
+  UseStore,
+  State as ZState,
+} from 'zustand'
 import { persist } from 'zustand/middleware'
 import createContext from 'zustand/context'
 import produce, { Draft } from 'immer'
 import { DataConnection } from 'peerjs'
 import { customAlphabet } from 'nanoid'
-
-import * as game from './game'
+import { useGameStore, GameState } from './state/gameState'
 
 export const UiActionType = {
   buildRoad: 'buildRoad',
@@ -49,9 +53,6 @@ export type State = {
   friends: {
     [id: string]: Friend
   }
-  games: {
-    [gameId: string]: game.GameState
-  }
   uiState: {
     currentAction: UiAction
     friendState: { [friendId: string]: FriendState }
@@ -93,7 +94,6 @@ export function initialiseStore(
           friends: {
             [myId]: { id: myId, peerId: myId, name: '' },
           },
-          games: {},
           uiState: {
             currentAction: { type: UiActionType.none },
             connectedFriends: [],
@@ -103,7 +103,7 @@ export function initialiseStore(
       }),
       {
         name: 'state',
-        whitelist: ['games', 'myId', 'friends'],
+        whitelist: ['myId', 'friends'],
         onRehydrateStorage: () => onRehydrated,
       },
     ),
@@ -115,12 +115,24 @@ export const { Provider, useStore, context } = createContext<State & Setter>()
 
 export type Stores = {
   local: Store
+  game: {
+    get: GetState<GameState>
+    set: (fn: (draft: Draft<GameState>) => void) => void
+  }
+}
+
+function selector<T extends ZState>(state: {
+  get: GetState<T>
+  set: (fn: (draft: Draft<T>) => void) => void
+}) {
+  return {
+    get: state.get,
+    set: state.set,
+  }
 }
 
 export const useStores = (): Stores => {
-  const store = useStore((state) => ({
-    get: state.get,
-    set: state.set,
-  }))
-  return { local: store } as const
+  const local = useStore(selector)
+  const game = useGameStore(selector)
+  return { local, game } as const
 }

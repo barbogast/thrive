@@ -1,7 +1,8 @@
 import React from 'react'
 
-import { useStore } from '../state'
+import { useGameStore } from '../state/gameState'
 import Board from '../components/Board'
+import Stage from '../components/Stage'
 import Controls from '../components/Controls'
 import Players from '../components/Players'
 import * as routing from '../routing'
@@ -9,7 +10,7 @@ import Box from '../components/Box'
 
 const Playing: React.FC = function Playing() {
   const gameId = routing.useGameId()
-  const { state, sequence, currentPlayerColor, currentAction } = useStore(
+  const { sequence, currentPlayerColor, currentAction } = useGameStore(
     (state) => ({
       state: state,
       sequence: state.games[gameId].sequence,
@@ -30,9 +31,9 @@ const Playing: React.FC = function Playing() {
       </div>
       {sequence.phaseType === 'normal' ? <Players /> : <></>}
       {sequence.phaseType === 'normal' ? <Controls /> : <></>}
-      <Board />
-      {/* eslint-disable-next-line no-console */}
-      <button onClick={() => console.log(state)}>Log state</button>
+      <Stage>
+        <Board />
+      </Stage>
     </>
   )
 }

@@ -1,22 +1,26 @@
 import React, { useMemo } from 'react'
 import { Layer } from 'react-konva'
 
-import { useStore, UiActionType } from '../state'
+import { useStore, UiActionType, useStores } from '../state'
 import * as routing from '../routing'
 import * as board from '../board'
 import HexTile from './HexTile'
 import Road from './Road'
 import Town from './Town'
+import { useGameStore, useGameStoreApi } from '../state/gameState'
+import { sendState } from '../hooks/useConnection'
 
 const Board: React.FC = function Board() {
   const gameId = routing.useGameId()
+  const { uiAction, myId } = useStore((state) => ({
+    myId: state.myId,
+    uiAction: state.uiState.currentAction,
+  }))
   const {
     gameState: { tiles, roads, towns },
-    uiAction,
     sequenceAction,
-  } = useStore((state) => ({
+  } = useGameStore((state) => ({
     gameState: state.games[gameId],
-    uiAction: state.uiState.currentAction,
     sequenceAction: state.games[gameId].sequence.scheduledActions[0],
   }))
 

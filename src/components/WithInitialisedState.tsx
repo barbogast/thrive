@@ -1,6 +1,7 @@
 import React, { ReactChild, ReactChildren, useState } from 'react'
 
-import { initialiseStore, Provider } from '../state'
+import * as state from '../state'
+import * as gameState from '../state/gameState'
 
 type Props = {
   children: ReactChildren | ReactChild
@@ -10,13 +11,27 @@ type Props = {
 const WithInitialisedState: React.FC<Props> = function WithInitialisedState({
   children,
 }) {
-  const [rehydrated, setRehydrated] = useState(false)
-  const [useStore] = useState(() => initialiseStore(() => setRehydrated(true)))
-  if (!rehydrated) {
+  const [rehydrated1, setRehydrated1] = useState(false)
+  const [useStore1] = useState(() =>
+    state.initialiseStore(() => setRehydrated1(true)),
+  )
+
+  const [rehydrated2, setRehydrated2] = useState(false)
+  const [useStore2] = useState(() =>
+    gameState.initialiseStore(() => setRehydrated2(true)),
+  )
+
+  if (!rehydrated1 || !rehydrated2) {
     return <></>
   }
 
-  return <Provider initialStore={useStore}>{children}</Provider>
+  return (
+    <state.Provider initialStore={useStore1}>
+      <gameState.Provider initialStore={useStore2}>
+        {children}
+      </gameState.Provider>
+    </state.Provider>
+  )
 }
 
 export default WithInitialisedState

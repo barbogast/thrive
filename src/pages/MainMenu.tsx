@@ -13,6 +13,7 @@ import {
   initialise,
   removeSelectedPlayers,
 } from '../state/setters'
+import { useGameStore } from '../state/gameState'
 
 const MainMenu: React.FC = function MainMenu() {
   const [, setLocation] = useLocation()
@@ -20,9 +21,11 @@ const MainMenu: React.FC = function MainMenu() {
     get: state.get,
     set: state.set,
     myId: state.myId,
-    games: state.games,
     friends: state.friends,
     friendState: state.uiState.friendState,
+  }))
+  const gameStore = useGameStore((state) => ({
+    games: state.games,
   }))
   const stores = useStores()
   const createGame = () => {
@@ -46,7 +49,7 @@ const MainMenu: React.FC = function MainMenu() {
       <div>
         Existing games
         <ul>
-          {Object.entries(store.games).map(([gameId, game]) => (
+          {Object.entries(gameStore.games).map(([gameId, game]) => (
             <li key={gameId}>
               <Link href={`/play/${gameId}`}>
                 <a className="link">Play {gameId}</a>

@@ -93,7 +93,7 @@ export function removeSelectedPlayers(stores: Stores) {
 
 export function initialise(stores: Stores) {
   return (gameId: string, friends: Friend[]): void => {
-    stores.local.set((draft) => {
+    stores.game.set((draft) => {
       draft.games[gameId] = game.initialiseGame(friends)
     })
   }
@@ -101,8 +101,10 @@ export function initialise(stores: Stores) {
 
 export function buildTown(stores: Stores) {
   return (gameId: string, position: position.Position): void => {
-    stores.local.set((draft) => {
+    stores.game.set((draft) => {
       game.buildTown(draft.games[gameId], position)
+    })
+    stores.local.set((draft) => {
       draft.uiState.currentAction = { type: UiActionType.none }
     })
   }
@@ -110,8 +112,10 @@ export function buildTown(stores: Stores) {
 
 export function buildRoad(stores: Stores) {
   return (gameId: string, position: position.Position): void => {
-    stores.local.set((draft) => {
+    stores.game.set((draft) => {
       game.buildRoad(draft.games[gameId], position)
+    })
+    stores.local.set((draft) => {
       draft.uiState.currentAction = { type: UiActionType.none }
     })
   }
@@ -119,9 +123,11 @@ export function buildRoad(stores: Stores) {
 
 export function nextTurn(stores: Stores) {
   return (gameId: string): void => {
+    stores.game.set((draft) => {
+      game.endTurn(draft.games[gameId])
+    })
     stores.local.set((draft) => {
       draft.uiState.currentAction = { type: UiActionType.none }
-      game.endTurn(draft.games[gameId])
     })
     sendState(stores)(gameId)
   }
@@ -129,7 +135,7 @@ export function nextTurn(stores: Stores) {
 
 export function rollDice(stores: Stores) {
   return (gameId: string): void => {
-    stores.local.set((draft) => {
+    stores.game.set((draft) => {
       game.rollDice(draft.games[gameId])
     })
   }
@@ -148,7 +154,7 @@ export function toggleCurrentAction(stores: Stores) {
 
 export function updateGameState(stores: Stores) {
   return (gameId: string, gameState: game.GameState): void => {
-    stores.local.set((draft) => {
+    stores.game.set((draft) => {
       draft.games[gameId] = gameState
     })
   }

@@ -4,6 +4,7 @@ import { KonvaEventObject } from 'konva-types/Node'
 import { Stage as StateType } from 'konva-types/Stage'
 
 import * as state from '../state'
+import * as gameState from '../state/gameState'
 
 useStrictMode(true)
 
@@ -41,16 +42,22 @@ const Stage: React.FC = function v({ children }) {
   return (
     <state.context.Consumer>
       {(value: unknown) => (
-        <KonvaStage
-          width={window.innerWidth}
-          height={window.innerHeight}
-          onWheel={onWheel}
-          draggable
-        >
-          <state.context.Provider value={value}>
-            {children}
-          </state.context.Provider>
-        </KonvaStage>
+        <gameState.context.Consumer>
+          {(value2: unknown) => (
+            <KonvaStage
+              width={window.innerWidth}
+              height={window.innerHeight}
+              onWheel={onWheel}
+              draggable
+            >
+              <state.context.Provider value={value}>
+                <gameState.context.Provider value={value2}>
+                  {children}
+                </gameState.context.Provider>
+              </state.context.Provider>
+            </KonvaStage>
+          )}
+        </gameState.context.Consumer>
       )}
     </state.context.Consumer>
   )
