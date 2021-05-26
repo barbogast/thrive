@@ -2,18 +2,19 @@ import { DataConnection } from 'peerjs'
 
 import * as game from '../game'
 import * as position from '../position'
-import { Friend, FriendState, LocalState, UiActionType } from './localState'
+import { Friend } from './localState'
+import { FriendState, TempState, UiActionType } from './tempState'
 import { Stores } from './useStores'
 
 function updateFriendState(
-  draft: LocalState,
+  draft: TempState,
   friendId: string,
   cb: (friendState: FriendState) => void,
 ) {
-  if (!draft.uiState.friendState[friendId]) {
-    draft.uiState.friendState[friendId] = { isSelected: false }
+  if (!draft.friendState[friendId]) {
+    draft.friendState[friendId] = { isSelected: false }
   }
-  cb(draft.uiState.friendState[friendId])
+  cb(draft.friendState[friendId])
 }
 
 export function setMyName(stores: Stores) {
@@ -34,7 +35,7 @@ export function setFriendName(stores: Stores) {
 
 export function toggleFriendSelection(stores: Stores) {
   return (friendId: string): void => {
-    stores.local.set((draft) => {
+    stores.temp.set((draft) => {
       updateFriendState(draft, friendId, (friendState) => {
         friendState.isSelected = !friendState.isSelected
       })
@@ -46,6 +47,8 @@ export function addFriendConnection(stores: Stores) {
   return (friendId: string, name: string, connection: DataConnection): void => {
     stores.local.set((draft) => {
       draft.friends[friendId] = { id: friendId, peerId: friendId, name }
+    })
+    stores.temp.set((draft) => {
       updateFriendState(draft, friendId, (friendState) => {
         friendState.connection = connection
       })
@@ -55,7 +58,7 @@ export function addFriendConnection(stores: Stores) {
 
 export function removeFriendConnection(stores: Stores) {
   return (friendId: string): void => {
-    stores.local.set((draft) => {
+    stores.temp.set((draft) => {
       updateFriendState(draft, friendId, (friendState) => {
         delete friendState.connection
       })
@@ -77,15 +80,20 @@ export function addLocalPlayer(stores: Stores) {
 
 export function removeSelectedPlayers(stores: Stores) {
   return (): void => {
+    const toDelete = Object.entries(stores.temp.get().friendState)
+      .filter(([, friendState]) => friendState.isSelected)
+      .map(([friendId]) => friendId)
+
+    stores.temp.set((draft) => {
+      for (const friendId of toDelete) {
+        draft.friendState[friendId].connection?.close()
+        delete draft.friendState[friendId]
+      }
+    })
+
     stores.local.set((draft) => {
-      for (const [friendId, friendState] of Object.entries(
-        draft.uiState.friendState,
-      )) {
-        if (friendState.isSelected) {
-          draft.uiState.friendState[friendId].connection?.close()
-          delete draft.uiState.friendState[friendId]
-          delete draft.friends[friendId]
-        }
+      for (const friendId of toDelete) {
+        delete draft.friends[friendId]
       }
     })
   }
@@ -104,8 +112,8 @@ export function buildTown(stores: Stores) {
     stores.game.set((draft) => {
       game.buildTown(draft.games[gameId], position)
     })
-    stores.local.set((draft) => {
-      draft.uiState.currentAction = { type: UiActionType.none }
+    stores.temp.set((draft) => {
+      draft.currentAction = { type: UiActionType.none }
     })
   }
 }
@@ -115,8 +123,8 @@ export function buildRoad(stores: Stores) {
     stores.game.set((draft) => {
       game.buildRoad(draft.games[gameId], position)
     })
-    stores.local.set((draft) => {
-      draft.uiState.currentAction = { type: UiActionType.none }
+    stores.temp.set((draft) => {
+      draft.currentAction = { type: UiActionType.none }
     })
   }
 }
@@ -126,8 +134,8 @@ export function nextTurn(stores: Stores) {
     stores.game.set((draft) => {
       game.endTurn(draft.games[gameId])
     })
-    stores.local.set((draft) => {
-      draft.uiState.currentAction = { type: UiActionType.none }
+    stores.temp.set((draft) => {
+      draft.currentAction = { type: UiActionType.none }
     })
   }
 }
@@ -142,9 +150,9 @@ export function rollDice(stores: Stores) {
 
 export function toggleCurrentAction(stores: Stores) {
   return (actionType: UiActionType): void => {
-    stores.local.set((draft) => {
-      draft.uiState.currentAction =
-        actionType === draft.uiState.currentAction.type
+    stores.temp.set((draft) => {
+      draft.currentAction =
+        actionType === draft.currentAction.type
           ? { type: UiActionType.none }
           : { type: actionType }
     })

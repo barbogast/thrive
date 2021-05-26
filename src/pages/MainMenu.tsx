@@ -15,6 +15,7 @@ import {
 } from '../state/setters'
 import { useGameStore } from '../state/gameState'
 import { useStores } from '../state/useStores'
+import { useTempStore } from '../state/tempState'
 
 const MainMenu: React.FC = function MainMenu() {
   const [, setLocation] = useLocation()
@@ -23,7 +24,9 @@ const MainMenu: React.FC = function MainMenu() {
     set: state.set,
     myId: state.myId,
     friends: state.friends,
-    friendState: state.uiState.friendState,
+  }))
+  const tempStore = useTempStore((state) => ({
+    friendState: state.friendState,
   }))
   const gameStore = useGameStore((state) => ({
     games: state.games,
@@ -31,7 +34,7 @@ const MainMenu: React.FC = function MainMenu() {
   const stores = useStores()
   const createGame = () => {
     const friendsToInvite = Object.values(localStore.friends).filter(
-      (friend) => localStore.friendState[friend.id]?.isSelected,
+      (friend) => tempStore.friendState[friend.id]?.isSelected,
     )
 
     const gameId = nanoid()

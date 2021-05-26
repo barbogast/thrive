@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useLocalStore } from '../state/localState'
+import { useTempStore } from '../state/tempState'
 import Box from './Box'
 
 type Props = {
@@ -8,8 +8,8 @@ type Props = {
 }
 
 const ConnectionStatus: React.FC<Props> = function Friend({ id }) {
-  const localStore = useLocalStore((state) => ({
-    friendState: state.uiState.friendState,
+  const localStore = useTempStore((state) => ({
+    friendState: state.friendState,
   }))
 
   return (

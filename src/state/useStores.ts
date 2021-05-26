@@ -1,6 +1,7 @@
 import { State } from 'zustand'
 import { GameState, useGameStore } from './gameState'
 import { LocalState, useLocalStore } from './localState'
+import { TempState, useTempStore } from './tempState'
 import { GetState, SetState } from './utils'
 
 export type Stores = {
@@ -11,6 +12,10 @@ export type Stores = {
   game: {
     get: GetState<GameState>
     set: SetState<GameState>
+  }
+  temp: {
+    get: GetState<TempState>
+    set: SetState<TempState>
   }
 }
 
@@ -27,5 +32,6 @@ function selector<T extends State>(state: {
 export const useStores = (): Stores => {
   const local = useLocalStore(selector)
   const game = useGameStore(selector)
-  return { local, game } as const
+  const temp = useTempStore(selector)
+  return { local, game, temp } as const
 }

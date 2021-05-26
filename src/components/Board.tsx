@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react'
 import { Layer } from 'react-konva'
 
 import { useStores } from '../state/useStores'
-import { useLocalStore, UiActionType } from '../state/localState'
+import { useLocalStore } from '../state/localState'
 import * as routing from '../routing'
 import * as board from '../board'
 import HexTile from './HexTile'
@@ -10,12 +10,15 @@ import Road from './Road'
 import Town from './Town'
 import { useGameStore, useGameStoreApi } from '../state/gameState'
 import { sendState } from '../hooks/useConnection'
+import { useTempStore, UiActionType } from '../state/tempState'
 
 const Board: React.FC = function Board() {
   const gameId = routing.useGameId()
-  const { uiAction, myId } = useLocalStore((state) => ({
+  const { myId } = useLocalStore((state) => ({
     myId: state.myId,
-    uiAction: state.uiState.currentAction,
+  }))
+  const tempStore = useTempStore((state) => ({
+    uiAction: state.currentAction,
   }))
   const {
     gameState: { tiles, roads, towns },
@@ -27,10 +30,10 @@ const Board: React.FC = function Board() {
   const stores = useStores()
 
   const buildRoad =
-    uiAction.type === UiActionType.buildRoad ||
+    tempStore.uiAction.type === UiActionType.buildRoad ||
     sequenceAction.type === 'buildRoad'
   const buildTown =
-    uiAction.type === UiActionType.buildTown ||
+    tempStore.uiAction.type === UiActionType.buildTown ||
     sequenceAction.type === 'buildTown'
 
   const positions = useMemo(() => {

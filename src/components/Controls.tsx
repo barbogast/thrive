@@ -4,8 +4,9 @@ import * as routing from '../routing'
 import * as game from '../game'
 import * as setters from '../state/setters'
 import { useStores } from '../state/useStores'
-import { useLocalStore, UiActionType } from '../state/localState'
+import { useLocalStore } from '../state/localState'
 import { useGameStore } from '../state/gameState'
+import { UiActionType } from '../state/tempState'
 
 const Controls: React.FC = function Controls() {
   const gameId = routing.useGameId()

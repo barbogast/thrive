@@ -38,7 +38,7 @@ function send(stores: Stores) {
         continue
       }
 
-      const conn = stores.local.get().uiState.friendState[friend.id]?.connection
+      const conn = stores.temp.get().friendState[friend.id]?.connection
       if (!conn) {
         console.error(`Friend ${friend.id} has no connection`)
         continue
