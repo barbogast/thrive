@@ -48,10 +48,10 @@ function send(store: Store) {
 }
 
 export function sendState(store: Store) {
-  return (gameId: string, newState: GameState): void => {
+  return (gameId: string): void => {
     send(store)(store.get().games[gameId].players, {
       method: 'updateGameState',
-      args: { gameId, newState },
+      args: { gameId, newState: store.get().games[gameId] },
     })
   }
 }

@@ -123,7 +123,7 @@ export function nextTurn(store: Store) {
       draft.uiState.currentAction = { type: UiActionType.none }
       game.endTurn(draft.games[gameId])
     })
-    sendState(store)(gameId, store.get().games[gameId])
+    sendState(store)(gameId)
   }
 }
 
