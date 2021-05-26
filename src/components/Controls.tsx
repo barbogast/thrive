@@ -15,7 +15,6 @@ const Controls: React.FC = function Controls() {
   }))
   const gameStore = useGameStore((state) => ({
     currentAction: state.games[gameId].sequence.scheduledActions[0],
-    currentDiceRoll: state.games[gameId].currentDiceRoll,
     players: state.games[gameId].players,
   }))
   const stores = useStores()
@@ -28,10 +27,6 @@ const Controls: React.FC = function Controls() {
 
   return (
     <div>
-      {gameStore.currentAction.type !== game.GameActionType.rollDice
-        ? 'Current dice roll: ' + gameStore.currentDiceRoll.join(' | ')
-        : ''}
-      <br />
       {allowedActions.includes(UiActionType.buildRoad) ? (
         <button
           onClick={() =>
