@@ -1,7 +1,7 @@
 import Peer, { DataConnection } from 'peerjs'
 import { useEffect, useRef } from 'react'
 import { GameState } from '../game'
-import { useStore, Friend, Store, useController } from '../state'
+import { useStore, Friend, Store } from '../state'
 
 const DEBUG_LEVEL: 0 | 1 | 2 | 3 = 0
 
@@ -29,9 +29,8 @@ type RemoteCallPayload =
       args: { newName: string }
     }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function getControllers(store: Store) {
-  const send = (friends: { [id: string]: Friend }, call: RemoteCallPayload) => {
+function send(store: Store) {
+  return (friends: { [id: string]: Friend }, call: RemoteCallPayload) => {
     for (const friend of Object.values(friends)) {
       if (friend.peerId === store.get().myId) {
         continue
@@ -45,30 +44,38 @@ export function getControllers(store: Store) {
       conn.send(call)
     }
   }
+}
 
-  const sendState = (gameId: string, newState: GameState): void => {
-    send(store.get().games[gameId].players, {
+export function sendState(store: Store) {
+  return (gameId: string, newState: GameState): void => {
+    send(store)(store.get().games[gameId].players, {
       method: 'updateGameState',
       args: { gameId, newState },
     })
   }
+}
 
-  const updateMyName = (newName: string): void => {
-    send(store.get().friends, {
+export function updateMyName(store: Store) {
+  return (newName: string): void => {
+    send(store)(store.get().friends, {
       method: 'updateMyName',
       args: { newName },
     })
   }
+}
 
-  const inviteToGame = (gameId: string): void => {
+export function inviteToGame(store: Store) {
+  return (gameId: string): void => {
     const gameState = store.get().games[gameId]
-    send(gameState.players, {
+    send(store)(gameState.players, {
       method: 'inviteToGame',
       args: { gameId, gameState },
     })
   }
+}
 
-  const initialiseConnection = (conn: DataConnection) => {
+function initialiseConnection(store: Store) {
+  return (conn: DataConnection) => {
     let connectedPlayerId: string
     log('incoming peer connection!')
 
@@ -133,13 +140,6 @@ export function getControllers(store: Store) {
       store.get().removeFriendConnection(connectedPlayerId)
     })
   }
-
-  return {
-    updateMyName,
-    initialiseConnection,
-    inviteToGame,
-    sendState,
-  } as const
 }
 
 function useConnection(): {
@@ -152,7 +152,6 @@ function useConnection(): {
     friends: state.friends,
     myId: state.myId,
   }))
-  const controllers = useController(getControllers)
 
   const connectToPeer = (connectToId: string) => {
     if (!peerRef.current) {
@@ -160,7 +159,7 @@ function useConnection(): {
     }
     log(`Connecting to ${store.myId}...`)
     const conn = peerRef.current.connect(connectToId)
-    controllers.initialiseConnection(conn)
+    initialiseConnection(store)(conn)
   }
 
   useEffect(() => {
@@ -181,7 +180,7 @@ function useConnection(): {
     })
 
     // Handle incoming data connection
-    peerRef.current.on('connection', controllers.initialiseConnection)
+    peerRef.current.on('connection', initialiseConnection(store))
   }, [])
 
   return { connectToPeer }

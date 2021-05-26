@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { getControllers } from '../hooks/useConnection'
+import { updateMyName } from '../hooks/useConnection'
 
-import { useController, useStore } from '../state'
+import { useStore } from '../state'
 
 const PlayerName: React.FC = function PlayerName() {
   const store = useStore((state) => ({
@@ -10,12 +10,11 @@ const PlayerName: React.FC = function PlayerName() {
     get: state.get,
     set: state.set,
   }))
-  const controllers = useController(getControllers)
   const [value, setValue] = useState<string>(store.myName)
 
   const save = (name: string) => {
     store.setMyName(value)
-    controllers.updateMyName(name)
+    updateMyName(store)(name)
   }
 
   return (

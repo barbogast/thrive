@@ -7,7 +7,7 @@ import { customAlphabet } from 'nanoid'
 
 import * as game from './game'
 import * as position from './position'
-import { getControllers } from './hooks/useConnection'
+import { sendState } from './hooks/useConnection'
 
 export const UiActionType = {
   buildRoad: 'buildRoad',
@@ -116,8 +116,6 @@ export function initialiseStore(
           'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
         const getId = customAlphabet(aphabet, 21)
 
-        const controllers = getControllers({ set, get })
-
         const myId = getId()
         return {
           set,
@@ -215,7 +213,7 @@ export function initialiseStore(
               draft.uiState.currentAction = { type: UiActionType.none }
               game.endTurn(draft.games[gameId])
             })
-            controllers.sendState(gameId, get().games[gameId])
+            sendState({ set, get })(gameId, get().games[gameId])
           },
 
           rollDice: (gameId: string) => {
@@ -249,12 +247,3 @@ export function initialiseStore(
 
 // @ts-ignore
 export const { Provider, useStore, context } = createContext<State & Setter>()
-
-function storeSelector(state: State & Setter) {
-  return { get: state.get, set: state.set }
-}
-
-export function useController<F>(cb: (store: Store) => F): F {
-  const store = useStore(storeSelector)
-  return cb(store)
-}
