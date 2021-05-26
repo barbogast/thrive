@@ -78,7 +78,7 @@ export type Setter = {
   removeFriendConnection: (friendId: string) => void
   addLocalPlayer: (playerId: string, name: string) => void
   removeSelectedPlayers: () => void
-  initialise: (gameId: string, friends: Friend[]) => GetState<State & Setter>
+  initialise: (gameId: string, friends: Friend[]) => void
   buildTown: (gameId: string, position: position.Position) => void
   buildRoad: (gameId: string, position: position.Position) => void
   nextTurn: (gameId: string) => void
@@ -193,12 +193,10 @@ export function initialiseStore(
               }
             }),
 
-          initialise: (gameId: string, friends: Friend[]) => {
+          initialise: (gameId: string, friends: Friend[]) =>
             set((draft) => {
               draft.games[gameId] = game.initialiseGame(friends)
-            })
-            return get
-          },
+            }),
 
           buildTown: (gameId: string, position: position.Position) =>
             set((draft) => {
