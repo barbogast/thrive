@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { useLocalStore, useStores } from '../state/localState'
+import { useLocalStore } from '../state/localState'
+import { useStores } from '../state/useStores'
 import ConnectionStatus from './ConnectionStatus'
 import * as setters from '../state/setters'
 

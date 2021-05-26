@@ -2,7 +2,8 @@ import Peer, { DataConnection } from 'peerjs'
 import { useEffect, useRef } from 'react'
 import * as setters from '../state/setters'
 import { GameState } from '../game'
-import { useLocalStore, Friend, Stores, useStores } from '../state/localState'
+import { useLocalStore, Friend } from '../state/localState'
+import { Stores, useStores } from '../state/useStores'
 
 const DEBUG_LEVEL: 0 | 1 | 2 | 3 = 0
 

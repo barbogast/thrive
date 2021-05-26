@@ -3,7 +3,7 @@ import { Link } from 'wouter'
 import { nanoid } from 'nanoid'
 import { useLocation } from 'wouter'
 
-import { useLocalStore, useStores } from '../state/localState'
+import { useLocalStore } from '../state/localState'
 import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
 import { inviteToGame } from '../hooks/useConnection'
@@ -14,6 +14,7 @@ import {
   removeSelectedPlayers,
 } from '../state/setters'
 import { useGameStore } from '../state/gameState'
+import { useStores } from '../state/useStores'
 
 const MainMenu: React.FC = function MainMenu() {
   const [, setLocation] = useLocation()

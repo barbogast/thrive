@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo } from 'react'
 import { Layer } from 'react-konva'
 
-import { useLocalStore, UiActionType, useStores } from '../state/localState'
+import { useStores } from '../state/useStores'
+import { useLocalStore, UiActionType } from '../state/localState'
 import * as routing from '../routing'
 import * as board from '../board'
 import HexTile from './HexTile'

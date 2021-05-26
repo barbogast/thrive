@@ -6,7 +6,7 @@ import * as axial from '../axial'
 import * as position from '../position'
 import * as routing from '../routing'
 import * as setters from '../state/setters'
-import { useStores } from '../state/localState'
+import { useStores } from '../state/useStores'
 import { useGameStore } from '../state/gameState'
 
 type Props = {

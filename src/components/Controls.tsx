@@ -3,7 +3,8 @@ import React from 'react'
 import * as routing from '../routing'
 import * as game from '../game'
 import * as setters from '../state/setters'
-import { useLocalStore, UiActionType, useStores } from '../state/localState'
+import { useStores } from '../state/useStores'
+import { useLocalStore, UiActionType } from '../state/localState'
 import { useGameStore } from '../state/gameState'
 
 const Controls: React.FC = function Controls() {

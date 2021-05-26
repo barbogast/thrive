@@ -2,10 +2,11 @@ import { DataConnection } from 'peerjs'
 
 import * as game from '../game'
 import * as position from '../position'
-import { Friend, FriendState, State, Stores, UiActionType } from './localState'
+import { Friend, FriendState, LocalState, UiActionType } from './localState'
+import { Stores } from './useStores'
 
 function updateFriendState(
-  draft: State,
+  draft: LocalState,
   friendId: string,
   cb: (friendState: FriendState) => void,
 ) {

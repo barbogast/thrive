@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { updateMyName } from '../hooks/useConnection'
 
-import { useLocalStore, useStores } from '../state/localState'
+import { useLocalStore } from '../state/localState'
+import { useStores } from '../state/useStores'
 import * as setters from '../state/setters'
 
 const PlayerName: React.FC = function PlayerName() {
