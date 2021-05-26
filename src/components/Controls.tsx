@@ -3,7 +3,7 @@ import React from 'react'
 import * as routing from '../routing'
 import * as game from '../game'
 import * as setters from '../state/setters'
-import { useStore, UiActionType } from '../state'
+import { useStore, UiActionType, useStores } from '../state'
 
 const Controls: React.FC = function Controls() {
   const gameId = routing.useGameId()
@@ -12,9 +12,8 @@ const Controls: React.FC = function Controls() {
     currentAction: state.games[gameId].sequence.scheduledActions[0],
     currentDiceRoll: state.games[gameId].currentDiceRoll,
     players: state.games[gameId].players,
-    get: state.get,
-    set: state.set,
   }))
+  const stores = useStores()
   const allowedActions = game.getAllowedUiActions(store.currentAction)
 
   const player = store.players[store.currentAction.playerId]
@@ -31,7 +30,7 @@ const Controls: React.FC = function Controls() {
       {allowedActions.includes(UiActionType.buildRoad) ? (
         <button
           onClick={() =>
-            setters.toggleCurrentAction(store)(UiActionType.buildRoad)
+            setters.toggleCurrentAction(stores)(UiActionType.buildRoad)
           }
           style={{
             boxShadow:
@@ -49,7 +48,7 @@ const Controls: React.FC = function Controls() {
       {allowedActions.includes(UiActionType.buildTown) ? (
         <button
           onClick={() =>
-            setters.toggleCurrentAction(store)(UiActionType.buildTown)
+            setters.toggleCurrentAction(stores)(UiActionType.buildTown)
           }
           style={{
             boxShadow:
@@ -65,7 +64,7 @@ const Controls: React.FC = function Controls() {
       )}
       &nbsp;&nbsp;
       {allowedActions.includes(UiActionType.endTurn) ? (
-        <button onClick={() => setters.nextTurn(store)(gameId)}>
+        <button onClick={() => setters.nextTurn(stores)(gameId)}>
           Finish turn
         </button>
       ) : (
@@ -73,7 +72,7 @@ const Controls: React.FC = function Controls() {
       )}
       &nbsp;&nbsp;
       {allowedActions.includes(UiActionType.rollDice) ? (
-        <button onClick={() => setters.rollDice(store)(gameId)}>
+        <button onClick={() => setters.rollDice(stores)(gameId)}>
           Roll dice
         </button>
       ) : (

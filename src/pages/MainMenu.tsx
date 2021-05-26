@@ -3,7 +3,7 @@ import { Link } from 'wouter'
 import { nanoid } from 'nanoid'
 import { useLocation } from 'wouter'
 
-import { useStore } from '../state'
+import { useStore, useStores } from '../state'
 import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
 import { inviteToGame } from '../hooks/useConnection'
@@ -24,14 +24,15 @@ const MainMenu: React.FC = function MainMenu() {
     friends: state.friends,
     friendState: state.uiState.friendState,
   }))
+  const stores = useStores()
   const createGame = () => {
     const friendsToInvite = Object.values(store.friends).filter(
       (friend) => store.friendState[friend.id]?.isSelected,
     )
 
     const gameId = nanoid()
-    initialise(store)(gameId, friendsToInvite)
-    inviteToGame(store)(gameId)
+    initialise(stores)(gameId, friendsToInvite)
+    inviteToGame(stores)(gameId)
 
     setLocation(`/play/${gameId}`)
   }
@@ -68,10 +69,12 @@ const MainMenu: React.FC = function MainMenu() {
         Contacts
         <div>
           <FriendsList />
-          <button onClick={() => addLocalPlayer(store)(nanoid(), '')}>
+          <button onClick={() => addLocalPlayer(stores)(nanoid(), '')}>
             Add local player
           </button>{' '}
-          <button onClick={removeSelectedPlayers(store)}>Remove players</button>{' '}
+          <button onClick={removeSelectedPlayers(stores)}>
+            Remove players
+          </button>{' '}
           <button onClick={createGame}>Create game</button>
           <br />
           Invite new contacts by sharing this link:

@@ -2,7 +2,7 @@ import Peer, { DataConnection } from 'peerjs'
 import { useEffect, useRef } from 'react'
 import * as setters from '../state/setters'
 import { GameState } from '../game'
-import { useStore, Friend, Store } from '../state'
+import { useStore, Friend, Stores, useStores } from '../state'
 
 const DEBUG_LEVEL: 0 | 1 | 2 | 3 = 0
 
@@ -30,14 +30,14 @@ type RemoteCallPayload =
       args: { newName: string }
     }
 
-function send(store: Store) {
+function send(stores: Stores) {
   return (friends: { [id: string]: Friend }, call: RemoteCallPayload) => {
     for (const friend of Object.values(friends)) {
-      if (friend.peerId === store.get().myId) {
+      if (friend.peerId === stores.local.get().myId) {
         continue
       }
 
-      const conn = store.get().uiState.friendState[friend.id]?.connection
+      const conn = stores.local.get().uiState.friendState[friend.id]?.connection
       if (!conn) {
         console.error(`Friend ${friend.id} has no connection`)
         continue
@@ -47,35 +47,35 @@ function send(store: Store) {
   }
 }
 
-export function sendState(store: Store) {
+export function sendState(stores: Stores) {
   return (gameId: string): void => {
-    send(store)(store.get().games[gameId].players, {
+    send(stores)(stores.local.get().games[gameId].players, {
       method: 'updateGameState',
-      args: { gameId, newState: store.get().games[gameId] },
+      args: { gameId, newState: stores.local.get().games[gameId] },
     })
   }
 }
 
-export function updateMyName(store: Store) {
+export function updateMyName(stores: Stores) {
   return (newName: string): void => {
-    send(store)(store.get().friends, {
+    send(stores)(stores.local.get().friends, {
       method: 'updateMyName',
       args: { newName },
     })
   }
 }
 
-export function inviteToGame(store: Store) {
+export function inviteToGame(stores: Stores) {
   return (gameId: string): void => {
-    const gameState = store.get().games[gameId]
-    send(store)(gameState.players, {
+    const gameState = stores.local.get().games[gameId]
+    send(stores)(gameState.players, {
       method: 'inviteToGame',
       args: { gameId, gameState },
     })
   }
 }
 
-function initialiseConnection(store: Store) {
+function initialiseConnection(stores: Stores) {
   return (conn: DataConnection) => {
     let connectedPlayerId: string
     log('incoming peer connection!')
@@ -91,7 +91,7 @@ function initialiseConnection(store: Store) {
         case 'introduce': {
           connectedPlayerId = data.args.playerId
 
-          setters.addFriendConnection(store)(
+          setters.addFriendConnection(stores)(
             connectedPlayerId,
             data.args.playerName,
             conn,
@@ -101,17 +101,17 @@ function initialiseConnection(store: Store) {
         }
 
         case 'inviteToGame': {
-          setters.updateGameState(store)(data.args.gameId, data.args.gameState)
+          setters.updateGameState(stores)(data.args.gameId, data.args.gameState)
           break
         }
 
         case 'updateMyName': {
-          setters.setFriendName(store)(connectedPlayerId, data.args.newName)
+          setters.setFriendName(stores)(connectedPlayerId, data.args.newName)
           break
         }
 
         case 'updateGameState': {
-          setters.updateGameState(store)(data.args.gameId, data.args.newState)
+          setters.updateGameState(stores)(data.args.gameId, data.args.newState)
           break
         }
 
@@ -126,8 +126,8 @@ function initialiseConnection(store: Store) {
       conn.send({
         method: 'introduce',
         args: {
-          playerId: store.get().myId,
-          playerName: store.get().friends[store.get().myId].name,
+          playerId: stores.local.get().myId,
+          playerName: stores.local.get().friends[stores.local.get().myId].name,
         },
       })
     })
@@ -136,12 +136,12 @@ function initialiseConnection(store: Store) {
       // Looks like peerjs doesn't correctly handle closing connections, so this doesn't work...
       // https://stackoverflow.com/questions/64651890/peerjs-close-video-call-not-firing-close-event/67404616#67404616
       // https://github.com/peers/peerjs/issues/822
-      setters.removeFriendConnection(store)(connectedPlayerId)
+      setters.removeFriendConnection(stores)(connectedPlayerId)
     })
 
     conn.on('error', (err) => {
       console.error('error', err, connectedPlayerId)
-      setters.removeFriendConnection(store)(connectedPlayerId)
+      setters.removeFriendConnection(stores)(connectedPlayerId)
     })
   }
 }
@@ -151,11 +151,10 @@ function useConnection(): {
 } {
   const peerRef = useRef<Peer>()
   const store = useStore((state) => ({
-    get: state.get,
-    set: state.set,
     friends: state.friends,
     myId: state.myId,
   }))
+  const stores = useStores()
 
   const connectToPeer = (connectToId: string) => {
     if (!peerRef.current) {
@@ -163,7 +162,7 @@ function useConnection(): {
     }
     log(`Connecting to ${store.myId}...`)
     const conn = peerRef.current.connect(connectToId)
-    initialiseConnection(store)(conn)
+    initialiseConnection(stores)(conn)
   }
 
   useEffect(() => {
@@ -184,7 +183,7 @@ function useConnection(): {
     })
 
     // Handle incoming data connection
-    peerRef.current.on('connection', initialiseConnection(store))
+    peerRef.current.on('connection', initialiseConnection(stores))
   }, [])
 
   return { connectToPeer }

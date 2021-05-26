@@ -112,3 +112,15 @@ export function initialiseStore(
 
 // @ts-ignore
 export const { Provider, useStore, context } = createContext<State & Setter>()
+
+export type Stores = {
+  local: Store
+}
+
+export const useStores = (): Stores => {
+  const store = useStore((state) => ({
+    get: state.get,
+    set: state.set,
+  }))
+  return { local: store } as const
+}

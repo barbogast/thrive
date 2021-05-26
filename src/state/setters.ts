@@ -3,7 +3,7 @@ import { DataConnection } from 'peerjs'
 import * as game from '../game'
 import * as position from '../position'
 import { sendState } from '../hooks/useConnection'
-import { Friend, FriendState, State, Store, UiActionType } from '../state'
+import { Friend, FriendState, State, Stores, UiActionType } from '../state'
 
 function updateFriendState(
   draft: State,
@@ -16,25 +16,25 @@ function updateFriendState(
   cb(draft.uiState.friendState[friendId])
 }
 
-export function setMyName(store: Store) {
+export function setMyName(stores: Stores) {
   return (name: string): void => {
-    store.set((draft) => {
+    stores.local.set((draft) => {
       draft.friends[draft.myId].name = name
     })
   }
 }
 
-export function setFriendName(store: Store) {
+export function setFriendName(stores: Stores) {
   return (friendId: string, name: string): void => {
-    store.set((draft) => {
+    stores.local.set((draft) => {
       draft.friends[friendId].name = name
     })
   }
 }
 
-export function toggleFriendSelection(store: Store) {
+export function toggleFriendSelection(stores: Stores) {
   return (friendId: string): void => {
-    store.set((draft) => {
+    stores.local.set((draft) => {
       updateFriendState(draft, friendId, (friendState) => {
         friendState.isSelected = !friendState.isSelected
       })
@@ -42,9 +42,9 @@ export function toggleFriendSelection(store: Store) {
   }
 }
 
-export function addFriendConnection(store: Store) {
+export function addFriendConnection(stores: Stores) {
   return (friendId: string, name: string, connection: DataConnection): void => {
-    store.set((draft) => {
+    stores.local.set((draft) => {
       draft.friends[friendId] = { id: friendId, peerId: friendId, name }
       updateFriendState(draft, friendId, (friendState) => {
         friendState.connection = connection
@@ -53,9 +53,9 @@ export function addFriendConnection(store: Store) {
   }
 }
 
-export function removeFriendConnection(store: Store) {
+export function removeFriendConnection(stores: Stores) {
   return (friendId: string): void => {
-    store.set((draft) => {
+    stores.local.set((draft) => {
       updateFriendState(draft, friendId, (friendState) => {
         delete friendState.connection
       })
@@ -63,9 +63,9 @@ export function removeFriendConnection(store: Store) {
   }
 }
 
-export function addLocalPlayer(store: Store) {
+export function addLocalPlayer(stores: Stores) {
   return (playerId: string, name: string): void => {
-    store.set((draft) => {
+    stores.local.set((draft) => {
       draft.friends[playerId] = {
         id: playerId,
         peerId: draft.myId,
@@ -75,9 +75,9 @@ export function addLocalPlayer(store: Store) {
   }
 }
 
-export function removeSelectedPlayers(store: Store) {
+export function removeSelectedPlayers(stores: Stores) {
   return (): void => {
-    store.set((draft) => {
+    stores.local.set((draft) => {
       for (const [friendId, friendState] of Object.entries(
         draft.uiState.friendState,
       )) {
@@ -91,53 +91,53 @@ export function removeSelectedPlayers(store: Store) {
   }
 }
 
-export function initialise(store: Store) {
+export function initialise(stores: Stores) {
   return (gameId: string, friends: Friend[]): void => {
-    store.set((draft) => {
+    stores.local.set((draft) => {
       draft.games[gameId] = game.initialiseGame(friends)
     })
   }
 }
 
-export function buildTown(store: Store) {
+export function buildTown(stores: Stores) {
   return (gameId: string, position: position.Position): void => {
-    store.set((draft) => {
+    stores.local.set((draft) => {
       game.buildTown(draft.games[gameId], position)
       draft.uiState.currentAction = { type: UiActionType.none }
     })
   }
 }
 
-export function buildRoad(store: Store) {
+export function buildRoad(stores: Stores) {
   return (gameId: string, position: position.Position): void => {
-    store.set((draft) => {
+    stores.local.set((draft) => {
       game.buildRoad(draft.games[gameId], position)
       draft.uiState.currentAction = { type: UiActionType.none }
     })
   }
 }
 
-export function nextTurn(store: Store) {
+export function nextTurn(stores: Stores) {
   return (gameId: string): void => {
-    store.set((draft) => {
+    stores.local.set((draft) => {
       draft.uiState.currentAction = { type: UiActionType.none }
       game.endTurn(draft.games[gameId])
     })
-    sendState(store)(gameId)
+    sendState(stores)(gameId)
   }
 }
 
-export function rollDice(store: Store) {
+export function rollDice(stores: Stores) {
   return (gameId: string): void => {
-    store.set((draft) => {
+    stores.local.set((draft) => {
       game.rollDice(draft.games[gameId])
     })
   }
 }
 
-export function toggleCurrentAction(store: Store) {
+export function toggleCurrentAction(stores: Stores) {
   return (actionType: UiActionType): void => {
-    store.set((draft) => {
+    stores.local.set((draft) => {
       draft.uiState.currentAction =
         actionType === draft.uiState.currentAction.type
           ? { type: UiActionType.none }
@@ -146,9 +146,9 @@ export function toggleCurrentAction(store: Store) {
   }
 }
 
-export function updateGameState(store: Store) {
+export function updateGameState(stores: Stores) {
   return (gameId: string, gameState: game.GameState): void => {
-    store.set((draft) => {
+    stores.local.set((draft) => {
       draft.games[gameId] = gameState
     })
   }
