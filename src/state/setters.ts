@@ -2,7 +2,6 @@ import { DataConnection } from 'peerjs'
 
 import * as game from '../game'
 import * as position from '../position'
-import { sendState } from '../hooks/useConnection'
 import { Friend, FriendState, State, Stores, UiActionType } from '../state'
 
 function updateFriendState(
@@ -129,7 +128,6 @@ export function nextTurn(stores: Stores) {
     stores.local.set((draft) => {
       draft.uiState.currentAction = { type: UiActionType.none }
     })
-    sendState(stores)(gameId)
   }
 }
 

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { Layer } from 'react-konva'
 
 import { useStore, UiActionType, useStores } from '../state'
@@ -23,6 +23,7 @@ const Board: React.FC = function Board() {
     gameState: state.games[gameId],
     sequenceAction: state.games[gameId].sequence.scheduledActions[0],
   }))
+  const stores = useStores()
 
   const buildRoad =
     uiAction.type === UiActionType.buildRoad ||
@@ -40,6 +41,14 @@ const Board: React.FC = function Board() {
       return []
     }
   }, [tiles, buildRoad, buildTown])
+
+  const gameStoreApi = useGameStoreApi()
+  useEffect(() => {
+    return gameStoreApi.subscribe((newState, oldState) => {
+      if (oldState.games[gameId].sequence.scheduledActions[0].playerId === myId)
+        sendState(stores)(gameId)
+    })
+  }, [])
 
   return (
     <Layer>
