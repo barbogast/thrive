@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useStore } from '../state'
+import { useLocalStore } from '../state/localState'
 import Box from './Box'
 
 type Props = {
@@ -8,11 +8,13 @@ type Props = {
 }
 
 const ConnectionStatus: React.FC<Props> = function Friend({ id }) {
-  const store = useStore((state) => ({
+  const localStore = useLocalStore((state) => ({
     friendState: state.uiState.friendState,
   }))
 
-  return <Box color={store.friendState[id]?.connection ? 'green' : 'red'} />
+  return (
+    <Box color={localStore.friendState[id]?.connection ? 'green' : 'red'} />
+  )
 }
 
 export default ConnectionStatus

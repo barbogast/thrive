@@ -9,7 +9,7 @@ import createContext from 'zustand/context'
 import produce, { Draft } from 'immer'
 import { DataConnection } from 'peerjs'
 import { customAlphabet } from 'nanoid'
-import { useGameStore, GameState } from './state/gameState'
+import { useGameStore, GameState } from './gameState'
 
 export const UiActionType = {
   buildRoad: 'buildRoad',
@@ -110,8 +110,12 @@ export function initialiseStore(
   )
 }
 
-// @ts-ignore
-export const { Provider, useStore, context } = createContext<State & Setter>()
+export const {
+  Provider,
+  useStore: useLocalStore,
+  // @ts-ignore
+  context,
+} = createContext<State & Setter>()
 
 export type Stores = {
   local: Store
@@ -132,7 +136,7 @@ function selector<T extends ZState>(state: {
 }
 
 export const useStores = (): Stores => {
-  const local = useStore(selector)
+  const local = useLocalStore(selector)
   const game = useGameStore(selector)
   return { local, game } as const
 }

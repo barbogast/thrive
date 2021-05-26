@@ -2,7 +2,7 @@ import Peer, { DataConnection } from 'peerjs'
 import { useEffect, useRef } from 'react'
 import * as setters from '../state/setters'
 import { GameState } from '../game'
-import { useStore, Friend, Stores, useStores } from '../state'
+import { useLocalStore, Friend, Stores, useStores } from '../state/localState'
 
 const DEBUG_LEVEL: 0 | 1 | 2 | 3 = 0
 
@@ -150,7 +150,7 @@ function useConnection(): {
   connectToPeer: (connectToId: string) => void
 } {
   const peerRef = useRef<Peer>()
-  const store = useStore((state) => ({
+  const localStore = useLocalStore((state) => ({
     friends: state.friends,
     myId: state.myId,
   }))
@@ -160,19 +160,19 @@ function useConnection(): {
     if (!peerRef.current) {
       return
     }
-    log(`Connecting to ${store.myId}...`)
+    log(`Connecting to ${localStore.myId}...`)
     const conn = peerRef.current.connect(connectToId)
     initialiseConnection(stores)(conn)
   }
 
   useEffect(() => {
-    peerRef.current = new Peer(store.myId, { debug: DEBUG_LEVEL })
+    peerRef.current = new Peer(localStore.myId, { debug: DEBUG_LEVEL })
 
     peerRef.current.on('open', (id) => {
       log('My peer ID is: ' + id)
 
-      for (const friendId in store.friends) {
-        if (store.friends[friendId].peerId !== store.myId) {
+      for (const friendId in localStore.friends) {
+        if (localStore.friends[friendId].peerId !== localStore.myId) {
           connectToPeer(friendId)
         }
       }

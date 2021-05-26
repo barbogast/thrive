@@ -3,12 +3,12 @@ import React from 'react'
 import * as routing from '../routing'
 import * as game from '../game'
 import * as setters from '../state/setters'
-import { useStore, UiActionType, useStores } from '../state'
+import { useLocalStore, UiActionType, useStores } from '../state/localState'
 import { useGameStore } from '../state/gameState'
 
 const Controls: React.FC = function Controls() {
   const gameId = routing.useGameId()
-  const store = useStore((state) => ({
+  const localStore = useLocalStore((state) => ({
     myId: state.myId,
   }))
   const gameStore = useGameStore((state) => ({
@@ -20,7 +20,7 @@ const Controls: React.FC = function Controls() {
   const allowedActions = game.getAllowedUiActions(gameStore.currentAction)
 
   const player = gameStore.players[gameStore.currentAction.playerId]
-  if (player.peerId !== store.myId) {
+  if (player.peerId !== localStore.myId) {
     return <>Waiting for {player.name}</>
   }
 

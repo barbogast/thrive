@@ -1,11 +1,11 @@
 import React from 'react'
 
-import { useStore, useStores } from '../state'
+import { useLocalStore, useStores } from '../state/localState'
 import ConnectionStatus from './ConnectionStatus'
 import * as setters from '../state/setters'
 
 const FriendsList: React.FC = function FriendsList() {
-  const store = useStore((state) => ({
+  const localStore = useLocalStore((state) => ({
     myId: state.myId,
     friends: state.friends,
     friendState: state.uiState.friendState,
@@ -14,16 +14,18 @@ const FriendsList: React.FC = function FriendsList() {
 
   return (
     <ul>
-      {Object.values(store.friends).map((friend) => (
+      {Object.values(localStore.friends).map((friend) => (
         <li key={friend.id}>
           <input
             type="checkbox"
-            checked={Boolean(store.friendState[friend.id]?.isSelected)}
+            checked={Boolean(localStore.friendState[friend.id]?.isSelected)}
             onChange={() => setters.toggleFriendSelection(stores)(friend.id)}
           />
           {friend.name}
-          {friend.peerId !== store.myId && <ConnectionStatus id={friend.id} />}
-          {friend.peerId === store.myId && (
+          {friend.peerId !== localStore.myId && (
+            <ConnectionStatus id={friend.id} />
+          )}
+          {friend.peerId === localStore.myId && (
             <input
               value={friend.name}
               onChange={(e) =>

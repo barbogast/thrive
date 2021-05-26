@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react'
 import { Layer } from 'react-konva'
 
-import { useStore, UiActionType, useStores } from '../state'
+import { useLocalStore, UiActionType, useStores } from '../state/localState'
 import * as routing from '../routing'
 import * as board from '../board'
 import HexTile from './HexTile'
@@ -12,7 +12,7 @@ import { sendState } from '../hooks/useConnection'
 
 const Board: React.FC = function Board() {
   const gameId = routing.useGameId()
-  const { uiAction, myId } = useStore((state) => ({
+  const { uiAction, myId } = useLocalStore((state) => ({
     myId: state.myId,
     uiAction: state.uiState.currentAction,
   }))

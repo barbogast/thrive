@@ -3,7 +3,7 @@ import { Link } from 'wouter'
 import { nanoid } from 'nanoid'
 import { useLocation } from 'wouter'
 
-import { useStore, useStores } from '../state'
+import { useLocalStore, useStores } from '../state/localState'
 import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
 import { inviteToGame } from '../hooks/useConnection'
@@ -17,7 +17,7 @@ import { useGameStore } from '../state/gameState'
 
 const MainMenu: React.FC = function MainMenu() {
   const [, setLocation] = useLocation()
-  const store = useStore((state) => ({
+  const localStore = useLocalStore((state) => ({
     get: state.get,
     set: state.set,
     myId: state.myId,
@@ -29,8 +29,8 @@ const MainMenu: React.FC = function MainMenu() {
   }))
   const stores = useStores()
   const createGame = () => {
-    const friendsToInvite = Object.values(store.friends).filter(
-      (friend) => store.friendState[friend.id]?.isSelected,
+    const friendsToInvite = Object.values(localStore.friends).filter(
+      (friend) => localStore.friendState[friend.id]?.isSelected,
     )
 
     const gameId = nanoid()
@@ -41,7 +41,7 @@ const MainMenu: React.FC = function MainMenu() {
   }
 
   const inviteLink = `${window.location.protocol}//${
-    window.location.host + '?connect=' + store.myId
+    window.location.host + '?connect=' + localStore.myId
   }`
   return (
     <>
@@ -57,7 +57,7 @@ const MainMenu: React.FC = function MainMenu() {
               {Object.values(game.players).map((player) => (
                 <span key={player.id}>
                   {player.name}
-                  {player.peerId !== store.myId ? (
+                  {player.peerId !== localStore.myId ? (
                     <ConnectionStatus id={player.peerId} />
                   ) : (
                     <></>

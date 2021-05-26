@@ -3,7 +3,7 @@ import { Stage as KonvaStage, useStrictMode } from 'react-konva'
 import { KonvaEventObject } from 'konva-types/Node'
 import { Stage as StateType } from 'konva-types/Stage'
 
-import * as state from '../state'
+import * as state from '../state/localState'
 import * as gameState from '../state/gameState'
 
 useStrictMode(true)

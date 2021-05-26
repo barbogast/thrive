@@ -1,6 +1,6 @@
 import React, { ReactChild, ReactChildren, useState } from 'react'
 
-import * as state from '../state'
+import * as state from '../state/localState'
 import * as gameState from '../state/gameState'
 
 type Props = {

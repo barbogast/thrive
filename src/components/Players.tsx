@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { getColorForTileType } from './HexTile'
-import { useStore } from '../state'
+import { useLocalStore } from '../state/localState'
 import { useGameStore } from '../state/gameState'
 import Box from './Box'
 import * as game from '../game'
@@ -10,7 +10,7 @@ import ConnectionStatus from './ConnectionStatus'
 
 const Players: React.FC = function Players() {
   const gameId = routing.useGameId()
-  const { myId } = useStore((state) => ({
+  const { myId } = useLocalStore((state) => ({
     myId: state.myId,
   }))
   const { players } = useGameStore((state) => ({

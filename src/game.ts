@@ -4,7 +4,7 @@ import * as board from './board'
 import * as utils from './utils'
 import * as position from './position'
 import { gameConfig } from './constants'
-import { Friend, UiActionType } from './state'
+import { Friend, UiActionType } from './state/localState'
 
 export type PlayerId = string
 
