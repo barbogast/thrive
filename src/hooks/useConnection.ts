@@ -1,5 +1,6 @@
 import Peer, { DataConnection } from 'peerjs'
 import { useEffect, useRef } from 'react'
+import * as setters from '../state/setters'
 import { GameState } from '../game'
 import { useStore, Friend, Store } from '../state'
 
@@ -89,25 +90,28 @@ function initialiseConnection(store: Store) {
       switch (data.method) {
         case 'introduce': {
           connectedPlayerId = data.args.playerId
-          store
-            .get()
-            .addFriendConnection(connectedPlayerId, data.args.playerName, conn)
+
+          setters.addFriendConnection(store)(
+            connectedPlayerId,
+            data.args.playerName,
+            conn,
+          )
           log('add connection, ', connectedPlayerId)
           break
         }
 
         case 'inviteToGame': {
-          store.get().updateGameState(data.args.gameId, data.args.gameState)
+          setters.updateGameState(store)(data.args.gameId, data.args.gameState)
           break
         }
 
         case 'updateMyName': {
-          store.get().setFriendName(connectedPlayerId, data.args.newName)
+          setters.setFriendName(store)(connectedPlayerId, data.args.newName)
           break
         }
 
         case 'updateGameState': {
-          store.get().updateGameState(data.args.gameId, data.args.newState)
+          setters.updateGameState(store)(data.args.gameId, data.args.newState)
           break
         }
 
@@ -132,12 +136,12 @@ function initialiseConnection(store: Store) {
       // Looks like peerjs doesn't correctly handle closing connections, so this doesn't work...
       // https://stackoverflow.com/questions/64651890/peerjs-close-video-call-not-firing-close-event/67404616#67404616
       // https://github.com/peers/peerjs/issues/822
-      store.get().removeFriendConnection(connectedPlayerId)
+      setters.removeFriendConnection(store)(connectedPlayerId)
     })
 
     conn.on('error', (err) => {
       console.error('error', err, connectedPlayerId)
-      store.get().removeFriendConnection(connectedPlayerId)
+      setters.removeFriendConnection(store)(connectedPlayerId)
     })
   }
 }

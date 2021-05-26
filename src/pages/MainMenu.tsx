@@ -8,6 +8,11 @@ import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
 import { inviteToGame } from '../hooks/useConnection'
 import ConnectionStatus from '../components/ConnectionStatus'
+import {
+  addLocalPlayer,
+  initialise,
+  removeSelectedPlayers,
+} from '../state/setters'
 
 const MainMenu: React.FC = function MainMenu() {
   const [, setLocation] = useLocation()
@@ -15,11 +20,8 @@ const MainMenu: React.FC = function MainMenu() {
     get: state.get,
     set: state.set,
     myId: state.myId,
-    initialise: state.initialise,
     games: state.games,
     friends: state.friends,
-    addLocalPlayer: state.addLocalPlayer,
-    removeSelectedPlayers: state.removeSelectedPlayers,
     friendState: state.uiState.friendState,
   }))
   const createGame = () => {
@@ -28,7 +30,7 @@ const MainMenu: React.FC = function MainMenu() {
     )
 
     const gameId = nanoid()
-    store.initialise(gameId, friendsToInvite)
+    initialise(store)(gameId, friendsToInvite)
     inviteToGame(store)(gameId)
 
     setLocation(`/play/${gameId}`)
@@ -66,10 +68,10 @@ const MainMenu: React.FC = function MainMenu() {
         Contacts
         <div>
           <FriendsList />
-          <button onClick={() => store.addLocalPlayer(nanoid(), '')}>
+          <button onClick={() => addLocalPlayer(store)(nanoid(), '')}>
             Add local player
           </button>{' '}
-          <button onClick={store.removeSelectedPlayers}>Remove players</button>{' '}
+          <button onClick={removeSelectedPlayers(store)}>Remove players</button>{' '}
           <button onClick={createGame}>Create game</button>
           <br />
           Invite new contacts by sharing this link:

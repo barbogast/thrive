@@ -6,8 +6,6 @@ import { DataConnection } from 'peerjs'
 import { customAlphabet } from 'nanoid'
 
 import * as game from './game'
-import * as position from './position'
-import { sendState } from './hooks/useConnection'
 
 export const UiActionType = {
   buildRoad: 'buildRoad',
@@ -67,24 +65,6 @@ export type Store = { set: Set; get: Get }
 export type Setter = {
   get: Get
   set: Set
-  setMyName: (name: string) => void
-  setFriendName: (friendId: string, name: string) => void
-  toggleFriendSelection: (friendId: string) => void
-  addFriendConnection: (
-    friendId: string,
-    name: string,
-    connection: DataConnection,
-  ) => void
-  removeFriendConnection: (friendId: string) => void
-  addLocalPlayer: (playerId: string, name: string) => void
-  removeSelectedPlayers: () => void
-  initialise: (gameId: string, friends: Friend[]) => void
-  buildTown: (gameId: string, position: position.Position) => void
-  buildRoad: (gameId: string, position: position.Position) => void
-  nextTurn: (gameId: string) => void
-  rollDice: (gameId: string) => void
-  toggleCurrentAction: (action: UiActionType) => void
-  updateGameState: (gameId: string, gameState: game.GameState) => void
 }
 
 const immer =
@@ -93,17 +73,6 @@ const immer =
   ): StateCreator<T> =>
   (set, get, api) =>
     config((fn) => set(produce<T>(fn)), get, api)
-
-function updateFriendState(
-  draft: State,
-  friendId: string,
-  cb: (friendState: FriendState) => void,
-) {
-  if (!draft.uiState.friendState[friendId]) {
-    draft.uiState.friendState[friendId] = { isSelected: false }
-  }
-  cb(draft.uiState.friendState[friendId])
-}
 
 export function initialiseStore(
   onRehydrated: () => void,
@@ -130,110 +99,6 @@ export function initialiseStore(
             connectedFriends: [],
             friendState: {},
           },
-
-          setMyName: (name: string) => {
-            set((draft) => {
-              draft.friends[draft.myId].name = name
-            })
-          },
-
-          setFriendName: (friendId: string, name: string) => {
-            set((draft) => {
-              draft.friends[friendId].name = name
-            })
-          },
-
-          toggleFriendSelection: (friendId: string) =>
-            set((draft) => {
-              updateFriendState(draft, friendId, (friendState) => {
-                friendState.isSelected = !friendState.isSelected
-              })
-            }),
-
-          addFriendConnection: (
-            friendId: string,
-            name: string,
-            connection: DataConnection,
-          ) =>
-            set((draft) => {
-              draft.friends[friendId] = { id: friendId, peerId: friendId, name }
-              updateFriendState(draft, friendId, (friendState) => {
-                friendState.connection = connection
-              })
-            }),
-
-          removeFriendConnection: (friendId: string) =>
-            set((draft) => {
-              updateFriendState(draft, friendId, (friendState) => {
-                delete friendState.connection
-              })
-            }),
-
-          addLocalPlayer: (playerId: string, name: string) =>
-            set((draft) => {
-              draft.friends[playerId] = {
-                id: playerId,
-                peerId: draft.myId,
-                name,
-              }
-            }),
-
-          removeSelectedPlayers: () =>
-            set((draft) => {
-              for (const [friendId, friendState] of Object.entries(
-                draft.uiState.friendState,
-              )) {
-                if (friendState.isSelected) {
-                  draft.uiState.friendState[friendId].connection?.close()
-                  delete draft.uiState.friendState[friendId]
-                  delete draft.friends[friendId]
-                }
-              }
-            }),
-
-          initialise: (gameId: string, friends: Friend[]) =>
-            set((draft) => {
-              draft.games[gameId] = game.initialiseGame(friends)
-            }),
-
-          buildTown: (gameId: string, position: position.Position) =>
-            set((draft) => {
-              game.buildTown(draft.games[gameId], position)
-              draft.uiState.currentAction = { type: UiActionType.none }
-            }),
-
-          buildRoad: (gameId: string, position: position.Position) =>
-            set((draft) => {
-              game.buildRoad(draft.games[gameId], position)
-              draft.uiState.currentAction = { type: UiActionType.none }
-            }),
-
-          nextTurn: (gameId: string) => {
-            set((draft) => {
-              draft.uiState.currentAction = { type: UiActionType.none }
-              game.endTurn(draft.games[gameId])
-            })
-            sendState({ set, get })(gameId, get().games[gameId])
-          },
-
-          rollDice: (gameId: string) => {
-            set((draft) => {
-              game.rollDice(draft.games[gameId])
-            })
-          },
-
-          toggleCurrentAction: (actionType: UiActionType) =>
-            set((draft) => {
-              draft.uiState.currentAction =
-                actionType === draft.uiState.currentAction.type
-                  ? { type: UiActionType.none }
-                  : { type: actionType }
-            }),
-
-          updateGameState: (gameId: string, gameState: game.GameState) =>
-            set((draft) => {
-              draft.games[gameId] = gameState
-            }),
         }
       }),
       {

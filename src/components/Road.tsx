@@ -6,6 +6,7 @@ import * as game from '../game'
 import * as axial from '../axial'
 import * as position from '../position'
 import * as routing from '../routing'
+import * as setters from '../state/setters'
 import { useStore } from '../state'
 
 type Props = {
@@ -16,7 +17,8 @@ type Props = {
 const Road: React.FC<Props> = function Road({ position, owner }) {
   const gameId = routing.useGameId()
   const store = useStore((state) => ({
-    buildRoad: state.buildRoad,
+    get: state.get,
+    set: state.set,
     color: owner ? state.games[gameId].players[owner].color : undefined,
   }))
 
@@ -49,7 +51,9 @@ const Road: React.FC<Props> = function Road({ position, owner }) {
       height={7}
       rotation={directionToDegree[direction]}
       {...style}
-      onClick={owner ? undefined : () => store.buildRoad(gameId, position)}
+      onClick={
+        owner ? undefined : () => setters.buildRoad(store)(gameId, position)
+      }
     />
   )
 }

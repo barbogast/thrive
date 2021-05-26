@@ -2,18 +2,18 @@ import React from 'react'
 
 import * as routing from '../routing'
 import * as game from '../game'
+import * as setters from '../state/setters'
 import { useStore, UiActionType } from '../state'
 
 const Controls: React.FC = function Controls() {
   const gameId = routing.useGameId()
   const store = useStore((state) => ({
     myId: state.myId,
-    nextTurn: state.nextTurn,
-    toggleCurrentAction: state.toggleCurrentAction,
     currentAction: state.games[gameId].sequence.scheduledActions[0],
     currentDiceRoll: state.games[gameId].currentDiceRoll,
-    rollDice: state.rollDice,
     players: state.games[gameId].players,
+    get: state.get,
+    set: state.set,
   }))
   const allowedActions = game.getAllowedUiActions(store.currentAction)
 
@@ -30,7 +30,9 @@ const Controls: React.FC = function Controls() {
       <br />
       {allowedActions.includes(UiActionType.buildRoad) ? (
         <button
-          onClick={() => store.toggleCurrentAction(UiActionType.buildRoad)}
+          onClick={() =>
+            setters.toggleCurrentAction(store)(UiActionType.buildRoad)
+          }
           style={{
             boxShadow:
               store.currentAction.type === UiActionType.buildRoad
@@ -46,7 +48,9 @@ const Controls: React.FC = function Controls() {
       &nbsp;&nbsp;
       {allowedActions.includes(UiActionType.buildTown) ? (
         <button
-          onClick={() => store.toggleCurrentAction(UiActionType.buildTown)}
+          onClick={() =>
+            setters.toggleCurrentAction(store)(UiActionType.buildTown)
+          }
           style={{
             boxShadow:
               store.currentAction.type === UiActionType.buildTown
@@ -61,13 +65,17 @@ const Controls: React.FC = function Controls() {
       )}
       &nbsp;&nbsp;
       {allowedActions.includes(UiActionType.endTurn) ? (
-        <button onClick={() => store.nextTurn(gameId)}>Finish turn</button>
+        <button onClick={() => setters.nextTurn(store)(gameId)}>
+          Finish turn
+        </button>
       ) : (
         <></>
       )}
       &nbsp;&nbsp;
       {allowedActions.includes(UiActionType.rollDice) ? (
-        <button onClick={() => store.rollDice(gameId)}>Roll dice</button>
+        <button onClick={() => setters.rollDice(store)(gameId)}>
+          Roll dice
+        </button>
       ) : (
         <></>
       )}
