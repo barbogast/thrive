@@ -8,7 +8,7 @@ import * as board from '../board'
 import HexTile from './HexTile'
 import Road from './Road'
 import Town from './Town'
-import { useGameStore, useGameStoreApi } from '../state/gameState'
+import { useCurrentGame, useGameStoreApi } from '../state/gameState'
 import { sendState } from '../hooks/useConnection'
 import { useTempStore, UiActionType } from '../state/tempState'
 
@@ -20,31 +20,30 @@ const Board: React.FC = function Board() {
   const tempStore = useTempStore((state) => ({
     uiAction: state.currentAction,
   }))
-  const {
-    gameState: { tiles, roads, towns },
-    sequenceAction,
-  } = useGameStore((state) => ({
-    gameState: state.games[gameId],
-    sequenceAction: state.games[gameId].sequence.scheduledActions[0],
+  const gameStore = useCurrentGame((game) => ({
+    roads: game.roads,
+    towns: game.towns,
+    tiles: game.tiles,
+    sequenceAction: game.sequence.scheduledActions[0],
   }))
   const stores = useStores()
 
   const buildRoad =
     tempStore.uiAction.type === UiActionType.buildRoad ||
-    sequenceAction.type === 'buildRoad'
+    gameStore.sequenceAction.type === 'buildRoad'
   const buildTown =
     tempStore.uiAction.type === UiActionType.buildTown ||
-    sequenceAction.type === 'buildTown'
+    gameStore.sequenceAction.type === 'buildTown'
 
   const positions = useMemo(() => {
     if (buildRoad) {
-      return board.getRoadPositions(tiles)
+      return board.getRoadPositions(gameStore.tiles)
     } else if (buildTown) {
-      return board.getTownPositions(tiles)
+      return board.getTownPositions(gameStore.tiles)
     } else {
       return []
     }
-  }, [tiles, buildRoad, buildTown])
+  }, [gameStore.tiles, buildRoad, buildTown])
 
   const gameStoreApi = useGameStoreApi()
   useEffect(() => {
@@ -56,7 +55,7 @@ const Board: React.FC = function Board() {
 
   return (
     <Layer>
-      {Object.values(tiles).map((t, i) => (
+      {Object.values(gameStore.tiles).map((t, i) => (
         <HexTile key={i} tile={t} />
       ))}
 
@@ -64,11 +63,11 @@ const Board: React.FC = function Board() {
 
       {buildTown && positions.map((r, i) => <Town key={i} position={r} />)}
 
-      {Object.values(roads).map((r, i) => (
+      {Object.values(gameStore.roads).map((r, i) => (
         <Road key={i} position={r.position} owner={r.owner} />
       ))}
 
-      {Object.values(towns).map((t, i) => (
+      {Object.values(gameStore.towns).map((t, i) => (
         <Town key={i} position={t.position} owner={t.owner} />
       ))}
     </Layer>

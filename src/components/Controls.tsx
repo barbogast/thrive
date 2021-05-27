@@ -5,7 +5,7 @@ import * as game from '../game'
 import * as setters from '../state/setters'
 import { useStores } from '../state/useStores'
 import { useLocalStore } from '../state/localState'
-import { useGameStore } from '../state/gameState'
+import { useCurrentGame } from '../state/gameState'
 import { UiActionType } from '../state/tempState'
 
 const Controls: React.FC = function Controls() {
@@ -13,9 +13,9 @@ const Controls: React.FC = function Controls() {
   const localStore = useLocalStore((state) => ({
     myId: state.myId,
   }))
-  const gameStore = useGameStore((state) => ({
-    currentAction: state.games[gameId].sequence.scheduledActions[0],
-    players: state.games[gameId].players,
+  const gameStore = useCurrentGame((game) => ({
+    currentAction: game.sequence.scheduledActions[0],
+    players: game.players,
   }))
   const stores = useStores()
   const allowedActions = game.getAllowedUiActions(gameStore.currentAction)

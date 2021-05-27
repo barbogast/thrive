@@ -1,24 +1,20 @@
 import React from 'react'
 
-import { useGameStore } from '../state/gameState'
+import { useCurrentGame } from '../state/gameState'
 import Board from '../components/Board'
 import Stage from '../components/Stage'
 import Controls from '../components/Controls'
 import Players from '../components/Players'
-import * as routing from '../routing'
 import * as game from '../game'
 import Box from '../components/Box'
 
 const Playing: React.FC = function Playing() {
-  const gameId = routing.useGameId()
-  const gameStore = useGameStore((state) => ({
-    sequence: state.games[gameId].sequence,
-    currentAction: state.games[gameId].sequence.scheduledActions[0],
+  const gameStore = useCurrentGame((game) => ({
+    sequence: game.sequence,
+    currentAction: game.sequence.scheduledActions[0],
     currentPlayerColor:
-      state.games[gameId].players[
-        state.games[gameId].sequence.scheduledActions[0].playerId
-      ].color,
-    currentDiceRoll: state.games[gameId].currentDiceRoll,
+      game.players[game.sequence.scheduledActions[0].playerId].color,
+    currentDiceRoll: game.currentDiceRoll,
   }))
 
   return (

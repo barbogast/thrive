@@ -1,9 +1,10 @@
-import create, { UseStore } from 'zustand'
+import create, { StateSelector, UseStore } from 'zustand'
 import { persist } from 'zustand/middleware'
 import createContext from 'zustand/context'
 import { GetState, immerMiddleware, SetState } from './utils'
 
 import * as game from '../game'
+import * as routing from '../routing'
 
 export type GameState = {
   games: {
@@ -38,3 +39,10 @@ export const {
   context,
   useStoreApi: useGameStoreApi,
 } = createContext<GameState>()
+
+export function useCurrentGame<U>(
+  selector: StateSelector<game.GameState, U>,
+): U {
+  const gameId = routing.useGameId()
+  return useGameStore((state: GameState) => selector(state.games[gameId]))
+}

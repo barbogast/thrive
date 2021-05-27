@@ -8,7 +8,7 @@ import * as position from '../position'
 import * as routing from '../routing'
 import * as setters from '../state/setters'
 import { useStores } from '../state/useStores'
-import { useGameStore } from '../state/gameState'
+import { useCurrentGame } from '../state/gameState'
 
 type Props = {
   position: position.Position
@@ -17,8 +17,8 @@ type Props = {
 
 const Road: React.FC<Props> = function Road({ position, owner }) {
   const gameId = routing.useGameId()
-  const localStore = useGameStore((state) => ({
-    color: owner ? state.games[gameId].players[owner].color : undefined,
+  const gameStore = useCurrentGame((game) => ({
+    color: owner ? game.players[owner].color : undefined,
   }))
   const stores = useStores()
 
@@ -38,7 +38,7 @@ const Road: React.FC<Props> = function Road({ position, owner }) {
   const middle = axial.getMiddle(position)
 
   const style = owner
-    ? { fill: localStore.color }
+    ? { fill: gameStore.color }
     : { stroke: 'black', strokeWidth: 1 }
 
   return (
