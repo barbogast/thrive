@@ -1,9 +1,8 @@
 import { DataConnection } from 'peerjs'
+import { inviteToGame } from '../hooks/useConnection'
 
 import * as game from '../game'
-import { BoardSettings } from '../game'
 import * as position from '../position'
-import { Friend } from './localState'
 import { FriendState, TempState, UiActionType } from './tempState'
 import { Stores } from './useStores'
 
@@ -100,15 +99,18 @@ export function removeSelectedPlayers(stores: Stores) {
   }
 }
 
-export function initialise(stores: Stores) {
-  return (
-    gameId: string,
-    boardConfig: BoardSettings,
-    friends: Friend[],
-  ): void => {
+export function createGame(stores: Stores) {
+  return (gameId: string): void => {
+    const friendsToInvite = Object.values(stores.local.get().friends).filter(
+      (friend) => stores.temp.get().friendState[friend.id]?.isSelected,
+    )
     stores.game.set((draft) => {
-      draft.games[gameId] = game.initialiseGame(boardConfig, friends)
+      draft.games[gameId] = game.initialiseGame(
+        stores.temp.get().boardSettings,
+        friendsToInvite,
+      )
     })
+    inviteToGame(stores)(gameId)
   }
 }
 

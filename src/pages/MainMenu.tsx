@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'wouter'
 import { nanoid } from 'nanoid'
 import { useLocation } from 'wouter'
@@ -6,17 +6,15 @@ import { useLocation } from 'wouter'
 import { useLocalStore } from '../state/localState'
 import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
-import { inviteToGame } from '../hooks/useConnection'
 import ConnectionStatus from '../components/ConnectionStatus'
 import BoardSettingsForm from '../components/BoardSettingsForm'
 import {
   addLocalPlayer,
-  initialise,
+  createGame,
   removeSelectedPlayers,
 } from '../state/setters'
 import { useGameStore } from '../state/gameState'
 import { useStores } from '../state/useStores'
-import { useTempStore } from '../state/tempState'
 
 const MainMenu: React.FC = function MainMenu() {
   const [, setLocation] = useLocation()
@@ -26,23 +24,14 @@ const MainMenu: React.FC = function MainMenu() {
     myId: state.myId,
     friends: state.friends,
   }))
-  const tempStore = useTempStore((state) => ({
-    friendState: state.friendState,
-    boardSettings: state.boardSettings,
-  }))
   const gameStore = useGameStore((state) => ({
     games: state.games,
   }))
   const stores = useStores()
 
-  const createGame = () => {
-    const friendsToInvite = Object.values(localStore.friends).filter(
-      (friend) => tempStore.friendState[friend.id]?.isSelected,
-    )
+  const create = () => {
     const gameId = nanoid()
-    initialise(stores)(gameId, tempStore.boardSettings, friendsToInvite)
-    inviteToGame(stores)(gameId)
-
+    createGame(stores)(gameId)
     setLocation(`/play/${gameId}`)
   }
 
@@ -85,7 +74,7 @@ const MainMenu: React.FC = function MainMenu() {
           <button onClick={removeSelectedPlayers(stores)}>
             Remove players
           </button>{' '}
-          <button onClick={createGame}>Create game</button>
+          <button onClick={create}>Create game</button>
           <br />
           Invite new contacts by sharing this link:
           <a href={inviteLink}>{inviteLink}</a>
