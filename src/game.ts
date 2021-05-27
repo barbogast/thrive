@@ -7,6 +7,17 @@ import { gameConfig } from './constants'
 import { Friend } from './state/localState'
 import { UiActionType } from './state/tempState'
 
+export type BoardSettings =
+  | {
+      type: 'hex'
+      size: '3' | '5'
+    }
+  | {
+      type: 'square'
+      rows: number
+      columns: number
+    }
+
 export type PlayerId = string
 
 export const Resource = {
@@ -90,10 +101,10 @@ export function getCost(type: 'town' | 'road'): Resources {
   return gameConfig().resourceCost[type]
 }
 
-export function getSquareBoard(): Tile[] {
+export function getSquareBoard(rows: number, columns: number): Tile[] {
   const tiles = []
-  for (let x = 0; x < 10; x++) {
-    for (let y = 0; y < 10; y++) {
+  for (let x = 0; x < columns; x++) {
+    for (let y = 0; y < rows; y++) {
       tiles.push({
         position: axial.offsetToAxial({ row: x, col: y }),
         resource: getResource(),
@@ -148,8 +159,15 @@ function generateStartingPhaseSequence(playerIds: string[]) {
   return sequence
 }
 
-export function initialiseGame(friends: Friend[]): GameState {
-  const tiles = getHexagonBoard('3')
+export function initialiseGame(
+  boardSettings: BoardSettings,
+  friends: Friend[],
+): GameState {
+  const tiles =
+    boardSettings.type === 'hex'
+      ? getHexagonBoard(boardSettings.size)
+      : getSquareBoard(boardSettings.rows, boardSettings.columns)
+
   const tMap = tileMap.fromArray(tiles)
   const playerOrder = friends.map((f) => f.id)
 

@@ -1,6 +1,7 @@
 import create, { UseStore } from 'zustand'
 import { DataConnection } from 'peerjs'
 import { GetState, immerMiddleware, SetState } from './utils'
+import { BoardSettings } from '../game'
 
 export const UiActionType = {
   buildRoad: 'buildRoad',
@@ -36,6 +37,7 @@ export type FriendState = {
 export type TempState = {
   currentAction: UiAction
   friendState: { [friendId: string]: FriendState }
+  boardSettings: BoardSettings
 
   get: GetState<TempState>
   set: SetState<TempState>
@@ -50,6 +52,7 @@ export function initialiseStore(): UseStore<TempState> {
         currentAction: { type: UiActionType.none },
         connectedFriends: [],
         friendState: {},
+        boardSettings: { type: 'hex', size: '5' },
       }
     }),
   )

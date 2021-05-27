@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'wouter'
 import { nanoid } from 'nanoid'
 import { useLocation } from 'wouter'
@@ -8,6 +8,7 @@ import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
 import { inviteToGame } from '../hooks/useConnection'
 import ConnectionStatus from '../components/ConnectionStatus'
+import BoardSettingsForm from '../components/BoardSettingsForm'
 import {
   addLocalPlayer,
   initialise,
@@ -27,18 +28,19 @@ const MainMenu: React.FC = function MainMenu() {
   }))
   const tempStore = useTempStore((state) => ({
     friendState: state.friendState,
+    boardSettings: state.boardSettings,
   }))
   const gameStore = useGameStore((state) => ({
     games: state.games,
   }))
   const stores = useStores()
+
   const createGame = () => {
     const friendsToInvite = Object.values(localStore.friends).filter(
       (friend) => tempStore.friendState[friend.id]?.isSelected,
     )
-
     const gameId = nanoid()
-    initialise(stores)(gameId, friendsToInvite)
+    initialise(stores)(gameId, tempStore.boardSettings, friendsToInvite)
     inviteToGame(stores)(gameId)
 
     setLocation(`/play/${gameId}`)
@@ -76,6 +78,7 @@ const MainMenu: React.FC = function MainMenu() {
         Contacts
         <div>
           <FriendsList />
+          <BoardSettingsForm />
           <button onClick={() => addLocalPlayer(stores)(nanoid(), '')}>
             Add local player
           </button>{' '}

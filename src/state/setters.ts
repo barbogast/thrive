@@ -1,6 +1,7 @@
 import { DataConnection } from 'peerjs'
 
 import * as game from '../game'
+import { BoardSettings } from '../game'
 import * as position from '../position'
 import { Friend } from './localState'
 import { FriendState, TempState, UiActionType } from './tempState'
@@ -100,9 +101,13 @@ export function removeSelectedPlayers(stores: Stores) {
 }
 
 export function initialise(stores: Stores) {
-  return (gameId: string, friends: Friend[]): void => {
+  return (
+    gameId: string,
+    boardConfig: BoardSettings,
+    friends: Friend[],
+  ): void => {
     stores.game.set((draft) => {
-      draft.games[gameId] = game.initialiseGame(friends)
+      draft.games[gameId] = game.initialiseGame(boardConfig, friends)
     })
   }
 }
