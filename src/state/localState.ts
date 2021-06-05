@@ -1,6 +1,5 @@
 import create, { UseStore } from 'zustand'
 import { persist } from 'zustand/middleware'
-import createContext from 'zustand/context'
 import { customAlphabet } from 'nanoid'
 import { GetState, immerMiddleware, SetState } from './utils'
 
@@ -19,9 +18,7 @@ export type LocalState = {
   set: SetState<LocalState>
 }
 
-export function initialiseStore(
-  onRehydrated: () => void,
-): UseStore<LocalState> {
+export function initialiseStore(): UseStore<LocalState> {
   return create<LocalState>(
     persist(
       immerMiddleware((set, get) => {
@@ -42,15 +39,9 @@ export function initialiseStore(
       }),
       {
         name: 'state',
-        onRehydrateStorage: () => onRehydrated,
       },
     ),
   )
 }
 
-export const {
-  Provider,
-  useStore: useLocalStore,
-  // @ts-ignore
-  context,
-} = createContext<LocalState>()
+export const useLocalStore = initialiseStore()

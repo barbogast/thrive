@@ -8,7 +8,7 @@ import * as board from '../board'
 import HexTile from './HexTile'
 import Road from './Road'
 import Town from './Town'
-import { useCurrentGame, useGameStoreApi } from '../state/gameState'
+import { useCurrentGame, useGameStore } from '../state/gameState'
 import { sendState } from '../hooks/useConnection'
 import { useTempStore, UiActionType } from '../state/tempState'
 
@@ -45,9 +45,8 @@ const Board: React.FC = function Board() {
     }
   }, [gameStore.tiles, buildRoad, buildTown])
 
-  const gameStoreApi = useGameStoreApi()
   useEffect(() => {
-    return gameStoreApi.subscribe((newState, oldState) => {
+    return useGameStore.subscribe((newState, oldState) => {
       if (oldState.games[gameId].sequence.scheduledActions[0].playerId === myId)
         sendState(stores)(gameId)
     })

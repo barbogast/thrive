@@ -1,6 +1,5 @@
 import create, { StateSelector, UseStore } from 'zustand'
 import { persist } from 'zustand/middleware'
-import createContext from 'zustand/context'
 import { GetState, immerMiddleware, SetState } from './utils'
 
 import * as game from '../game'
@@ -14,7 +13,7 @@ export type GameState = {
   set: SetState<GameState>
 }
 
-export function initialiseStore(onRehydrated: () => void): UseStore<GameState> {
+export function initialiseStore(): UseStore<GameState> {
   return create<GameState>(
     persist(
       immerMiddleware((set, get) => {
@@ -26,19 +25,12 @@ export function initialiseStore(onRehydrated: () => void): UseStore<GameState> {
       }),
       {
         name: 'games',
-        onRehydrateStorage: () => onRehydrated,
       },
     ),
   )
 }
 
-export const {
-  Provider,
-  useStore: useGameStore,
-  // @ts-ignore
-  context,
-  useStoreApi: useGameStoreApi,
-} = createContext<GameState>()
+export const useGameStore = initialiseStore()
 
 export function useCurrentGame<U>(
   selector: StateSelector<game.GameState, U>,
