@@ -14,7 +14,6 @@ import {
   removeSelectedPlayers,
 } from '../state/setters'
 import { useGameStore } from '../state/gameState'
-import { useStores } from '../state/useStores'
 
 const MainMenu: React.FC = function MainMenu() {
   const [, setLocation] = useLocation()
@@ -27,11 +26,10 @@ const MainMenu: React.FC = function MainMenu() {
   const gameStore = useGameStore((state) => ({
     games: state.games,
   }))
-  const stores = useStores()
 
   const create = () => {
     const gameId = nanoid()
-    createGame(stores)(gameId)
+    createGame(gameId)
     setLocation(`/play/${gameId}`)
   }
 
@@ -68,12 +66,10 @@ const MainMenu: React.FC = function MainMenu() {
         <div>
           <FriendsList />
           <BoardSettingsForm />
-          <button onClick={() => addLocalPlayer(stores)(nanoid(), '')}>
+          <button onClick={() => addLocalPlayer(nanoid(), '')}>
             Add local player
           </button>{' '}
-          <button onClick={removeSelectedPlayers(stores)}>
-            Remove players
-          </button>{' '}
+          <button onClick={removeSelectedPlayers}>Remove players</button>{' '}
           <button onClick={create}>Create game</button>
           <br />
           Invite new contacts by sharing this link:

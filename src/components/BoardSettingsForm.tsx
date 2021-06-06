@@ -1,20 +1,18 @@
 import React from 'react'
 
-import { useStores } from '../state/useStores'
 import { useTempStore } from '../state/tempState'
 
 const BoardSettingsForm: React.FC = function BoardSettingsForm() {
   const { boardSettings } = useTempStore((state) => ({
     boardSettings: state.boardSettings,
   }))
-  const stores = useStores()
 
   return (
     <div>
       <select
         value={boardSettings.type}
         onChange={(e) =>
-          stores.temp.set((draft) => {
+          useTempStore.setState((draft) => {
             draft.boardSettings.type = e.target.value as 'hex' | 'square'
           })
         }
@@ -32,7 +30,7 @@ const BoardSettingsForm: React.FC = function BoardSettingsForm() {
               value={boardSettings.rows}
               type="number"
               onChange={(e) =>
-                stores.temp.set((draft) => {
+                useTempStore.setState((draft) => {
                   if (draft.boardSettings.type !== 'square') {
                     throw new Error('TS-Refinement failed')
                   }
@@ -47,7 +45,7 @@ const BoardSettingsForm: React.FC = function BoardSettingsForm() {
               value={boardSettings.columns}
               type="number"
               onChange={(e) =>
-                stores.temp.set((draft) => {
+                useTempStore.setState((draft) => {
                   if (draft.boardSettings.type !== 'square') {
                     throw new Error('TS-Refinement failed')
                   }
@@ -67,7 +65,7 @@ const BoardSettingsForm: React.FC = function BoardSettingsForm() {
             <select
               value={boardSettings.size}
               onChange={(e) =>
-                stores.temp.set((draft) => {
+                useTempStore.setState((draft) => {
                   if (draft.boardSettings.type !== 'hex') {
                     throw new Error('TS-Refinement failed')
                   }

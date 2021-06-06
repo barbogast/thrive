@@ -6,7 +6,6 @@ import * as axial from '../axial'
 import * as position from '../position'
 import * as routing from '../routing'
 import * as setters from '../state/setters'
-import { useStores } from '../state/useStores'
 import { useCurrentGame } from '../state/gameState'
 
 type Props = {
@@ -19,7 +18,6 @@ const Town: React.FC<Props> = function Town({ position, owner }) {
   const localStore = useCurrentGame((game) => ({
     color: owner ? game.players[owner].color : undefined,
   }))
-  const stores = useStores()
   const middle = axial.getMiddle(position)
   const style = owner
     ? {
@@ -36,9 +34,7 @@ const Town: React.FC<Props> = function Town({ position, owner }) {
       x={middle.x}
       y={middle.y}
       radius={10}
-      onClick={
-        owner ? undefined : () => setters.buildTown(stores)(gameId, position)
-      }
+      onClick={owner ? undefined : () => setters.buildTown(gameId, position)}
       {...style}
     />
   )

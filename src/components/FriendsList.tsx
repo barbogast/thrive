@@ -1,7 +1,6 @@
 import React from 'react'
 
 import { useLocalStore } from '../state/localState'
-import { useStores } from '../state/useStores'
 import ConnectionStatus from './ConnectionStatus'
 import * as setters from '../state/setters'
 import { useTempStore } from '../state/tempState'
@@ -14,7 +13,6 @@ const FriendsList: React.FC = function FriendsList() {
   const tempStore = useTempStore((state) => ({
     friendState: state.friendState,
   }))
-  const stores = useStores()
 
   return (
     <ul>
@@ -23,7 +21,7 @@ const FriendsList: React.FC = function FriendsList() {
           <input
             type="checkbox"
             checked={Boolean(tempStore.friendState[friend.id]?.isSelected)}
-            onChange={() => setters.toggleFriendSelection(stores)(friend.id)}
+            onChange={() => setters.toggleFriendSelection(friend.id)}
           />
           {friend.name}
           {friend.peerId !== localStore.myId && (
@@ -32,9 +30,7 @@ const FriendsList: React.FC = function FriendsList() {
           {friend.peerId === localStore.myId && (
             <input
               value={friend.name}
-              onChange={(e) =>
-                setters.setFriendName(stores)(friend.id, e.target.value)
-              }
+              onChange={(e) => setters.setFriendName(friend.id, e.target.value)}
             />
           )}
         </li>

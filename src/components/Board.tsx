@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from 'react'
 import { Layer } from 'react-konva'
 
-import { useStores } from '../state/useStores'
 import { useLocalStore } from '../state/localState'
 import * as routing from '../routing'
 import * as board from '../board'
@@ -26,7 +25,6 @@ const Board: React.FC = function Board() {
     tiles: game.tiles,
     sequenceAction: game.sequence.scheduledActions[0],
   }))
-  const stores = useStores()
 
   const buildRoad =
     tempStore.uiAction.type === UiActionType.buildRoad ||
@@ -48,7 +46,7 @@ const Board: React.FC = function Board() {
   useEffect(() => {
     return useGameStore.subscribe((newState, oldState) => {
       if (oldState.games[gameId].sequence.scheduledActions[0].playerId === myId)
-        sendState(stores)(gameId)
+        sendState(gameId)
     })
   }, [])
 
