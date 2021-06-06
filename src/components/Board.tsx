@@ -27,11 +27,13 @@ const Board: React.FC = function Board() {
   }))
 
   const buildRoad =
-    tempStore.uiAction.type === UiActionType.buildRoad ||
-    gameStore.sequenceAction.type === 'buildRoad'
+    gameStore.sequenceAction.playerId === myId &&
+    (tempStore.uiAction.type === UiActionType.buildRoad ||
+      gameStore.sequenceAction.type === 'buildRoad')
   const buildTown =
-    tempStore.uiAction.type === UiActionType.buildTown ||
-    gameStore.sequenceAction.type === 'buildTown'
+    gameStore.sequenceAction.playerId === myId &&
+    (tempStore.uiAction.type === UiActionType.buildTown ||
+      gameStore.sequenceAction.type === 'buildTown')
 
   const positions = useMemo(() => {
     if (buildRoad) {
