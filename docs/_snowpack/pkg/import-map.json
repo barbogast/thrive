@@ -1,0 +1,13 @@
+{
+  "imports": {
+    "immer": "./immer.js",
+    "nanoid": "./nanoid.js",
+    "peerjs": "./peerjs.js",
+    "react": "./react.js",
+    "react-dom": "./react-dom.js",
+    "react-konva": "./react-konva.js",
+    "wouter": "./wouter.js",
+    "zustand": "./zustand.js",
+    "zustand/middleware": "./zustand/middleware.js"
+  }
+}
