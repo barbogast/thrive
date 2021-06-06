@@ -2,6 +2,7 @@ import create, { UseStore } from 'zustand'
 import { DataConnection } from 'peerjs'
 import { GetState, immerMiddleware, SetState } from './utils'
 import { BoardSettings } from '../game'
+import produce, { Draft } from 'immer'
 
 export const UiActionType = {
   buildRoad: 'buildRoad',
@@ -59,3 +60,7 @@ export function initialiseStore(): UseStore<TempState> {
 }
 
 export const useTempStore = initialiseStore()
+
+export function setTempState(fn: (draft: Draft<TempState>) => void): void {
+  useTempStore.setState(produce(fn))
+}

@@ -2,6 +2,7 @@ import create, { UseStore } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { customAlphabet } from 'nanoid'
 import { GetState, immerMiddleware, SetState } from './utils'
+import produce, { Draft } from 'immer'
 
 export type Friend = {
   id: string
@@ -45,3 +46,7 @@ export function initialiseStore(): UseStore<LocalState> {
 }
 
 export const useLocalStore = initialiseStore()
+
+export function setLocalState(fn: (draft: Draft<LocalState>) => void): void {
+  useLocalStore.setState(produce(fn))
+}

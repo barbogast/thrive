@@ -3,9 +3,15 @@ import { inviteToGame } from '../hooks/useConnection'
 
 import * as game from '../game'
 import * as position from '../position'
-import { FriendState, TempState, UiActionType, useTempStore } from './tempState'
-import { useLocalStore } from './localState'
-import { useGameStore } from './gameState'
+import {
+  FriendState,
+  setTempState,
+  TempState,
+  UiActionType,
+  useTempStore,
+} from './tempState'
+import { setLocalState, useLocalStore } from './localState'
+import { setGameState } from './gameState'
 
 function updateFriendState(
   draft: TempState,
@@ -19,19 +25,19 @@ function updateFriendState(
 }
 
 export function setMyName(name: string): void {
-  useLocalStore.setState((draft) => {
+  setLocalState((draft) => {
     draft.friends[draft.myId].name = name
   })
 }
 
 export function setFriendName(friendId: string, name: string): void {
-  useLocalStore.setState((draft) => {
+  setLocalState((draft) => {
     draft.friends[friendId].name = name
   })
 }
 
 export function toggleFriendSelection(friendId: string): void {
-  useTempStore.setState((draft) => {
+  setTempState((draft) => {
     updateFriendState(draft, friendId, (friendState) => {
       friendState.isSelected = !friendState.isSelected
     })
@@ -43,10 +49,10 @@ export function addFriendConnection(
   name: string,
   connection: DataConnection,
 ): void {
-  useLocalStore.setState((draft) => {
+  setLocalState((draft) => {
     draft.friends[friendId] = { id: friendId, peerId: friendId, name }
   })
-  useTempStore.setState((draft) => {
+  setTempState((draft) => {
     updateFriendState(draft, friendId, (friendState) => {
       friendState.connection = connection
     })
@@ -54,7 +60,7 @@ export function addFriendConnection(
 }
 
 export function removeFriendConnection(friendId: string): void {
-  useTempStore.setState((draft) => {
+  setTempState((draft) => {
     updateFriendState(draft, friendId, (friendState) => {
       delete friendState.connection
     })
@@ -62,7 +68,7 @@ export function removeFriendConnection(friendId: string): void {
 }
 
 export function addLocalPlayer(playerId: string, name: string): void {
-  useLocalStore.setState((draft) => {
+  setLocalState((draft) => {
     draft.friends[playerId] = {
       id: playerId,
       peerId: draft.myId,
@@ -76,14 +82,14 @@ export function removeSelectedPlayers(): void {
     .filter(([, friendState]) => friendState.isSelected)
     .map(([friendId]) => friendId)
 
-  useTempStore.setState((draft) => {
+  setTempState((draft) => {
     for (const friendId of toDelete) {
       draft.friendState[friendId].connection?.close()
       delete draft.friendState[friendId]
     }
   })
 
-  useLocalStore.setState((draft) => {
+  setLocalState((draft) => {
     for (const friendId of toDelete) {
       delete draft.friends[friendId]
     }
@@ -96,7 +102,7 @@ export function createGame(gameId: string): void {
   ).filter(
     (friend) => useTempStore.getState().friendState[friend.id]?.isSelected,
   )
-  useGameStore.setState((draft) => {
+  setGameState((draft) => {
     draft.games[gameId] = game.initialiseGame(
       useTempStore.getState().boardSettings,
       friendsToInvite,
@@ -106,40 +112,40 @@ export function createGame(gameId: string): void {
 }
 
 export function buildTown(gameId: string, position: position.Position): void {
-  useGameStore.setState((draft) => {
+  setGameState((draft) => {
     game.buildTown(draft.games[gameId], position)
   })
-  useTempStore.setState((draft) => {
+  setTempState((draft) => {
     draft.currentAction = { type: UiActionType.none }
   })
 }
 
 export function buildRoad(gameId: string, position: position.Position): void {
-  useGameStore.setState((draft) => {
+  setGameState((draft) => {
     game.buildRoad(draft.games[gameId], position)
   })
-  useTempStore.setState((draft) => {
+  setTempState((draft) => {
     draft.currentAction = { type: UiActionType.none }
   })
 }
 
 export function nextTurn(gameId: string): void {
-  useGameStore.setState((draft) => {
+  setGameState((draft) => {
     game.endTurn(draft.games[gameId])
   })
-  useTempStore.setState((draft) => {
+  setTempState((draft) => {
     draft.currentAction = { type: UiActionType.none }
   })
 }
 
 export function rollDice(gameId: string): void {
-  useGameStore.setState((draft) => {
+  setGameState((draft) => {
     game.rollDice(draft.games[gameId])
   })
 }
 
 export function toggleCurrentAction(actionType: UiActionType): void {
-  useTempStore.setState((draft) => {
+  setTempState((draft) => {
     draft.currentAction =
       actionType === draft.currentAction.type
         ? { type: UiActionType.none }
@@ -151,7 +157,7 @@ export function updateGameState(
   gameId: string,
   gameState: game.GameState,
 ): void {
-  useGameStore.setState((draft) => {
+  setGameState((draft) => {
     draft.games[gameId] = gameState
   })
 }

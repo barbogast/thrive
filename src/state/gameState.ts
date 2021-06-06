@@ -4,6 +4,7 @@ import { GetState, immerMiddleware, SetState } from './utils'
 
 import * as game from '../game'
 import * as routing from '../routing'
+import produce, { Draft } from 'immer'
 
 export type GameState = {
   games: {
@@ -31,6 +32,10 @@ export function initialiseStore(): UseStore<GameState> {
 }
 
 export const useGameStore = initialiseStore()
+
+export function setGameState(fn: (draft: Draft<GameState>) => void): void {
+  useGameStore.setState(produce(fn))
+}
 
 export function useCurrentGame<U>(
   selector: StateSelector<game.GameState, U>,
