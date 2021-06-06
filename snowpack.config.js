@@ -7,6 +7,10 @@ module.exports = {
     public: { url: '/', static: true },
     src: { url: '/dist' },
   },
+  buildOptions: {
+    baseUrl: '/thrive/dist',
+    out: './docs',
+  },
   plugins: ['@snowpack/plugin-typescript', '@snowpack/plugin-react-refresh'],
   alias: {
     'konva-types': './node_modules/konva/types',
