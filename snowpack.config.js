@@ -8,7 +8,7 @@ module.exports = {
     src: { url: '/dist' },
   },
   buildOptions: {
-    baseUrl: '/thrive/dist',
+    baseUrl: '/thrive',
     out: './docs',
   },
   plugins: ['@snowpack/plugin-typescript', '@snowpack/plugin-react-refresh'],
