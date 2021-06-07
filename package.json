@@ -31,7 +31,7 @@
     "dev": "snowpack dev",
     "eslint": "eslint --ext=.tsx,.ts --cache src",
     "tsc": "tsc",
-    "build": "snowpack build && touch ./docs/.nojekyll"
+    "build": "snowpack build"
   },
   "prettier": {
     "trailingComma": "all",
