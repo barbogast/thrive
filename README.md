@@ -1,18 +1,37 @@
-# Thrive: Browser implementation of a certain(tm) board game
+# Thrive: Browser version of a certain(tm) board game
 
 This repository contains the source code for an implementation for a certain, well-known board game. The game can be played with friends over the internet or from the same computer. It is implemented in Typescript using Canvas for rendering and WebRTC for peer-to-peer communication.
 
 ## Technical Documentation
 
 - Canvas rendering with Konva
+  - Why canvas? Why konva?
 - Rendering the app with React and react-konva
+  - Why react? Why react-konva?
 - Working with the hex grid
+  - Coordinate system (axial and offset)
+  - Representation within the state
 - Working with towns and roads on the grid
-- Directory structure: State, game logic components
+  - townPositionIs2RoadsApart
+  - roadPositionConnectsToExistingRoad
+  - townPositionConnectsToExistingRoad
+- Directory structure: State, game logic, components
 - Peer-to-peer communication with PeerJS / WebRTC Data Channel
+  - Why WebRTC?
+  - Why peerJS?
+  - RTC system
+  - Connect to a new player
+  - Starting a game
+  - Updating the game state
 - Player and game management
+  - Managing known players
+  - Players within a game
 - State management with zustand and immer
+  - Why zustand?
+  - Why immer?
   - 3 different stores
+    - Why?
+    - Details
   - interacting with stores: set\*State()
 - Game logic:
   - state organisation
@@ -22,7 +41,11 @@ This repository contains the source code for an implementation for a certain, we
 
 ## TODO
 
+What's left to do...
+
 ### MVP
+
+To make the game playable in its most simple form:
 
 - Menu: make understandable and basic styling
 - Points and Game end
@@ -30,6 +53,8 @@ This repository contains the source code for an implementation for a certain, we
 - Make the whole app resilient against network errors
 
 ### Base Game
+
+Missing elements from a certain(tm) board game
 
 - When building roads or towns only show available positions
 - Trading
@@ -45,6 +70,8 @@ This repository contains the source code for an implementation for a certain, we
 
 ### Additions
 
+Ideas for more features
+
 - Ships
 - Map editor
 - Record game, allow replay
@@ -52,9 +79,12 @@ This repository contains the source code for an implementation for a certain, we
 
 ### UI
 
+Work on the user interface
+
 - improve UX
 - make it pretty
 - Build roads/towns with drag and drop
 - Proper icons for resources and towns
 - Display resources as cards which can be freely arranged by the player with drag and drop
 - Show the mouse pointer of the player whose turn it is for all other players
+- Support playing on mobile devices
