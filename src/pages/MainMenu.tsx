@@ -14,6 +14,18 @@ import {
   removeSelectedPlayers,
 } from '../state/setters'
 import { useGameStore } from '../state/gameState'
+import { GameState } from '../game'
+
+function formatPlayers(game: GameState) {
+  const allPlayers = Object.keys(game.players)
+  const allExceptTheLast = allPlayers.slice(0, -1)
+  const theLast = allPlayers[allPlayers.length - 1]
+  return (
+    allExceptTheLast.map((playerId) => game.players[playerId].name).join(', ') +
+    ' and ' +
+    game.players[theLast].name
+  )
+}
 
 const MainMenu: React.FC = function MainMenu() {
   const [, setLocation] = useLocation()
@@ -45,7 +57,7 @@ const MainMenu: React.FC = function MainMenu() {
           {Object.entries(gameStore.games).map(([gameId, game]) => (
             <li key={gameId}>
               <Link href={`/play/${gameId}`}>
-                <a className="link">Play {gameId}</a>
+                <a className="link">Continue game with {formatPlayers(game)}</a>
               </Link>
               {Object.values(game.players).map((player) => (
                 <span key={player.id}>
