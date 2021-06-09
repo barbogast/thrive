@@ -48,9 +48,18 @@ const MainMenu: React.FC = function MainMenu() {
   const inviteLink = `${window.location.protocol}//${
     window.location.host + '?connect=' + localStore.myId
   }`
+
+  if (!localStore.friends[localStore.myId].name) {
+    return (
+      <>
+        <PlayerName label="What's your name?" />
+      </>
+    )
+  }
+
   return (
     <>
-      <PlayerName />
+      <PlayerName label="Your name" />
       <div>
         Existing games
         <ul>

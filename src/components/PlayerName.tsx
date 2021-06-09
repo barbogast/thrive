@@ -4,7 +4,11 @@ import { updateMyName } from '../hooks/useConnection'
 import { useLocalStore } from '../state/localState'
 import * as setters from '../state/setters'
 
-const PlayerName: React.FC = function PlayerName() {
+type Props = {
+  label: string
+}
+
+const PlayerName: React.FC<Props> = function PlayerName({ label }) {
   const localStore = useLocalStore((state) => ({
     myName: state.friends[state.myId].name,
   }))
@@ -18,7 +22,7 @@ const PlayerName: React.FC = function PlayerName() {
   return (
     <div>
       <label>
-        Your name:
+        {label}
         <input value={value} onChange={(e) => setValue(e.target.value)} />
       </label>
       <button onClick={() => save(value)}>Save</button>
