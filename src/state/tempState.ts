@@ -1,6 +1,6 @@
 import create, { UseStore } from 'zustand'
 import { DataConnection } from 'peerjs'
-import { GetState, immerMiddleware, SetState } from './utils'
+import { immerMiddleware } from './utils'
 import { BoardSettings } from '../game'
 import produce, { Draft } from 'immer'
 
@@ -39,22 +39,18 @@ export type TempState = {
   currentAction: UiAction
   friendState: { [friendId: string]: FriendState }
   boardSettings: BoardSettings
-
-  get: GetState<TempState>
-  set: SetState<TempState>
 }
 
 export function initialiseStore(): UseStore<TempState> {
   return create<TempState>(
-    immerMiddleware((set, get) => {
-      return {
-        set,
-        get,
-        currentAction: { type: UiActionType.none },
-        connectedFriends: [],
+    immerMiddleware(() => {
+      const s: TempState = {
+        currentAction: { type: 'none' },
         friendState: {},
         boardSettings: { type: 'hex', size: '5' },
       }
+
+      return s
     }),
   )
 }

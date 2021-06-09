@@ -1,7 +1,7 @@
 import create, { UseStore } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { customAlphabet } from 'nanoid'
-import { GetState, immerMiddleware, SetState } from './utils'
+import { immerMiddleware } from './utils'
 import produce, { Draft } from 'immer'
 
 export type Friend = {
@@ -15,14 +15,12 @@ export type LocalState = {
   friends: {
     [id: string]: Friend
   }
-  get: GetState<LocalState>
-  set: SetState<LocalState>
 }
 
 export function initialiseStore(): UseStore<LocalState> {
   return create<LocalState>(
     persist(
-      immerMiddleware((set, get) => {
+      immerMiddleware(() => {
         // Omit special characters so the id can be used with peerjs (which dislikes "-")
         const aphabet =
           'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -30,8 +28,6 @@ export function initialiseStore(): UseStore<LocalState> {
 
         const myId = getId()
         return {
-          set,
-          get,
           myId,
           friends: {
             [myId]: { id: myId, peerId: myId, name: '' },

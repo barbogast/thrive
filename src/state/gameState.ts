@@ -1,6 +1,6 @@
 import create, { StateSelector, UseStore } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { GetState, immerMiddleware, SetState } from './utils'
+import { immerMiddleware } from './utils'
 
 import * as game from '../game'
 import * as routing from '../routing'
@@ -10,17 +10,13 @@ export type GameState = {
   games: {
     [gameId: string]: game.GameState
   }
-  get: GetState<GameState>
-  set: SetState<GameState>
 }
 
 export function initialiseStore(): UseStore<GameState> {
   return create<GameState>(
     persist(
-      immerMiddleware((set, get) => {
+      immerMiddleware(() => {
         return {
-          set,
-          get,
           games: {},
         }
       }),
