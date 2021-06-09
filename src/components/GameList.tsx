@@ -24,6 +24,10 @@ const GameList: React.FC = function GameList() {
     games: state.games,
   }))
 
+  if (!Object.keys(gameStore.games).length) {
+    return <a href="create">Create a game</a>
+  }
+
   return (
     <div>
       Existing games

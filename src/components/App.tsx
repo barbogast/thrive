@@ -4,6 +4,7 @@ import { Route } from 'wouter'
 import useConnection from '../hooks/useConnection'
 import Playing from '../pages/Playing'
 import MainMenu from '../pages/MainMenu'
+import CreateGame from '../pages/CreateGame'
 
 const App: React.FC = function App() {
   const connect = () => {
@@ -19,6 +20,7 @@ const App: React.FC = function App() {
   return (
     <>
       <Route path="/" component={MainMenu} />
+      <Route path="/create" component={CreateGame} />
       <Route path="/play/:gameId" component={Playing} />
       <div>
         <button onClick={connect}>Connect</button>
