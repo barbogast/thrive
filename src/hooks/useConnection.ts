@@ -1,9 +1,8 @@
 import Peer, { DataConnection } from 'peerjs'
-import { useEffect, useRef } from 'react'
 import * as setters from '../state/setters'
 import { GameState } from '../game'
 import { useLocalStore, Friend } from '../state/localState'
-import { useTempStore } from '../state/tempState'
+import { setTempState, useTempStore } from '../state/tempState'
 import { useGameStore } from '../state/gameState'
 
 const DEBUG_LEVEL: 0 | 1 | 2 | 3 = 0
@@ -140,46 +139,39 @@ function initialiseConnection(conn: DataConnection) {
   })
 }
 
-function useConnection(): {
-  connectToPeer: (connectToId: string) => void
-} {
-  const peerRef = useRef<Peer>()
-  const localStore = useLocalStore((state) => ({
-    friends: state.friends,
-    myId: state.myId,
-  }))
-
-  const connectToPeer = (connectToId: string) => {
-    if (!peerRef.current) {
-      return
-    }
-    log(`Connecting to ${localStore.myId}...`)
-    const conn = peerRef.current.connect(connectToId)
-    initialiseConnection(conn)
+export function connectToPeer(connectToId: string): void {
+  const tempStore = useTempStore.getState()
+  if (!tempStore.peerJsConnection) {
+    return
   }
+  log(`Connecting to ${connectToId}...`)
+  const conn = tempStore.peerJsConnection.connect(connectToId)
 
-  useEffect(() => {
-    peerRef.current = new Peer(localStore.myId, { debug: DEBUG_LEVEL })
-
-    peerRef.current.on('open', (id) => {
-      log('My peer ID is: ' + id)
-
-      for (const friendId in localStore.friends) {
-        if (localStore.friends[friendId].peerId !== localStore.myId) {
-          connectToPeer(friendId)
-        }
-      }
-    })
-
-    peerRef.current.on('error', (error) => {
-      console.error(error)
-    })
-
-    // Handle incoming data connection
-    peerRef.current.on('connection', initialiseConnection)
-  }, [])
-
-  return { connectToPeer }
+  initialiseConnection(conn)
 }
 
-export default useConnection
+export function setup(): void {
+  const localStore = useLocalStore.getState()
+
+  const peer = new Peer(localStore.myId, { debug: DEBUG_LEVEL })
+  setTempState((draft) => {
+    draft.peerJsConnection = peer
+  })
+
+  peer.on('open', (id) => {
+    log('My peer ID is: ' + id)
+
+    for (const friendId in localStore.friends) {
+      if (localStore.friends[friendId].peerId !== localStore.myId) {
+        connectToPeer(friendId)
+      }
+    }
+  })
+
+  peer.on('error', (error) => {
+    console.error(error)
+  })
+
+  // Handle incoming data connection
+  peer.on('connection', initialiseConnection)
+}
