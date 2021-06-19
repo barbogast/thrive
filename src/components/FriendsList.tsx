@@ -5,7 +5,13 @@ import ConnectionStatus from './ConnectionStatus'
 import * as setters from '../state/setters'
 import { useTempStore } from '../state/tempState'
 
-const FriendsList: React.FC = function FriendsList() {
+type Props = {
+  showLocalPlayers?: boolean
+}
+
+const FriendsList: React.FC<Props> = function FriendsList({
+  showLocalPlayers,
+}) {
   const localStore = useLocalStore((state) => ({
     myId: state.myId,
     friends: state.friends,
@@ -14,9 +20,15 @@ const FriendsList: React.FC = function FriendsList() {
     friendState: state.friendState,
   }))
 
+  let players = Object.values(localStore.friends)
+
+  if (!showLocalPlayers) {
+    players = players.filter((player) => player.peerId !== localStore.myId)
+  }
+
   return (
     <ul>
-      {Object.values(localStore.friends).map((friend) => (
+      {players.map((friend) => (
         <li key={friend.id}>
           <input
             type="checkbox"

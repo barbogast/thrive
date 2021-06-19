@@ -39,7 +39,7 @@ const CreateGame: React.FC = function CreateGame() {
       <div>
         Contacts
         <div>
-          <FriendsList />
+          <FriendsList showLocalPlayers />
           <BoardSettingsForm />
           <button onClick={() => addLocalPlayer(nanoid(), '')}>
             Add local player
