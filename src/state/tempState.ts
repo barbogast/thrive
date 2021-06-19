@@ -1,7 +1,7 @@
 import create, { UseStore } from 'zustand'
 import Peer, { DataConnection } from 'peerjs'
 import { immerMiddleware } from './utils'
-import { BoardSettings } from '../lib/game'
+import { BoardSettings, Tile } from '../lib/game'
 import produce, { Draft } from 'immer'
 
 export const UiActionType = {
@@ -39,6 +39,7 @@ export type TempState = {
   currentAction: UiAction
   friendState: { [friendId: string]: FriendState }
   boardSettings: BoardSettings
+  currentTiles: Tile[]
   peerJsConnection: Peer | void
 }
 
@@ -50,6 +51,7 @@ export function initialiseStore(): UseStore<TempState> {
         friendState: {},
         boardSettings: { type: 'hex', size: '5' },
         peerJsConnection: undefined,
+        currentTiles: [],
       }
 
       return s

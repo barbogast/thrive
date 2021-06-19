@@ -159,15 +159,13 @@ function generateStartingPhaseSequence(playerIds: string[]) {
   return sequence
 }
 
-export function initialiseGame(
-  boardSettings: BoardSettings,
-  friends: Friend[],
-): GameState {
-  const tiles =
-    boardSettings.type === 'hex'
-      ? getHexagonBoard(boardSettings.size)
-      : getSquareBoard(boardSettings.rows, boardSettings.columns)
+export function generateBoard(boardSettings: BoardSettings): Tile[] {
+  return boardSettings.type === 'hex'
+    ? getHexagonBoard(boardSettings.size)
+    : getSquareBoard(boardSettings.rows, boardSettings.columns)
+}
 
+export function initialiseGame(tiles: Tile[], friends: Friend[]): GameState {
   const tMap = tileMap.fromArray(tiles)
   const playerOrder = friends.map((f) => f.id)
 

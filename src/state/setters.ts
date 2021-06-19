@@ -96,6 +96,14 @@ export function removeSelectedPlayers(): void {
   })
 }
 
+export function generateBoard(): void {
+  setTempState((draft) => {
+    draft.currentTiles = game.generateBoard(
+      useTempStore.getState().boardSettings,
+    )
+  })
+}
+
 export function createGame(gameId: string): void {
   const friendsToInvite = Object.values(
     useLocalStore.getState().friends,
@@ -104,7 +112,7 @@ export function createGame(gameId: string): void {
   )
   setGameState((draft) => {
     draft.games[gameId] = game.initialiseGame(
-      useTempStore.getState().boardSettings,
+      useTempStore.getState().currentTiles,
       friendsToInvite,
     )
   })
