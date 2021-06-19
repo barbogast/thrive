@@ -7,6 +7,7 @@ import Controls from '../components/Controls'
 import Players from '../components/Players'
 import * as game from '../lib/game'
 import Box from '../components/Box'
+import BackButton from '../components/BackButton'
 
 const Playing: React.FC = function Playing() {
   const gameStore = useCurrentGame((game) => ({
@@ -19,7 +20,7 @@ const Playing: React.FC = function Playing() {
 
   return (
     <>
-      <button onClick={() => window.history.back()}>Back</button>
+      <BackButton />
       <div>
         Current player <Box color={gameStore.currentPlayerColor} />:{' '}
         {gameStore.currentAction.type}

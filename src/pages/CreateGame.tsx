@@ -6,6 +6,7 @@ import { useLocalStore } from '../state/localState'
 import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
 import BoardSettingsForm from '../components/BoardSettingsForm'
+import BackButton from '../components/BackButton'
 import { addLocalPlayer, createGame } from '../state/setters'
 
 const CreateGame: React.FC = function CreateGame() {
@@ -35,7 +36,7 @@ const CreateGame: React.FC = function CreateGame() {
 
   return (
     <>
-      <button onClick={() => window.history.back()}>&lt;&lt;</button>
+      <BackButton />
       <div>
         <h3>Board settings</h3>
         <BoardSettingsForm />
