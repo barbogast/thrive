@@ -1,8 +1,19 @@
 import React from 'react'
 
-import { useTempStore } from '../state/tempState'
+import {
+  hexDefault,
+  setTempState,
+  squareDefault,
+  useTempStore,
+} from '../state/tempState'
 
-const BoardSettingsForm: React.FC = function BoardSettingsForm() {
+type Props = {
+  onChange: () => void
+}
+
+const BoardSettingsForm: React.FC<Props> = function BoardSettingsForm({
+  onChange,
+}) {
   const { boardSettings } = useTempStore((state) => ({
     boardSettings: state.boardSettings,
   }))
@@ -11,11 +22,13 @@ const BoardSettingsForm: React.FC = function BoardSettingsForm() {
     <div>
       <select
         value={boardSettings.type}
-        onChange={(e) =>
-          useTempStore.setState((draft) => {
-            draft.boardSettings.type = e.target.value as 'hex' | 'square'
+        onChange={(e) => {
+          setTempState((draft) => {
+            draft.boardSettings =
+              e.target.value === 'hex' ? hexDefault : squareDefault
           })
-        }
+          onChange()
+        }}
       >
         <option defaultChecked value="hex">
           Hexagon
@@ -29,14 +42,15 @@ const BoardSettingsForm: React.FC = function BoardSettingsForm() {
             <input
               value={boardSettings.rows}
               type="number"
-              onChange={(e) =>
-                useTempStore.setState((draft) => {
+              onChange={(e) => {
+                setTempState((draft) => {
                   if (draft.boardSettings.type !== 'square') {
                     throw new Error('TS-Refinement failed')
                   }
                   draft.boardSettings.rows = parseInt(e.target.value) as number
                 })
-              }
+                onChange()
+              }}
             />
           </label>
           <label>
@@ -44,8 +58,8 @@ const BoardSettingsForm: React.FC = function BoardSettingsForm() {
             <input
               value={boardSettings.columns}
               type="number"
-              onChange={(e) =>
-                useTempStore.setState((draft) => {
+              onChange={(e) => {
+                setTempState((draft) => {
                   if (draft.boardSettings.type !== 'square') {
                     throw new Error('TS-Refinement failed')
                   }
@@ -53,7 +67,8 @@ const BoardSettingsForm: React.FC = function BoardSettingsForm() {
                     e.target.value,
                   ) as number
                 })
-              }
+                onChange()
+              }}
             />
           </label>
         </div>
@@ -64,14 +79,15 @@ const BoardSettingsForm: React.FC = function BoardSettingsForm() {
             Size:{' '}
             <select
               value={boardSettings.size}
-              onChange={(e) =>
-                useTempStore.setState((draft) => {
+              onChange={(e) => {
+                setTempState((draft) => {
                   if (draft.boardSettings.type !== 'hex') {
                     throw new Error('TS-Refinement failed')
                   }
                   draft.boardSettings.size = e.target.value as '3' | '5'
                 })
-              }
+                onChange()
+              }}
             >
               <option defaultChecked value="5">
                 5
