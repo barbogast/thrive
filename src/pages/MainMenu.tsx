@@ -9,18 +9,12 @@ import { addLocalPlayer, removeSelectedPlayers } from '../state/setters'
 
 const MainMenu: React.FC = function MainMenu() {
   const localStore = useLocalStore((state) => ({
-    get: state.get,
-    set: state.set,
     myId: state.myId,
     friends: state.friends,
   }))
 
   if (!localStore.friends[localStore.myId].name) {
-    return (
-      <>
-        <PlayerName label="What's your name?" />
-      </>
-    )
+    return <PlayerName label="What's your name?" />
   }
 
   return (
