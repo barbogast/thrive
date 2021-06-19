@@ -1,9 +1,7 @@
 import React from 'react'
-import { Stage as KonvaStage, useStrictMode } from 'react-konva'
+import { Stage as KonvaStage } from 'react-konva'
 import { KonvaEventObject } from 'konva-types/Node'
 import { Stage as StateType } from 'konva-types/Stage'
-
-useStrictMode(true)
 
 function onWheel(e: KonvaEventObject<WheelEvent>) {
   const scaleBy = 1.05
