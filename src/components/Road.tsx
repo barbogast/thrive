@@ -33,7 +33,7 @@ const Road: React.FC<Props> = function Road({ position, owner }) {
     5: 30,
   }
 
-  const middle = axial.getMiddle(position)
+  const middle = axial.getMiddle(visualConfig().tileRadius, position)
 
   const style = owner
     ? { fill: gameStore.color }

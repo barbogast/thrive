@@ -10,6 +10,7 @@ import Town from './Town'
 import { useCurrentGame, useGameStore } from '../state/gameState'
 import { sendState } from '../lib/peers'
 import { useTempStore, UiActionType } from '../state/tempState'
+import { visualConfig } from '../lib/constants'
 
 const Board: React.FC = function Board() {
   const gameId = routing.useGameId()
@@ -55,7 +56,12 @@ const Board: React.FC = function Board() {
   return (
     <Layer>
       {Object.values(gameStore.tiles).map((t, i) => (
-        <HexTile key={i} tile={t} />
+        <HexTile
+          key={i}
+          tile={t}
+          radius={visualConfig().tileRadius}
+          fontSize={14}
+        />
       ))}
 
       {buildRoad && positions.map((r, i) => <Road key={i} position={r} />)}

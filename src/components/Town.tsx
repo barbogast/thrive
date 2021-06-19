@@ -7,6 +7,7 @@ import * as position from '../lib/position'
 import * as routing from '../lib/routing'
 import * as setters from '../state/setters'
 import { useCurrentGame } from '../state/gameState'
+import { visualConfig } from '../lib/constants'
 
 type Props = {
   position: position.Position
@@ -18,7 +19,7 @@ const Town: React.FC<Props> = function Town({ position, owner }) {
   const localStore = useCurrentGame((game) => ({
     color: owner ? game.players[owner].color : undefined,
   }))
-  const middle = axial.getMiddle(position)
+  const middle = axial.getMiddle(visualConfig().tileRadius, position)
   const style = owner
     ? {
         fill: localStore.color,

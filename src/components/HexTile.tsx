@@ -8,6 +8,8 @@ import { TileType } from '../lib/game'
 
 type Props = {
   tile: game.Tile
+  radius: number
+  fontSize: number
 }
 
 export function getColorForTileType(tileType: TileType): string {
@@ -21,8 +23,8 @@ export function getColorForTileType(tileType: TileType): string {
   }[tileType]
 }
 
-const HexTile: React.FC<Props> = function HexTile({ tile }) {
-  const pxPosition = axial.getTilePosition(tile.position)
+const HexTile: React.FC<Props> = function HexTile({ tile, radius, fontSize }) {
+  const pxPosition = axial.getTilePosition(radius, tile.position)
   // const coord = `r: ${tile.position.q}\nc: ${tile.position.r}`
 
   return (
@@ -30,7 +32,7 @@ const HexTile: React.FC<Props> = function HexTile({ tile }) {
       <RegularPolygon
         sides={6}
         rotation={visualConfig().flatTopped ? 30 : 0}
-        radius={visualConfig().tileRadius + 1}
+        radius={radius + 1}
         fill={getColorForTileType(tile.resource)}
         stroke={'black'}
         strokeWidth={1}
@@ -39,11 +41,11 @@ const HexTile: React.FC<Props> = function HexTile({ tile }) {
       {tile.number ? (
         <Text
           text={String(tile.number)}
-          fontSize={14}
+          fontSize={fontSize}
           fontFamily="Arial"
           offsetX={6}
           offsetY={3}
-          fontVariant="bold"
+          fontVariant={fontSize > 10 ? 'bold' : 'normal'}
         />
       ) : null}
     </Group>

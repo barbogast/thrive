@@ -81,12 +81,15 @@ export function compareCoordinates(
   return coord1.q === coord2.q && coord1.r === coord2.r
 }
 
-export function getTilePosition(position: Coordinate): PixelCoordinate {
+export function getTilePosition(
+  radius: number,
+  position: Coordinate,
+): PixelCoordinate {
   const { row, col } = axialToOffset(position)
-  const left = 250
-  const top = 150
+  const left = 0
+  const top = 0
 
-  const r = visualConfig().tileRadius
+  const r = radius
   if (visualConfig().flatTopped) {
     const height = Math.sqrt(3) * r
     const isOffset = row % 2 !== 0 ? r : 0
@@ -104,8 +107,11 @@ export function getTilePosition(position: Coordinate): PixelCoordinate {
   }
 }
 
-export function getMiddle(positions: Coordinate[]): PixelCoordinate {
-  const pxPositions = positions.map(getTilePosition)
+export function getMiddle(
+  radius: number,
+  positions: Coordinate[],
+): PixelCoordinate {
+  const pxPositions = positions.map((pos) => getTilePosition(radius, pos))
   return {
     x: utils.average(pxPositions.map((pos) => pos.x)),
     y: utils.average(pxPositions.map((pos) => pos.y)),
