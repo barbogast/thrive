@@ -88,3 +88,9 @@ Work on the user interface
 - Display resources as cards which can be freely arranged by the player with drag and drop
 - Show the mouse pointer of the player whose turn it is for all other players
 - Support playing on mobile devices
+
+### Minor
+
+- There are 2 "GameState" types right now
+- The id of a game should also be stored within the GameState object
+- install react hook eslint plugin
