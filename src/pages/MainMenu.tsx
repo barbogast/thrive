@@ -25,9 +25,6 @@ const MainMenu: React.FC = function MainMenu() {
         Contacts
         <div>
           <FriendsList />
-          <button onClick={() => addLocalPlayer(nanoid(), '')}>
-            Add local player
-          </button>{' '}
           <button onClick={removeSelectedPlayers}>Remove players</button>{' '}
         </div>
       </div>

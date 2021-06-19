@@ -30,6 +30,8 @@ const GameList: React.FC = function GameList() {
 
   return (
     <div>
+      <a href="create">Create a game</a>
+      <br />
       Existing games
       <ul>
         {Object.entries(gameStore.games).map(([gameId, game]) => (

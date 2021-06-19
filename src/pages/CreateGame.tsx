@@ -35,21 +35,20 @@ const CreateGame: React.FC = function CreateGame() {
 
   return (
     <>
-      <button onClick={() => window.history.back()}>Back</button>
+      <button onClick={() => window.history.back()}>&lt;&lt;</button>
       <div>
-        Contacts
-        <div>
-          <FriendsList showLocalPlayers />
-          <BoardSettingsForm />
-          <button onClick={() => addLocalPlayer(nanoid(), '')}>
-            Add local player
-          </button>{' '}
-          <button onClick={create}>Create game</button>
-          <br />
-          Invite new contacts by sharing this link:
-          <a href={inviteLink}>{inviteLink}</a>
-        </div>
+        <h3>Board settings</h3>
+        <BoardSettingsForm />
+        <h3>Players</h3>
+        <FriendsList showLocalPlayers />
+        <button onClick={() => addLocalPlayer(nanoid(), '')}>
+          Add local player
+        </button>{' '}
+        <br />
+        Invite new contacts by sharing this link:
+        <a href={inviteLink}>{inviteLink}</a>
       </div>
+      <button onClick={create}>Create game</button>
     </>
   )
 }
