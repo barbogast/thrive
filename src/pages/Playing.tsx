@@ -5,7 +5,7 @@ import Board from '../components/Board'
 import Stage from '../components/Stage'
 import Controls from '../components/Controls'
 import Players from '../components/Players'
-import * as game from '../game'
+import * as game from '../lib/game'
 import Box from '../components/Box'
 
 const Playing: React.FC = function Playing() {

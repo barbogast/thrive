@@ -1,10 +1,10 @@
 import React from 'react'
 import { Group, RegularPolygon, Text } from 'react-konva'
 
-import { visualConfig } from '../constants'
-import * as game from '../game'
-import * as axial from '../axial'
-import { TileType } from '../game'
+import { visualConfig } from '../lib/constants'
+import * as game from '../lib/game'
+import * as axial from '../lib/axial'
+import { TileType } from '../lib/game'
 
 type Props = {
   tile: game.Tile

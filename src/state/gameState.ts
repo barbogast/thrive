@@ -2,8 +2,8 @@ import create, { StateSelector, UseStore } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { immerMiddleware } from './utils'
 
-import * as game from '../game'
-import * as routing from '../routing'
+import * as game from '../lib/game'
+import * as routing from '../lib/routing'
 import produce, { Draft } from 'immer'
 
 export type GameState = {

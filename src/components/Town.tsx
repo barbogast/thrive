@@ -1,10 +1,10 @@
 import React from 'react'
 import { Circle } from 'react-konva'
 
-import * as game from '../game'
-import * as axial from '../axial'
-import * as position from '../position'
-import * as routing from '../routing'
+import * as game from '../lib/game'
+import * as axial from '../lib/axial'
+import * as position from '../lib/position'
+import * as routing from '../lib/routing'
 import * as setters from '../state/setters'
 import { useCurrentGame } from '../state/gameState'
 

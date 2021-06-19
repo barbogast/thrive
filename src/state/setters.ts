@@ -1,8 +1,8 @@
 import { DataConnection } from 'peerjs'
-import * as peers from '../peers'
+import * as peers from '../lib/peers'
 
-import * as game from '../game'
-import * as position from '../position'
+import * as game from '../lib/game'
+import * as position from '../lib/position'
 import {
   FriendState,
   setTempState,

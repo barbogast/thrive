@@ -2,13 +2,13 @@ import React, { useEffect, useMemo } from 'react'
 import { Layer } from 'react-konva'
 
 import { useLocalStore } from '../state/localState'
-import * as routing from '../routing'
-import * as board from '../board'
+import * as routing from '../lib/routing'
+import * as board from '../lib/board'
 import HexTile from './HexTile'
 import Road from './Road'
 import Town from './Town'
 import { useCurrentGame, useGameStore } from '../state/gameState'
-import { sendState } from '../peers'
+import { sendState } from '../lib/peers'
 import { useTempStore, UiActionType } from '../state/tempState'
 
 const Board: React.FC = function Board() {

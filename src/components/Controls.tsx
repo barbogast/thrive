@@ -1,7 +1,7 @@
 import React from 'react'
 
-import * as routing from '../routing'
-import * as game from '../game'
+import * as routing from '../lib/routing'
+import * as game from '../lib/game'
 import * as setters from '../state/setters'
 import { useLocalStore } from '../state/localState'
 import { useCurrentGame } from '../state/gameState'

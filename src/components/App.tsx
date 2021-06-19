@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route } from 'wouter'
 
-import * as peers from '../peers'
+import * as peers from '../lib/peers'
 import Playing from '../pages/Playing'
 import MainMenu from '../pages/MainMenu'
 import CreateGame from '../pages/CreateGame'

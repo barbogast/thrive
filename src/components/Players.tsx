@@ -4,7 +4,7 @@ import { getColorForTileType } from './HexTile'
 import { useLocalStore } from '../state/localState'
 import { useCurrentGame } from '../state/gameState'
 import Box from './Box'
-import * as game from '../game'
+import * as game from '../lib/game'
 import ConnectionStatus from './ConnectionStatus'
 
 const Players: React.FC = function Players() {

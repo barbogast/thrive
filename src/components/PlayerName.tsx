@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import * as peers from '../peers'
+import * as peers from '../lib/peers'
 
 import { useLocalStore } from '../state/localState'
 import * as setters from '../state/setters'

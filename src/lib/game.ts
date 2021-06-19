@@ -4,8 +4,8 @@ import * as board from './board'
 import * as utils from './utils'
 import * as position from './position'
 import { gameConfig } from './constants'
-import { Friend } from './state/localState'
-import { UiActionType } from './state/tempState'
+import { Friend } from '../state/localState'
+import { UiActionType } from '../state/tempState'
 
 export type BoardSettings =
   | {

@@ -1,7 +1,7 @@
 import create, { UseStore } from 'zustand'
 import Peer, { DataConnection } from 'peerjs'
 import { immerMiddleware } from './utils'
-import { BoardSettings } from '../game'
+import { BoardSettings } from '../lib/game'
 import produce, { Draft } from 'immer'
 
 export const UiActionType = {

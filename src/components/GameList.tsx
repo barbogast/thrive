@@ -4,7 +4,7 @@ import { Link } from 'wouter'
 import { useLocalStore } from '../state/localState'
 import ConnectionStatus from '../components/ConnectionStatus'
 import { useGameStore } from '../state/gameState'
-import { GameState } from '../game'
+import { GameState } from '../lib/game'
 
 function formatPlayers(game: GameState) {
   const allPlayers = Object.keys(game.players)
