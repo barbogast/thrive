@@ -1,11 +1,10 @@
 import React from 'react'
-import { nanoid } from 'nanoid'
 
 import { useLocalStore } from '../state/localState'
 import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
 import GameList from '../components/GameList'
-import { addLocalPlayer, removeSelectedPlayers } from '../state/setters'
+import { removeSelectedPlayers } from '../state/setters'
 
 const MainMenu: React.FC = function MainMenu() {
   const localStore = useLocalStore((state) => ({
@@ -19,7 +18,6 @@ const MainMenu: React.FC = function MainMenu() {
 
   return (
     <>
-      <PlayerName label="Your name" />
       <GameList />
       <div>
         Contacts
@@ -27,6 +25,7 @@ const MainMenu: React.FC = function MainMenu() {
           <FriendsList />
           <button onClick={removeSelectedPlayers}>Remove players</button>{' '}
         </div>
+        <PlayerName label="Your name" />
       </div>
     </>
   )
