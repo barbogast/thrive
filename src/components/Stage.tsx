@@ -38,6 +38,8 @@ const Stage: React.FC = function v({ children }) {
     <KonvaStage
       width={window.innerWidth}
       height={window.innerHeight}
+      x={300}
+      y={300}
       onWheel={onWheel}
       draggable
     >

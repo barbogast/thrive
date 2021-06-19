@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { nanoid } from 'nanoid'
 import { useLocation } from 'wouter'
 
@@ -7,7 +7,8 @@ import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
 import BoardSettingsForm from '../components/BoardSettingsForm'
 import BackButton from '../components/BackButton'
-import { addLocalPlayer, createGame } from '../state/setters'
+import PreviewBoard from '../components/PreviewBoard'
+import { addLocalPlayer, createGame, generateBoard } from '../state/setters'
 
 const CreateGame: React.FC = function CreateGame() {
   const [, setLocation] = useLocation()
@@ -15,6 +16,8 @@ const CreateGame: React.FC = function CreateGame() {
     myId: state.myId,
     friends: state.friends,
   }))
+
+  useEffect(generateBoard, [])
 
   const create = () => {
     const gameId = nanoid()
@@ -39,7 +42,9 @@ const CreateGame: React.FC = function CreateGame() {
       <BackButton />
       <div>
         <h3>Board settings</h3>
-        <BoardSettingsForm />
+        <BoardSettingsForm onChange={generateBoard} />
+        <PreviewBoard />
+        <button onClick={generateBoard}>Reshuffle</button>
         <h3>Players</h3>
         <FriendsList showLocalPlayers />
         <button onClick={() => addLocalPlayer(nanoid(), '')}>
