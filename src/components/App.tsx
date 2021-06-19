@@ -1,12 +1,12 @@
 import React from 'react'
 import { Route } from 'wouter'
 
-import * as useConnection from '../hooks/useConnection'
+import * as peers from '../peers'
 import Playing from '../pages/Playing'
 import MainMenu from '../pages/MainMenu'
 import CreateGame from '../pages/CreateGame'
 
-useConnection.setup()
+peers.setup()
 
 const App: React.FC = function App() {
   const connect = () => {
@@ -15,7 +15,7 @@ const App: React.FC = function App() {
     if (!playerId) {
       return
     }
-    useConnection.connectToPeer(playerId)
+    peers.connectToPeer(playerId)
   }
   return (
     <>

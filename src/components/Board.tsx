@@ -8,7 +8,7 @@ import HexTile from './HexTile'
 import Road from './Road'
 import Town from './Town'
 import { useCurrentGame, useGameStore } from '../state/gameState'
-import { sendState } from '../hooks/useConnection'
+import { sendState } from '../peers'
 import { useTempStore, UiActionType } from '../state/tempState'
 
 const Board: React.FC = function Board() {

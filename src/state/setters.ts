@@ -1,5 +1,5 @@
 import { DataConnection } from 'peerjs'
-import { inviteToGame } from '../hooks/useConnection'
+import * as peers from '../peers'
 
 import * as game from '../game'
 import * as position from '../position'
@@ -108,7 +108,7 @@ export function createGame(gameId: string): void {
       friendsToInvite,
     )
   })
-  inviteToGame(gameId)
+  peers.inviteToGame(gameId)
 }
 
 export function buildTown(gameId: string, position: position.Position): void {

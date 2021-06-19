@@ -1,9 +1,9 @@
 import Peer, { DataConnection } from 'peerjs'
-import * as setters from '../state/setters'
-import { GameState } from '../game'
-import { useLocalStore, Friend } from '../state/localState'
-import { setTempState, useTempStore } from '../state/tempState'
-import { useGameStore } from '../state/gameState'
+import * as setters from './state/setters'
+import { GameState } from './game'
+import { useLocalStore, Friend } from './state/localState'
+import { setTempState, useTempStore } from './state/tempState'
+import { useGameStore } from './state/gameState'
 
 const DEBUG_LEVEL: 0 | 1 | 2 | 3 = 0
 

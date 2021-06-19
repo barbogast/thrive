@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { updateMyName } from '../hooks/useConnection'
+import * as peers from '../peers'
 
 import { useLocalStore } from '../state/localState'
 import * as setters from '../state/setters'
@@ -16,7 +16,7 @@ const PlayerName: React.FC<Props> = function PlayerName({ label }) {
 
   const save = (name: string) => {
     setters.setMyName(value)
-    updateMyName(name)
+    peers.updateMyName(name)
   }
 
   return (
