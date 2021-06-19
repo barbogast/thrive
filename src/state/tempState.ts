@@ -43,13 +43,20 @@ export type TempState = {
   peerJsConnection: Peer | void
 }
 
+export const hexDefault: BoardSettings = { type: 'hex', size: '5' }
+export const squareDefault: BoardSettings = {
+  type: 'square',
+  rows: 10,
+  columns: 10,
+}
+
 export function initialiseStore(): UseStore<TempState> {
   return create<TempState>(
     immerMiddleware(() => {
       const s: TempState = {
         currentAction: { type: 'none' },
         friendState: {},
-        boardSettings: { type: 'hex', size: '5' },
+        boardSettings: hexDefault,
         peerJsConnection: undefined,
         currentTiles: [],
       }
