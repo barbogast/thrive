@@ -51,7 +51,7 @@ const Board: React.FC = function Board() {
       if (oldState.games[gameId].sequence.scheduledActions[0].playerId === myId)
         sendState(gameId)
     })
-  }, [])
+  }, [gameId, myId])
 
   return (
     <Layer>

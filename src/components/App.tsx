@@ -7,10 +7,11 @@ import Playing from '../pages/Playing'
 import MainMenu from '../pages/MainMenu'
 import CreateGame from '../pages/CreateGame'
 
-useStrictMode(true)
 peers.setup()
 
 const App: React.FC = function App() {
+  useStrictMode(true)
+
   const connect = () => {
     const urlParams = new URLSearchParams(window.location.search)
     const playerId = urlParams.get('connect')
