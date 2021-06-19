@@ -42,6 +42,9 @@ const Stage: React.FC = function v({ children }) {
       y={300}
       onWheel={onWheel}
       draggable
+      // Silence Konva warning
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      onDragMove={() => {}}
     >
       {children}
     </KonvaStage>
