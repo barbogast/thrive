@@ -18,15 +18,13 @@ const MainMenu: React.FC = function MainMenu() {
 
   return (
     <>
+      <h3>Games</h3>
       <GameList />
-      <div>
-        Contacts
-        <div>
-          <FriendsList />
-          <button onClick={removeSelectedPlayers}>Remove players</button>{' '}
-        </div>
-        <PlayerName label="Your name" />
-      </div>
+      <h3>Contacts</h3>
+      <FriendsList />
+      <button onClick={removeSelectedPlayers}>Remove players</button>{' '}
+      <h3>Settings</h3>
+      <PlayerName label="Your name" />
     </>
   )
 }
