@@ -26,9 +26,9 @@ const Playing: React.FC = function Playing() {
         {gameStore.currentAction.type}
         <br />
       </div>
+      <Players />
       {gameStore.sequence.phaseType === 'normal' ? (
         <>
-          <Players />
           <div>
             {gameStore.currentAction.type !== game.GameActionType.rollDice
               ? 'Current dice roll: ' + gameStore.currentDiceRoll.join(' | ')
