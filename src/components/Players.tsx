@@ -11,8 +11,9 @@ const Players: React.FC = function Players() {
   const { myId } = useLocalStore((state) => ({
     myId: state.myId,
   }))
-  const { players } = useCurrentGame((game) => ({
+  const { players, sequenceAction } = useCurrentGame((game) => ({
     players: game.players,
+    sequenceAction: game.sequence.scheduledActions[0],
   }))
 
   return (
@@ -20,7 +21,14 @@ const Players: React.FC = function Players() {
       {Object.values(players).map((player) => {
         return (
           <div style={{ border: `1px solid ${player.color}` }} key={player.id}>
-            <div style={{ backgroundColor: player.color }}>
+            <div
+              style={{
+                backgroundColor:
+                  sequenceAction.playerId === player.id
+                    ? player.color
+                    : undefined,
+              }}
+            >
               {player.name}
               {player.peerId !== myId ? (
                 <ConnectionStatus id={player.peerId} />
