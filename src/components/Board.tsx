@@ -25,14 +25,18 @@ const Board: React.FC = function Board() {
     towns: game.towns,
     tiles: game.tiles,
     sequenceAction: game.sequence.scheduledActions[0],
+    players: game.players,
   }))
 
+  const isLocalPlayer =
+    gameStore.players[gameStore.sequenceAction.playerId].peerId === myId
+
   const buildRoad =
-    gameStore.sequenceAction.playerId === myId &&
+    isLocalPlayer &&
     (tempStore.uiAction.type === UiActionType.buildRoad ||
       gameStore.sequenceAction.type === 'buildRoad')
   const buildTown =
-    gameStore.sequenceAction.playerId === myId &&
+    isLocalPlayer &&
     (tempStore.uiAction.type === UiActionType.buildTown ||
       gameStore.sequenceAction.type === 'buildTown')
 
@@ -48,8 +52,11 @@ const Board: React.FC = function Board() {
 
   useEffect(() => {
     return useGameStore.subscribe((newState, oldState) => {
-      if (oldState.games[gameId].sequence.scheduledActions[0].playerId === myId)
-        sendState(gameId)
+      const currentGame = oldState.games[gameId]
+      const recentAction = currentGame.sequence.scheduledActions[0]
+      const isLocalPlayer =
+        currentGame.players[recentAction.playerId].peerId === myId
+      if (isLocalPlayer) sendState(gameId)
     })
   }, [gameId, myId])
 
