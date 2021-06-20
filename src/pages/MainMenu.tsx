@@ -4,16 +4,23 @@ import { useLocalStore } from '../state/localState'
 import PlayerName from '../components/PlayerName'
 import FriendsList from '../components/FriendsList'
 import GameList from '../components/GameList'
+import Invitation from '../components/Invitation'
 import { removeSelectedPlayers } from '../state/setters'
+import { useInvitation } from '../lib/routing'
 
 const MainMenu: React.FC = function MainMenu() {
   const localStore = useLocalStore((state) => ({
     myId: state.myId,
     friends: state.friends,
   }))
+  const connectId = useInvitation()
 
   if (!localStore.friends[localStore.myId].name) {
     return <PlayerName label="What's your name?" />
+  }
+
+  if (connectId) {
+    return <Invitation connectId={connectId} />
   }
 
   return (
