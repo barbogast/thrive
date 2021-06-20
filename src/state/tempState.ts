@@ -39,6 +39,7 @@ export type TempState = {
   currentAction: UiAction
   friendState: { [friendId: string]: FriendState }
   boardSettings: BoardSettings
+  pointsForVictory: number | void
   currentTiles: Tile[]
   peerJsConnection: Peer | void
 }
@@ -59,6 +60,7 @@ export function initialiseStore(): UseStore<TempState> {
         boardSettings: hexDefault,
         peerJsConnection: undefined,
         currentTiles: [],
+        pointsForVictory: 10,
       }
 
       return s

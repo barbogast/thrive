@@ -40,6 +40,7 @@ export type TileType = typeof TileType[keyof typeof TileType]
 type Player = Friend & {
   color: string
   resources: Resources
+  points: number
 }
 
 export type Tile = {
@@ -74,6 +75,8 @@ export type GameAction = {
 }
 
 export type GameState = {
+  pointsForVictory: number | void
+  winnerId: string | void
   tiles: tileMap.TileMap
   roads: Road[]
   towns: Town[]
@@ -136,6 +139,7 @@ function initialisePlayers(friends: Friend[]) {
       ...friend,
       color: colors[i],
       resources: { brick: 0, grain: 0, ore: 0, sheep: 0, wood: 0 },
+      points: 0,
     }
   })
   return players
@@ -165,11 +169,17 @@ export function generateBoard(boardSettings: BoardSettings): Tile[] {
     : getSquareBoard(boardSettings.rows, boardSettings.columns)
 }
 
-export function initialiseGame(tiles: Tile[], friends: Friend[]): GameState {
+export function initialiseGame(
+  tiles: Tile[],
+  friends: Friend[],
+  pointsForVictory: number | void,
+): GameState {
   const tMap = tileMap.fromArray(tiles)
   const playerOrder = friends.map((f) => f.id)
 
   return {
+    winnerId: undefined,
+    pointsForVictory,
     tiles: tMap,
     roads: [],
     towns: [],
@@ -183,7 +193,19 @@ export function initialiseGame(tiles: Tile[], friends: Friend[]): GameState {
   }
 }
 
+function calculatePoints(state: GameState, playerId: string): number {
+  return state.towns
+    .filter((town) => town.owner === playerId)
+    .reduce((prev) => prev + 1, 0)
+}
+
 export function endTurn(state: GameState): void {
+  for (const player of Object.values(state.players)) {
+    player.points = calculatePoints(state, player.id)
+    if (player.points >= state.pointsForVictory) {
+      state.winnerId = player.id
+    }
+  }
   const currentAction = state.sequence.scheduledActions[0]
   const nextPlayer =
     state.playerOrder[
@@ -304,6 +326,7 @@ export function buildTown(state: GameState, position: position.Position): void {
     position,
     owner: currentPlayerId,
   })
+  state.players[currentPlayerId].points += 1
   finishAction(state, GameActionType.buildTown)
 }
 

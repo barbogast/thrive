@@ -16,6 +16,8 @@ const Playing: React.FC = function Playing() {
     currentPlayerColor:
       game.players[game.sequence.scheduledActions[0].playerId].color,
     currentDiceRoll: game.currentDiceRoll,
+    pointsForVictory: game.pointsForVictory,
+    winnerName: game.winnerId ? game.players[game.winnerId].name : undefined,
   }))
 
   return (
@@ -25,6 +27,14 @@ const Playing: React.FC = function Playing() {
         Current player <Box color={gameStore.currentPlayerColor} />:{' '}
         {gameStore.currentAction.type}
         <br />
+        {gameStore.pointsForVictory !== undefined &&
+          gameStore.winnerName === undefined && (
+            <>Winning condition: {gameStore.pointsForVictory}</>
+          )}
+        <br />
+        {gameStore.winnerName !== undefined && (
+          <>Winner: {gameStore.winnerName}</>
+        )}
       </div>
       <Players />
       {gameStore.sequence.phaseType === 'normal' ? (

@@ -57,6 +57,9 @@ const Players: React.FC = function Players() {
                 <Box color={getColorForTileType(game.Resource.wood)} /> &nbsp;
                 Ore: {player.resources.ore}
               </li>
+              <li>
+                <Box color="transparent" /> &nbsp;Points: {player.points}
+              </li>
             </ul>
           </div>
         )

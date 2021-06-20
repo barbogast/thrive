@@ -9,12 +9,17 @@ import BoardSettingsForm from '../components/BoardSettingsForm'
 import BackButton from '../components/BackButton'
 import PreviewBoard from '../components/PreviewBoard'
 import { addLocalPlayer, createGame, generateBoard } from '../state/setters'
+import { setTempState, useTempStore } from '../state/tempState'
 
 const CreateGame: React.FC = function CreateGame() {
   const [, setLocation] = useLocation()
   const localStore = useLocalStore((state) => ({
     myId: state.myId,
     friends: state.friends,
+  }))
+
+  const tempStore = useTempStore((state) => ({
+    pointsForVictory: state.pointsForVictory,
   }))
 
   useEffect(generateBoard, [])
@@ -45,6 +50,20 @@ const CreateGame: React.FC = function CreateGame() {
         <BoardSettingsForm onChange={generateBoard} />
         <PreviewBoard />
         <button onClick={generateBoard}>Reshuffle</button>
+        <h3>Winning</h3>
+        <label>
+          Points (optional)
+          <input
+            value={tempStore.pointsForVictory || ''}
+            type="number"
+            onChange={(e) =>
+              setTempState((draft) => {
+                draft.pointsForVictory =
+                  e.target.value === '' ? undefined : parseInt(e.target.value)
+              })
+            }
+          />
+        </label>
         <h3>Players</h3>
         <FriendsList showLocalPlayers />
         <button onClick={() => addLocalPlayer(nanoid(), '')}>

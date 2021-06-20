@@ -114,6 +114,7 @@ export function createGame(gameId: string): void {
     draft.games[gameId] = game.initialiseGame(
       useTempStore.getState().currentTiles,
       friendsToInvite,
+      useTempStore.getState().pointsForVictory,
     )
   })
   peers.inviteToGame(gameId)
