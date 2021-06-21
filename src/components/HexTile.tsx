@@ -25,7 +25,6 @@ export function getColorForTileType(tileType: TileType): string {
 
 const HexTile: React.FC<Props> = function HexTile({ tile, radius, fontSize }) {
   const pxPosition = axial.getTilePosition(radius, tile.position)
-  // const coord = `r: ${tile.position.q}\nc: ${tile.position.r}`
 
   return (
     <Group x={pxPosition.x} y={pxPosition.y}>
@@ -36,14 +35,13 @@ const HexTile: React.FC<Props> = function HexTile({ tile, radius, fontSize }) {
         fill={getColorForTileType(tile.resource)}
         stroke={'black'}
         strokeWidth={1}
-        id={'asdf' + pxPosition.x + pxPosition.y}
       />
       {tile.number ? (
         <Text
           text={String(tile.number)}
           fontSize={fontSize}
           fontFamily="Arial"
-          offsetX={6}
+          offsetX={fontSize > 10 ? 6 : 3}
           offsetY={3}
           fontVariant={fontSize > 10 ? 'bold' : 'normal'}
         />
