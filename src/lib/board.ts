@@ -186,3 +186,23 @@ export function townPositionIs2RoadsApart(
 
   return true
 }
+
+export function getDimensions(tiles: game.Tile[]): {
+  top: number
+  bottom: number
+  left: number
+  right: number
+} {
+  let top = 0,
+    bottom = 0,
+    left = 0,
+    right = 0
+  for (const tile of tiles) {
+    const offsetPos = axial.axialToOffset(tile.position)
+    top = Math.min(top, offsetPos.col)
+    bottom = Math.max(bottom, offsetPos.col)
+    right = Math.max(right, offsetPos.row)
+    left = Math.min(left, offsetPos.row)
+  }
+  return { top, bottom, right, left }
+}

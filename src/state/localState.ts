@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware'
 import { customAlphabet } from 'nanoid'
 import { immerMiddleware } from './utils'
 import produce, { Draft } from 'immer'
+import * as game from '../lib/game'
 
 export type Friend = {
   id: string
@@ -10,10 +11,18 @@ export type Friend = {
   name: string
 }
 
+export type Board = {
+  name: string
+  tiles: game.Tile[]
+}
+
 export type LocalState = {
   myId: string
   friends: {
     [id: string]: Friend
+  }
+  customBoards: {
+    [id: string]: Board
   }
 }
 
@@ -32,6 +41,7 @@ export function initialiseStore(): UseStore<LocalState> {
           friends: {
             [myId]: { id: myId, peerId: myId, name: '' },
           },
+          customBoards: {},
         }
       }),
       {

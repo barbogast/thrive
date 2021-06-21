@@ -10,6 +10,7 @@ type Props = {
   tile: game.Tile
   radius: number
   fontSize: number
+  onClick?: () => void
 }
 
 export function getColorForTileType(tileType: TileType): string {
@@ -20,14 +21,20 @@ export function getColorForTileType(tileType: TileType): string {
     sheep: 'lightgreen',
     ore: 'grey',
     desert: 'lightyellow',
+    empty: 'transparent',
   }[tileType]
 }
 
-const HexTile: React.FC<Props> = function HexTile({ tile, radius, fontSize }) {
+const HexTile: React.FC<Props> = function HexTile({
+  tile,
+  radius,
+  fontSize,
+  onClick,
+}) {
   const pxPosition = axial.getTilePosition(radius, tile.position)
 
   return (
-    <Group x={pxPosition.x} y={pxPosition.y}>
+    <Group x={pxPosition.x} y={pxPosition.y} onClick={onClick || undefined}>
       <RegularPolygon
         sides={6}
         rotation={visualConfig().flatTopped ? 30 : 0}

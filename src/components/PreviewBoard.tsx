@@ -3,29 +3,60 @@ import { Layer, Stage as KonvaStage } from 'react-konva'
 import { useTempStore } from '../state/tempState'
 
 import HexTile from '../components/HexTile'
+import { useLocalStore } from '../state/localState'
+import { Tile } from '../lib/game'
+import { getDimensions } from '../lib/board'
 
 const PreviewBoard: React.FC = function PreviewBoard() {
   const tempStore = useTempStore((state) => ({
     currentTiles: state.currentTiles,
     boardSettings: state.boardSettings,
+    boardMode: state.boardMode,
+    selectedCustomBoardId: state.selectedCustomBoardId,
   }))
-  let x, y, width, height
-  if (tempStore.boardSettings.type === 'hex') {
-    x = 75
-    y = 75
-    width = 300
-    height = 300
+
+  const localStore = useLocalStore((state) => ({
+    customBoards: state.customBoards,
+  }))
+
+  let tiles: Tile[] | void
+  if (tempStore.boardMode === 'random') {
+    tiles = tempStore.currentTiles
   } else {
-    x = 50
-    y = 50
-    width = 300
-    height = 300
+    if (tempStore.selectedCustomBoardId) {
+      tiles = localStore.customBoards[tempStore.selectedCustomBoardId].tiles
+    }
+  }
+
+  if (!tiles) {
+    return null
+  }
+
+  const { bottom, top, left, right } = getDimensions(tiles)
+  const width = (right - left) * 30 + 50
+  const height = (bottom - top) * 30 + 50
+
+  let horizontalCenter: number, verticalCenter: number
+  if (
+    tempStore.boardMode === 'random' &&
+    tempStore.boardSettings.type === 'square'
+  ) {
+    horizontalCenter = 25
+    verticalCenter = 50
+  } else {
+    horizontalCenter = 10 + width / 2
+    verticalCenter = 10 + height / 2
   }
 
   return (
-    <KonvaStage x={x} y={y} width={width} height={height}>
+    <KonvaStage
+      x={horizontalCenter}
+      y={verticalCenter}
+      width={width}
+      height={height}
+    >
       <Layer>
-        {Object.values(tempStore.currentTiles).map((t, i) => (
+        {tiles.map((t, i) => (
           <HexTile key={i} tile={t} radius={12} fontSize={10} />
         ))}
       </Layer>

@@ -27,13 +27,14 @@ export const Resource = {
   sheep: 'sheep',
   ore: 'ore',
 } as const
-type Resource = typeof Resource[keyof typeof Resource]
+export type Resource = typeof Resource[keyof typeof Resource]
 
 type Resources = { [key in Resource]: number }
 
 export const TileType = {
   ...Resource,
   desert: 'desert',
+  empty: 'empty',
 } as const
 export type TileType = typeof TileType[keyof typeof TileType]
 
@@ -225,6 +226,7 @@ export function rollDice(state: GameState): void {
   for (const tile of Object.values(state.tiles)) {
     if (
       tile.resource !== 'desert' &&
+      tile.resource !== 'empty' &&
       tile.number === diceResult1 + diceResult2
     ) {
       const townsOnTile = board.getTownsOnTile(tile.position, state.towns)
@@ -288,7 +290,7 @@ function finishAction(state: GameState, type: GameActionType) {
       for (const town of state.towns) {
         for (const coordinate of town.position) {
           const tile = board.findTile(state.tiles, coordinate)
-          if (tile && tile.resource !== 'desert') {
+          if (tile && tile.resource !== 'desert' && tile.resource !== 'empty') {
             state.players[town.owner].resources[tile.resource] += 1
           }
         }

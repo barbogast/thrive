@@ -9,6 +9,14 @@ export function useGameId(): string {
   return params.gameId
 }
 
+export function useBoardId(): string {
+  const [, params] = useRoute<{ boardId: string }>('/edit/:boardId')
+  if (!params) {
+    throw new Error('No board id')
+  }
+  return params.boardId
+}
+
 export function useInvitation(): string | void {
   return useSearchParam('connect') || undefined
 }

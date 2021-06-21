@@ -110,9 +110,21 @@ export function createGame(gameId: string): void {
   ).filter(
     (friend) => useTempStore.getState().friendState[friend.id]?.isSelected,
   )
+
+  const selectedCustomBoardId = useTempStore.getState().selectedCustomBoardId
+  let board: game.Tile[]
+  if (useTempStore.getState().boardMode === 'random') {
+    board = useTempStore.getState().currentTiles
+  } else {
+    if (!selectedCustomBoardId) {
+      return
+    }
+    board = useLocalStore.getState().customBoards[selectedCustomBoardId].tiles
+  }
+
   setGameState((draft) => {
     draft.games[gameId] = game.initialiseGame(
-      useTempStore.getState().currentTiles,
+      board,
       friendsToInvite,
       useTempStore.getState().pointsForVictory,
     )

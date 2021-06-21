@@ -6,6 +6,7 @@ import * as peers from '../lib/peers'
 import Playing from '../pages/Playing'
 import MainMenu from '../pages/MainMenu'
 import CreateGame from '../pages/CreateGame'
+import EditBoard from '../pages/EditBoard'
 
 peers.setup()
 
@@ -17,6 +18,7 @@ const App: React.FC = function App() {
       <Route path="/" component={MainMenu} />
       <Route path="/create" component={CreateGame} />
       <Route path="/play/:gameId" component={Playing} />
+      <Route path="/edit/:boardId" component={EditBoard} />
     </>
   )
 }

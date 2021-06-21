@@ -19,3 +19,14 @@ export function assert(callback: () => boolean): void {
     throw new Error('Assertion failed')
   }
 }
+
+export function range(min: number, max: number): number[] {
+  if (min > max) {
+    throw new Error(`min (${min}) must not be greater than max (${max})`)
+  }
+  const arr = []
+  for (let i = min; i <= max; i++) {
+    arr.push(i)
+  }
+  return arr
+}

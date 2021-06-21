@@ -40,6 +40,8 @@ export type TempState = {
   friendState: { [friendId: string]: FriendState }
   boardSettings: BoardSettings
   pointsForVictory: number | void
+  boardMode: 'custom' | 'random'
+  selectedCustomBoardId: string | void
   currentTiles: Tile[]
   peerJsConnection: Peer | void
 }
@@ -58,6 +60,8 @@ export function initialiseStore(): UseStore<TempState> {
         currentAction: { type: 'none' },
         friendState: {},
         boardSettings: hexDefault,
+        boardMode: 'custom',
+        selectedCustomBoardId: undefined,
         peerJsConnection: undefined,
         currentTiles: [],
         pointsForVictory: 10,
