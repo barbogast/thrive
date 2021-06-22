@@ -11,7 +11,7 @@ export type Friend = {
   name: string
 }
 
-export type Board = {
+export type CustomBoard = {
   id: string
   name: string
   tiles: Tile[]
@@ -23,7 +23,7 @@ export type LocalState = {
     [id: string]: Friend
   }
   customBoards: {
-    [id: string]: Board
+    [id: string]: CustomBoard
   }
 }
 

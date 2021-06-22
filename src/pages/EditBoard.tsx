@@ -4,7 +4,7 @@ import { Layer } from 'react-konva'
 import Stage from '../components/Stage'
 import HexTile from '../components/HexTile'
 import BackButton from '../components/BackButton'
-import { Board, setLocalState, useLocalStore } from '../state/localState'
+import { CustomBoard, setLocalState, useLocalStore } from '../state/localState'
 import { useBoardId } from '../lib/routing'
 import { visualConfig } from '../lib/constants'
 import { offsetToAxial } from '../lib/axial'
@@ -21,7 +21,7 @@ type EditMode = keyof typeof editModes
 
 const EditBoard: React.FC = function EditBoard() {
   const boardId = useBoardId()
-  const setBoard = (callback: (board: Board) => void) =>
+  const setBoard = (callback: (board: CustomBoard) => void) =>
     setLocalState((draft) => callback(draft.customBoards[boardId]))
 
   const board = useLocalStore((state) => state.customBoards[boardId])
