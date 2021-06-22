@@ -20,7 +20,7 @@ export function getColorForTileType(tileType: TileType): string {
     sheep: 'lightgreen',
     ore: 'grey',
     desert: 'lightyellow',
-    water: 'blue',
+    water: '#5eadff',
     empty: 'transparent',
   }[tileType]
 }

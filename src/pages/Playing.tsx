@@ -50,9 +50,11 @@ const Playing: React.FC = function Playing() {
       ) : (
         <></>
       )}
-      <Stage>
-        <Board />
-      </Stage>
+      <div style={{ backgroundColor: '#005ebf' }}>
+        <Stage>
+          <Board />
+        </Stage>
+      </div>
     </>
   )
 }
