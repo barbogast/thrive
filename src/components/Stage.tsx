@@ -1,7 +1,7 @@
-import { KonvaEventObject } from 'konva/lib/Node'
-import { Stage as StageType } from 'konva/lib/Stage'
 import React, { useState } from 'react'
 import { Stage as KonvaStage } from 'react-konva'
+import { KonvaEventObject } from 'konva/lib/Node'
+import { Stage as StageType } from 'konva/lib/Stage'
 
 function onWheel(e: KonvaEventObject<WheelEvent>) {
   const scaleBy = 1.05

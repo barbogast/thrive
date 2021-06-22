@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'wouter'
 
 import { useLocalStore } from '../state/localState'
-import ConnectionStatus from '../components/ConnectionStatus'
+import ConnectionStatus from './ConnectionStatus'
 import { useGameStore } from '../state/gameState'
 import { Game } from '../lib/game'
 

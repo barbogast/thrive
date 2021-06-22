@@ -2,10 +2,9 @@ import React from 'react'
 import { Layer, Stage as KonvaStage } from 'react-konva'
 import { useTempStore } from '../state/tempState'
 
-import HexTile from '../components/HexTile'
+import HexTile from './HexTile'
 import { useLocalStore } from '../state/localState'
-import { Tile } from '../lib/board'
-import { getDimensions } from '../lib/board'
+import { Tile, getDimensions } from '../lib/board'
 
 const PreviewBoard: React.FC = function PreviewBoard() {
   const tempStore = useTempStore((state) => ({

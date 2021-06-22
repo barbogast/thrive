@@ -3,8 +3,8 @@ import React from 'react'
 import { getColorForTileType } from './HexTile'
 import { useLocalStore } from '../state/localState'
 import { useCurrentGame } from '../state/gameState'
-import Box from './Box'
 import * as board from '../lib/board'
+import Box from './Box'
 import ConnectionStatus from './ConnectionStatus'
 
 const Players: React.FC = function Players() {
