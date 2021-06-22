@@ -93,4 +93,3 @@ Work on the user interface
 
 - There are 2 "GameState" types right now
 - The id of a game should also be stored within the GameState object
-- install react hook eslint plugin
