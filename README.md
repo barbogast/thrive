@@ -92,4 +92,3 @@ Work on the user interface
 ### Minor
 
 - There are 2 "GameState" types right now
-- The id of a game should also be stored within the GameState object

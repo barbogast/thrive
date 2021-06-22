@@ -37,6 +37,7 @@ const CreateGame: React.FC = function CreateGame() {
     const boardId = nanoid()
     setLocalState((draft) => {
       draft.customBoards[boardId] = {
+        id: boardId,
         tiles: useTempStore.getState().currentTiles,
         name: '',
       }

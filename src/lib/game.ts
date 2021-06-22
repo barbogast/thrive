@@ -41,6 +41,7 @@ export type GameAction = {
 }
 
 export type GameState = {
+  gameId: string
   pointsForVictory: number | void
   winnerId: string | void
   tiles: tileMap.TileMap
@@ -104,6 +105,7 @@ export function generateBoard(
 }
 
 export function initialiseGame(
+  gameId: string,
   tiles: board.Tile[],
   friends: Friend[],
   pointsForVictory: number | void,
@@ -112,6 +114,7 @@ export function initialiseGame(
   const playerOrder = friends.map((f) => f.id)
 
   return {
+    gameId,
     winnerId: undefined,
     pointsForVictory,
     tiles: tMap,

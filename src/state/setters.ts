@@ -125,6 +125,7 @@ export function createGame(gameId: string): void {
 
   setGameState((draft) => {
     draft.games[gameId] = game.initialiseGame(
+      gameId,
       board,
       friendsToInvite,
       useTempStore.getState().pointsForVictory,

@@ -12,6 +12,7 @@ export type Friend = {
 }
 
 export type Board = {
+  id: string
   name: string
   tiles: Tile[]
 }
