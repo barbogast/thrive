@@ -84,11 +84,12 @@ const BoardSettingsForm: React.FC<Props> = function BoardSettingsForm({
                   if (draft.boardSettings.type !== 'hex') {
                     throw new Error('TS-Refinement failed')
                   }
-                  draft.boardSettings.size = e.target.value as '3' | '5'
+                  draft.boardSettings.size = e.target.value as '3' | '5' | '9'
                 })
                 onChange()
               }}
             >
+              <option value="9">9</option>
               <option defaultChecked value="5">
                 5
               </option>

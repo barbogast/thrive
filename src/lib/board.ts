@@ -3,12 +3,11 @@ import * as tileMap from './tileMap'
 import * as game from './game'
 import * as utils from './utils'
 import * as position from './position'
-import { gameConfig } from './constants'
 
 export type BoardSettings =
   | {
       type: 'hex'
-      size: '3' | '5'
+      size: '3' | '5' | '9'
     }
   | {
       type: 'square'
@@ -70,13 +69,25 @@ export function getSquareBoard(rows: number, columns: number): Tile[] {
   return tiles
 }
 
-export function getHexagonBoard(size: '3' | '5'): Tile[] {
-  const positions = gameConfig().hexagonPositions
-  return positions[size].map((p: axial.Coordinate) => ({
-    position: p,
-    type: p.q === 0 && p.r === 0 ? TileType.desert : getResource(),
-    number: p.q === 0 && p.r === 0 ? undefined : utils.randomNumber(12) + 1,
-  }))
+export function getHexagonBoard(size: '3' | '5' | '9'): Tile[] {
+  const s = parseInt(size)
+  const tiles = []
+  const offset = (s - 1) / 2
+  const outerMin = 0 - offset
+  const outerMax = 0 + offset
+  const fullRange = utils.range(outerMin, outerMax)
+  for (let q = outerMin; q <= outerMax; q++) {
+    const sliceStart = q < 0 ? 0 - q : 0
+    const sliceEnd = q > 0 ? s - q : s
+    const cols = fullRange.slice(sliceStart, sliceEnd)
+
+    for (const r of cols) {
+      const type = q === 0 && r === 0 ? TileType.desert : getResource()
+      const number = q === 0 && r === 0 ? undefined : utils.randomNumber(12) + 1
+      tiles.push({ position: { q, r }, type, number })
+    }
+  }
+  return tiles
 }
 
 export function getRoadPositions(tiles: tileMap.TileMap): position.Position[] {
