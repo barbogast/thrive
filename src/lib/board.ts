@@ -96,7 +96,9 @@ export function getRoadPositions(tiles: tileMap.TileMap): position.Position[] {
     For the ones which lack neighours 4, 5 or 6 we add those as well.
     This should give us each road position exactly once */
   const roads: position.Position[] = []
-  for (const tile of Object.values(tiles)) {
+  for (const tile of Object.values(tiles).filter(
+    (t) => t.type !== TileType.water,
+  )) {
     for (const direction of [0, 1, 2] as axial.Direction[]) {
       const neighborPos = axial.getNeighbor(tile.position, direction)
 
@@ -105,7 +107,8 @@ export function getRoadPositions(tiles: tileMap.TileMap): position.Position[] {
     }
     for (const direction of [3, 4, 5] as axial.Direction[]) {
       const neighbourPos = axial.getNeighbor(tile.position, direction)
-      if (!tileMap.findInPos(tiles, neighbourPos)) {
+      const neighbourTile = tileMap.findInPos(tiles, neighbourPos)
+      if (!neighbourTile || neighbourTile.type === TileType.water) {
         const road = position.createPosition([tile.position, neighbourPos])
         roads.push(road)
       }
@@ -141,7 +144,9 @@ export function getTownPositions(tiles: tileMap.TileMap): position.Position[] {
     For each tile go through all 6 connecting positions and store the ones
     that are not already present */
   const towns: position.Position[] = []
-  for (const tile of Object.values(tiles)) {
+  for (const tile of Object.values(tiles).filter(
+    (t) => t.type !== TileType.water,
+  )) {
     for (const direction of axial.allDirections) {
       const neighborPos1 = axial.getNeighbor(tile.position, direction)
 
