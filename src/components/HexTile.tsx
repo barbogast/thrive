@@ -10,6 +10,7 @@ type Props = {
   radius: number
   fontSize: number
   onClick?: () => void
+  showPosition?: boolean
 }
 
 export function getColorForTileType(tileType: TileType): string {
@@ -30,9 +31,12 @@ const HexTile: React.FC<Props> = function HexTile({
   radius,
   fontSize,
   onClick,
+  showPosition,
 }) {
   const pxPosition = axial.getTilePosition(radius, tile.position)
-
+  const text = showPosition
+    ? `${tile.position.q}/${tile.position.r}`
+    : String(tile.number)
   return (
     <Group x={pxPosition.x} y={pxPosition.y} onClick={onClick || undefined}>
       <RegularPolygon
@@ -45,7 +49,7 @@ const HexTile: React.FC<Props> = function HexTile({
       />
       {tile.number ? (
         <Text
-          text={String(tile.number)}
+          text={text}
           fontSize={fontSize}
           fontFamily="Arial"
           offsetX={fontSize > 10 ? 6 : 3}
