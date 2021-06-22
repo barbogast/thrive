@@ -24,16 +24,20 @@
     "zustand": "^3.5.2"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.23",
     "@typescript-eslint/eslint-plugin": "^4.27.0",
     "@typescript-eslint/parser": "^4.27.0",
     "eslint": "^7.29.0",
     "eslint-plugin-react": "^7.24.0",
-    "eslint-plugin-react-hooks": "^4.2.0"
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "jest": "^27.0.5",
+    "ts-jest": "^27.0.3"
   },
   "scripts": {
     "dev": "snowpack dev",
     "eslint": "eslint --ext=.tsx,.ts --cache src",
     "tsc": "tsc",
+    "test": "jest",
     "build": "snowpack build"
   },
   "prettier": {
