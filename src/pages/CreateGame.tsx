@@ -145,7 +145,7 @@ const CreateGame: React.FC = function CreateGame() {
         Invite new contacts by sharing this link:
         <a href={inviteLink}>{inviteLink}</a>
       </div>
-      <button onClick={create}>Create game</button>
+      <button onClick={create}>Start game</button>
     </>
   )
 }
