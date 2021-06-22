@@ -46,6 +46,25 @@ export function initialiseStore(): UseStore<LocalState> {
       }),
       {
         name: 'state',
+        version: 1,
+        migrate: (state, version) => {
+          if (version === 0) {
+            for (const boardId of Object.keys(state.customBoards)) {
+              const board = state.customBoards[boardId]
+              for (const tileId of Object.keys(board.tiles)) {
+                const tile = board.tiles[tileId]
+                board.tiles[tileId] = {
+                  type: tile.resource,
+                  position: tile.position,
+                  number: tile.number,
+                }
+              }
+            }
+            return state
+          } else {
+            throw new Error(`Migration for v${version} not supported`)
+          }
+        },
       },
     ),
   )

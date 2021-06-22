@@ -46,7 +46,7 @@ type Player = Friend & {
 
 export type Tile = {
   position: axial.Coordinate
-  resource: TileType
+  type: TileType
   number: number | void
 }
 
@@ -111,7 +111,7 @@ export function getSquareBoard(rows: number, columns: number): Tile[] {
     for (let y = 0; y < rows; y++) {
       tiles.push({
         position: axial.offsetToAxial({ row: x, col: y }),
-        resource: getResource(),
+        type: getResource(),
         number: utils.randomNumber(12) + 1,
       })
     }
@@ -123,7 +123,7 @@ export function getHexagonBoard(size: '3' | '5'): Tile[] {
   const positions = gameConfig().hexagonPositions
   return positions[size].map((p: axial.Coordinate) => ({
     position: p,
-    resource: p.q === 0 && p.r === 0 ? TileType.desert : getResource(),
+    type: p.q === 0 && p.r === 0 ? TileType.desert : getResource(),
     number: p.q === 0 && p.r === 0 ? undefined : utils.randomNumber(12) + 1,
   }))
 }
@@ -225,15 +225,15 @@ export function rollDice(state: GameState): void {
 
   for (const tile of Object.values(state.tiles)) {
     if (
-      tile.resource !== 'desert' &&
-      tile.resource !== 'empty' &&
+      tile.type !== 'desert' &&
+      tile.type !== 'empty' &&
       tile.number === diceResult1 + diceResult2
     ) {
       const townsOnTile = board.getTownsOnTile(tile.position, state.towns)
       for (const town of townsOnTile) {
         if (town.owner) {
-          state.players[town.owner].resources[tile.resource] += 1
-          newResources.push({ resource: tile.resource, playerId: town.owner })
+          state.players[town.owner].resources[tile.type] += 1
+          newResources.push({ resource: tile.type, playerId: town.owner })
         }
       }
     }
@@ -290,8 +290,8 @@ function finishAction(state: GameState, type: GameActionType) {
       for (const town of state.towns) {
         for (const coordinate of town.position) {
           const tile = board.findTile(state.tiles, coordinate)
-          if (tile && tile.resource !== 'desert' && tile.resource !== 'empty') {
-            state.players[town.owner].resources[tile.resource] += 1
+          if (tile && tile.type !== 'desert' && tile.type !== 'empty') {
+            state.players[town.owner].resources[tile.type] += 1
           }
         }
       }

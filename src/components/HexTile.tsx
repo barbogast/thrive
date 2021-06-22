@@ -39,7 +39,7 @@ const HexTile: React.FC<Props> = function HexTile({
         sides={6}
         rotation={visualConfig().flatTopped ? 30 : 0}
         radius={radius + 1}
-        fill={getColorForTileType(tile.resource)}
+        fill={getColorForTileType(tile.type)}
         stroke={'black'}
         strokeWidth={1}
       />

@@ -22,6 +22,25 @@ export function initialiseStore(): UseStore<GameState> {
       }),
       {
         name: 'games',
+        version: 1,
+        migrate: (state, version) => {
+          if (version === 0) {
+            for (const gameId of Object.keys(state.games)) {
+              const game = state.games[gameId]
+              for (const tileId of Object.keys(game.tiles)) {
+                const tile = game.tiles[tileId]
+                game.tiles[tileId] = {
+                  type: tile.resource,
+                  position: tile.position,
+                  number: tile.number,
+                }
+              }
+            }
+            return state
+          } else {
+            throw new Error(`Migration for v${version} not supported`)
+          }
+        },
       },
     ),
   )

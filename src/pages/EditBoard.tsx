@@ -29,8 +29,7 @@ const EditBoard: React.FC = function EditBoard() {
 
   const [editMode, setEditMode] = useState<EditMode>('setTileType')
 
-  const [selectedResource, setSelectedResource] =
-    useState<game.TileType>('wood')
+  const [selectedType, setSelectedType] = useState<game.TileType>('wood')
 
   const [selectedNumber, setSelectedNumber] = useState<number>(8)
 
@@ -67,12 +66,10 @@ const EditBoard: React.FC = function EditBoard() {
       </div>
       {(editMode === 'setTileType' || editMode === 'addTile') && (
         <>
-          Selected resource:
+          Selected type:
           <select
-            value={selectedResource}
-            onChange={(e) =>
-              setSelectedResource(e.target.value as game.Resource)
-            }
+            value={selectedType}
+            onChange={(e) => setSelectedType(e.target.value as game.Resource)}
           >
             {Object.keys(game.TileType).map((r, i) => (
               <option value={r} key={i}>
@@ -103,7 +100,7 @@ const EditBoard: React.FC = function EditBoard() {
                   key={`${i}-${j}`}
                   tile={{
                     position: offsetToAxial({ col, row }),
-                    resource: 'empty',
+                    type: 'empty',
                     number: undefined,
                   }}
                   radius={visualConfig().tileRadius}
@@ -112,7 +109,7 @@ const EditBoard: React.FC = function EditBoard() {
                     setBoard((board) => {
                       board.tiles.push({
                         position: offsetToAxial({ col, row }),
-                        resource: selectedResource,
+                        type: selectedType,
                         number: undefined,
                       })
                     })
@@ -130,7 +127,7 @@ const EditBoard: React.FC = function EditBoard() {
                 setBoard((board) => {
                   switch (editMode) {
                     case 'setTileType': {
-                      board.tiles[i].resource = selectedResource
+                      board.tiles[i].type = selectedType
                       break
                     }
                     case 'setNumber': {
