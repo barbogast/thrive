@@ -101,6 +101,10 @@ function getResource() {
   return resources[utils.randomNumber(resources.length)]
 }
 
+function tileIsResource(type: TileType): type is Resource {
+  return type in Resource
+}
+
 export function getCost(type: 'town' | 'road'): Resources {
   return gameConfig().resourceCost[type]
 }
@@ -222,11 +226,9 @@ export function rollDice(state: GameState): void {
   const diceResult2 = utils.randomNumber(5) + 1
 
   const newResources: { playerId: PlayerId; resource: Resource }[] = []
-
   for (const tile of Object.values(state.tiles)) {
     if (
-      tile.type !== 'desert' &&
-      tile.type !== 'empty' &&
+      tileIsResource(tile.type) &&
       tile.number === diceResult1 + diceResult2
     ) {
       const townsOnTile = board.getTownsOnTile(tile.position, state.towns)
@@ -290,7 +292,7 @@ function finishAction(state: GameState, type: GameActionType) {
       for (const town of state.towns) {
         for (const coordinate of town.position) {
           const tile = board.findTile(state.tiles, coordinate)
-          if (tile && tile.type !== 'desert' && tile.type !== 'empty') {
+          if (tile && tileIsResource(tile.type)) {
             state.players[town.owner].resources[tile.type] += 1
           }
         }
