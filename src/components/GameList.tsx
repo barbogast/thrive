@@ -4,9 +4,9 @@ import { Link } from 'wouter'
 import { useLocalStore } from '../state/localState'
 import ConnectionStatus from '../components/ConnectionStatus'
 import { useGameStore } from '../state/gameState'
-import { GameState } from '../lib/game'
+import { Game } from '../lib/game'
 
-function formatPlayers(game: GameState) {
+function formatPlayers(game: Game) {
   const allPlayers = Object.keys(game.players)
   const allExceptTheLast = allPlayers.slice(0, -1)
   const theLast = allPlayers[allPlayers.length - 1]

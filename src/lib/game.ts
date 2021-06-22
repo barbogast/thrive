@@ -40,7 +40,7 @@ export type GameAction = {
   playerId: string
 }
 
-export type GameState = {
+export type Game = {
   gameId: string
   pointsForVictory: number | void
   winnerId: string | void
@@ -109,7 +109,7 @@ export function initialiseGame(
   tiles: board.Tile[],
   friends: Friend[],
   pointsForVictory: number | void,
-): GameState {
+): Game {
   const tMap = tileMap.fromArray(tiles)
   const playerOrder = friends.map((f) => f.id)
 
@@ -130,13 +130,13 @@ export function initialiseGame(
   }
 }
 
-function calculatePoints(state: GameState, playerId: string): number {
+function calculatePoints(state: Game, playerId: string): number {
   return state.towns
     .filter((town) => town.owner === playerId)
     .reduce((prev) => prev + 1, 0)
 }
 
-export function endTurn(state: GameState): void {
+export function endTurn(state: Game): void {
   for (const player of Object.values(state.players)) {
     player.points = calculatePoints(state, player.id)
     if (player.points >= state.pointsForVictory) {
@@ -152,7 +152,7 @@ export function endTurn(state: GameState): void {
   state.sequence.scheduledActions = [{ type: 'rollDice', playerId: nextPlayer }]
 }
 
-export function rollDice(state: GameState): void {
+export function rollDice(state: Game): void {
   // Roll with 2 dices
   const diceResult1 = utils.randomNumber(5) + 1
   const diceResult2 = utils.randomNumber(5) + 1
@@ -202,7 +202,7 @@ export function getAllowedUiActions(
 }
 
 function payResources(
-  state: GameState,
+  state: Game,
   playerId: PlayerId,
   resources: board.Resources,
 ) {
@@ -213,7 +213,7 @@ function payResources(
   }
 }
 
-function finishAction(state: GameState, type: GameActionType) {
+function finishAction(state: Game, type: GameActionType) {
   const currentAction = state.sequence.scheduledActions[0]
   if (currentAction.type === type) {
     state.sequence.scheduledActions.shift()
@@ -237,7 +237,7 @@ function finishAction(state: GameState, type: GameActionType) {
   }
 }
 
-export function buildTown(state: GameState, position: position.Position): void {
+export function buildTown(state: Game, position: position.Position): void {
   const currentPlayerId = state.sequence.scheduledActions[0].playerId
   if (!board.townPositionIs2RoadsApart(state.towns, position)) {
     return
@@ -266,7 +266,7 @@ export function buildTown(state: GameState, position: position.Position): void {
   finishAction(state, GameActionType.buildTown)
 }
 
-export function buildRoad(state: GameState, position: position.Position): void {
+export function buildRoad(state: Game, position: position.Position): void {
   if (
     state.sequence.phaseType === 'normal' &&
     !board.roadPositionConnectsToExistingRoad(

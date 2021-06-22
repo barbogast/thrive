@@ -176,10 +176,7 @@ export function toggleCurrentAction(actionType: UiActionType): void {
   })
 }
 
-export function updateGameState(
-  gameId: string,
-  gameState: game.GameState,
-): void {
+export function updateGameState(gameId: string, gameState: game.Game): void {
   setGameState((draft) => {
     draft.games[gameId] = gameState
   })

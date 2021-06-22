@@ -8,7 +8,7 @@ import produce, { Draft } from 'immer'
 
 type Games = {
   games: {
-    [gameId: string]: game.GameState
+    [gameId: string]: game.Game
   }
 }
 
@@ -52,9 +52,7 @@ export function setGameState(fn: (draft: Draft<Games>) => void): void {
   useGameStore.setState(produce(fn))
 }
 
-export function useCurrentGame<U>(
-  selector: StateSelector<game.GameState, U>,
-): U {
+export function useCurrentGame<U>(selector: StateSelector<game.Game, U>): U {
   const gameId = routing.useGameId()
   return useGameStore((state: Games) => selector(state.games[gameId]))
 }

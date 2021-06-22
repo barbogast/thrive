@@ -1,6 +1,6 @@
 import Peer, { DataConnection } from 'peerjs'
 import * as setters from '../state/setters'
-import { GameState } from './game'
+import { Game } from './game'
 import { useLocalStore, Friend } from '../state/localState'
 import { setTempState, useTempStore } from '../state/tempState'
 import { useGameStore } from '../state/gameState'
@@ -20,11 +20,11 @@ type RemoteCallPayload =
     }
   | {
       method: 'inviteToGame'
-      args: { gameId: string; gameState: GameState }
+      args: { gameId: string; gameState: Game }
     }
   | {
       method: 'updateGameState'
-      args: { gameId: string; newState: GameState }
+      args: { gameId: string; newState: Game }
     }
   | {
       method: 'updateMyName'
