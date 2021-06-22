@@ -49,8 +49,8 @@ export type TempState = {
 export const hexDefault: BoardSettings = { type: 'hex', size: '5' }
 export const squareDefault: BoardSettings = {
   type: 'square',
-  rows: 10,
-  columns: 10,
+  rows: 7,
+  columns: 7,
 }
 
 export function initialiseStore(): UseStore<TempState> {
