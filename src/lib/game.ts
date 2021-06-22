@@ -35,6 +35,7 @@ export const TileType = {
   ...Resource,
   desert: 'desert',
   empty: 'empty',
+  water: 'water',
 } as const
 export type TileType = typeof TileType[keyof typeof TileType]
 
