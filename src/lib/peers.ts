@@ -32,12 +32,12 @@ type RemoteCallPayload =
     }
 
 function send(friends: { [id: string]: Friend }, call: RemoteCallPayload) {
-  log('send', friends, call)
   for (const friend of Object.values(friends)) {
     if (friend.peerId === useLocalStore.getState().myId) {
       continue
     }
 
+    log('send', friend, call)
     const conn = useTempStore.getState().friendState[friend.id]?.connection
     if (!conn) {
       console.error(`Friend ${friend.id} has no connection`)
