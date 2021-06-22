@@ -6,14 +6,14 @@ import * as game from '../lib/game'
 import * as routing from '../lib/routing'
 import produce, { Draft } from 'immer'
 
-export type GameState = {
+type Games = {
   games: {
     [gameId: string]: game.GameState
   }
 }
 
-export function initialiseStore(): UseStore<GameState> {
-  return create<GameState>(
+export function initialiseStore(): UseStore<Games> {
+  return create<Games>(
     persist(
       immerMiddleware(() => {
         return {
@@ -48,7 +48,7 @@ export function initialiseStore(): UseStore<GameState> {
 
 export const useGameStore = initialiseStore()
 
-export function setGameState(fn: (draft: Draft<GameState>) => void): void {
+export function setGameState(fn: (draft: Draft<Games>) => void): void {
   useGameStore.setState(produce(fn))
 }
 
@@ -56,5 +56,5 @@ export function useCurrentGame<U>(
   selector: StateSelector<game.GameState, U>,
 ): U {
   const gameId = routing.useGameId()
-  return useGameStore((state: GameState) => selector(state.games[gameId]))
+  return useGameStore((state: Games) => selector(state.games[gameId]))
 }

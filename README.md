@@ -90,5 +90,3 @@ Work on the user interface
 - Support playing on mobile devices
 
 ### Minor
-
-- There are 2 "GameState" types right now
