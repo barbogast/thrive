@@ -1,6 +1,6 @@
 import { KonvaEventObject } from 'konva/lib/Node'
 import { Stage as StageType } from 'konva/lib/Stage'
-import React from 'react'
+import React, { useState } from 'react'
 import { Stage as KonvaStage } from 'react-konva'
 
 function onWheel(e: KonvaEventObject<WheelEvent>) {
@@ -33,18 +33,21 @@ function onWheel(e: KonvaEventObject<WheelEvent>) {
   stage.batchDraw()
 }
 
-const Stage: React.FC = function v({ children }) {
+const Stage: React.FC = function Stage({ children }) {
+  const [position, setPosition] = useState<{ x: number; y: number }>({
+    x: 300,
+    y: 300,
+  })
+
   return (
     <KonvaStage
       width={window.innerWidth}
       height={window.innerHeight}
-      x={300}
-      y={300}
+      x={position.x}
+      y={position.y}
       onWheel={onWheel}
       draggable
-      // Silence Konva warning
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      onDragMove={() => {}}
+      onDragEnd={(e) => setPosition({ x: e.target.x(), y: e.target.y() })}
     >
       {children}
     </KonvaStage>
