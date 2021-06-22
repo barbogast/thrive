@@ -94,7 +94,7 @@ const EditBoard: React.FC = function EditBoard() {
       <Stage>
         <Layer>
           {editMode === 'addTile' &&
-            range(bottom - 1, top + 1).flatMap((col, i) =>
+            range(top - 1, bottom + 1).flatMap((col, i) =>
               range(left - 1, right + 1).map((row, j) => (
                 <HexTile
                   key={`${i}-${j}`}
