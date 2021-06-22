@@ -2,12 +2,11 @@ import React from 'react'
 import { Group, RegularPolygon, Text } from 'react-konva'
 
 import { visualConfig } from '../lib/constants'
-import * as game from '../lib/game'
 import * as axial from '../lib/axial'
-import { TileType } from '../lib/game'
+import { TileType, Tile } from '../lib/board'
 
 type Props = {
-  tile: game.Tile
+  tile: Tile
   radius: number
   fontSize: number
   onClick?: () => void

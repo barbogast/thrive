@@ -4,7 +4,7 @@ import { useTempStore } from '../state/tempState'
 
 import HexTile from '../components/HexTile'
 import { useLocalStore } from '../state/localState'
-import { Tile } from '../lib/game'
+import { Tile } from '../lib/board'
 import { getDimensions } from '../lib/board'
 
 const PreviewBoard: React.FC = function PreviewBoard() {

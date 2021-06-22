@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 import { customAlphabet } from 'nanoid'
 import { immerMiddleware } from './utils'
 import produce, { Draft } from 'immer'
-import * as game from '../lib/game'
+import { Tile } from '../lib/board'
 
 export type Friend = {
   id: string
@@ -13,7 +13,7 @@ export type Friend = {
 
 export type Board = {
   name: string
-  tiles: game.Tile[]
+  tiles: Tile[]
 }
 
 export type LocalState = {

@@ -12,6 +12,7 @@ import {
 } from './tempState'
 import { setLocalState, useLocalStore } from './localState'
 import { setGameState } from './gameState'
+import { Tile } from '../lib/board'
 
 function updateFriendState(
   draft: TempState,
@@ -112,7 +113,7 @@ export function createGame(gameId: string): void {
   )
 
   const selectedCustomBoardId = useTempStore.getState().selectedCustomBoardId
-  let board: game.Tile[]
+  let board: Tile[]
   if (useTempStore.getState().boardMode === 'random') {
     board = useTempStore.getState().currentTiles
   } else {

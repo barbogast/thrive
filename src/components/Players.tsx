@@ -4,7 +4,7 @@ import { getColorForTileType } from './HexTile'
 import { useLocalStore } from '../state/localState'
 import { useCurrentGame } from '../state/gameState'
 import Box from './Box'
-import * as game from '../lib/game'
+import * as board from '../lib/board'
 import ConnectionStatus from './ConnectionStatus'
 
 const Players: React.FC = function Players() {
@@ -38,23 +38,23 @@ const Players: React.FC = function Players() {
             </div>
             <ul>
               <li>
-                <Box color={getColorForTileType(game.Resource.wood)} />
+                <Box color={getColorForTileType(board.Resource.wood)} />
                 &nbsp; Wood: {player.resources.wood}
               </li>
               <li>
-                <Box color={getColorForTileType(game.Resource.brick)} />
+                <Box color={getColorForTileType(board.Resource.brick)} />
                 &nbsp; Brick: {player.resources.brick}
               </li>
               <li>
-                <Box color={getColorForTileType(game.Resource.grain)} />
+                <Box color={getColorForTileType(board.Resource.grain)} />
                 &nbsp; Grain: {player.resources.grain}
               </li>
               <li>
-                <Box color={getColorForTileType(game.Resource.sheep)} />
+                <Box color={getColorForTileType(board.Resource.sheep)} />
                 &nbsp; Sheep: {player.resources.sheep}
               </li>
               <li>
-                <Box color={getColorForTileType(game.Resource.wood)} /> &nbsp;
+                <Box color={getColorForTileType(board.Resource.wood)} /> &nbsp;
                 Ore: {player.resources.ore}
               </li>
               <li>

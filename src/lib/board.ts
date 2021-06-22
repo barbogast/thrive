@@ -3,6 +3,81 @@ import * as tileMap from './tileMap'
 import * as game from './game'
 import * as utils from './utils'
 import * as position from './position'
+import { gameConfig } from './constants'
+
+export type BoardSettings =
+  | {
+      type: 'hex'
+      size: '3' | '5'
+    }
+  | {
+      type: 'square'
+      rows: number
+      columns: number
+    }
+
+export const Resource = {
+  grain: 'grain',
+  wood: 'wood',
+  brick: 'brick',
+  sheep: 'sheep',
+  ore: 'ore',
+} as const
+export type Resource = typeof Resource[keyof typeof Resource]
+
+export type Resources = { [key in Resource]: number }
+
+export const TileType = {
+  ...Resource,
+  desert: 'desert',
+  empty: 'empty',
+  water: 'water',
+} as const
+export type TileType = typeof TileType[keyof typeof TileType]
+
+function getResource() {
+  const resources = [
+    Resource.brick,
+    Resource.grain,
+    Resource.ore,
+    Resource.sheep,
+    Resource.wood,
+  ]
+  return resources[utils.randomNumber(resources.length)]
+}
+
+export type Tile = {
+  position: axial.Coordinate
+  type: TileType
+  number: number | void
+}
+
+export function tileIsResource(type: TileType): type is Resource {
+  return type in Resource
+}
+
+export function getSquareBoard(rows: number, columns: number): Tile[] {
+  const tiles = []
+  for (let x = 0; x < columns; x++) {
+    for (let y = 0; y < rows; y++) {
+      tiles.push({
+        position: axial.offsetToAxial({ row: x, col: y }),
+        type: getResource(),
+        number: utils.randomNumber(12) + 1,
+      })
+    }
+  }
+  return tiles
+}
+
+export function getHexagonBoard(size: '3' | '5'): Tile[] {
+  const positions = gameConfig().hexagonPositions
+  return positions[size].map((p: axial.Coordinate) => ({
+    position: p,
+    type: p.q === 0 && p.r === 0 ? TileType.desert : getResource(),
+    number: p.q === 0 && p.r === 0 ? undefined : utils.randomNumber(12) + 1,
+  }))
+}
 
 export function getRoadPositions(tiles: tileMap.TileMap): position.Position[] {
   /*
@@ -95,7 +170,7 @@ export function getTownsOnTile(
 export function findTile(
   tiles: tileMap.TileMap,
   coord: axial.Coordinate,
-): game.Tile | void {
+): Tile | void {
   return Object.values(tiles).find((t) =>
     axial.compareCoordinates(t.position, coord),
   )
@@ -187,7 +262,7 @@ export function townPositionIs2RoadsApart(
   return true
 }
 
-export function getDimensions(tiles: game.Tile[]): {
+export function getDimensions(tiles: Tile[]): {
   top: number
   bottom: number
   left: number

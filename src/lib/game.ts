@@ -7,48 +7,12 @@ import { gameConfig } from './constants'
 import { Friend } from '../state/localState'
 import { UiActionType } from '../state/tempState'
 
-export type BoardSettings =
-  | {
-      type: 'hex'
-      size: '3' | '5'
-    }
-  | {
-      type: 'square'
-      rows: number
-      columns: number
-    }
-
 export type PlayerId = string
-
-export const Resource = {
-  grain: 'grain',
-  wood: 'wood',
-  brick: 'brick',
-  sheep: 'sheep',
-  ore: 'ore',
-} as const
-export type Resource = typeof Resource[keyof typeof Resource]
-
-type Resources = { [key in Resource]: number }
-
-export const TileType = {
-  ...Resource,
-  desert: 'desert',
-  empty: 'empty',
-  water: 'water',
-} as const
-export type TileType = typeof TileType[keyof typeof TileType]
 
 type Player = Friend & {
   color: string
-  resources: Resources
+  resources: board.Resources
   points: number
-}
-
-export type Tile = {
-  position: axial.Coordinate
-  type: TileType
-  number: number | void
 }
 
 export type Road = {
@@ -91,46 +55,8 @@ export type GameState = {
   }
 }
 
-function getResource() {
-  const resources = [
-    Resource.brick,
-    Resource.grain,
-    Resource.ore,
-    Resource.sheep,
-    Resource.wood,
-  ]
-  return resources[utils.randomNumber(resources.length)]
-}
-
-function tileIsResource(type: TileType): type is Resource {
-  return type in Resource
-}
-
-export function getCost(type: 'town' | 'road'): Resources {
+export function getCost(type: 'town' | 'road'): board.Resources {
   return gameConfig().resourceCost[type]
-}
-
-export function getSquareBoard(rows: number, columns: number): Tile[] {
-  const tiles = []
-  for (let x = 0; x < columns; x++) {
-    for (let y = 0; y < rows; y++) {
-      tiles.push({
-        position: axial.offsetToAxial({ row: x, col: y }),
-        type: getResource(),
-        number: utils.randomNumber(12) + 1,
-      })
-    }
-  }
-  return tiles
-}
-
-export function getHexagonBoard(size: '3' | '5'): Tile[] {
-  const positions = gameConfig().hexagonPositions
-  return positions[size].map((p: axial.Coordinate) => ({
-    position: p,
-    type: p.q === 0 && p.r === 0 ? TileType.desert : getResource(),
-    number: p.q === 0 && p.r === 0 ? undefined : utils.randomNumber(12) + 1,
-  }))
 }
 
 function getId(type: string, position: axial.Coordinate[]) {
@@ -169,14 +95,16 @@ function generateStartingPhaseSequence(playerIds: string[]) {
   return sequence
 }
 
-export function generateBoard(boardSettings: BoardSettings): Tile[] {
+export function generateBoard(
+  boardSettings: board.BoardSettings,
+): board.Tile[] {
   return boardSettings.type === 'hex'
-    ? getHexagonBoard(boardSettings.size)
-    : getSquareBoard(boardSettings.rows, boardSettings.columns)
+    ? board.getHexagonBoard(boardSettings.size)
+    : board.getSquareBoard(boardSettings.rows, boardSettings.columns)
 }
 
 export function initialiseGame(
-  tiles: Tile[],
+  tiles: board.Tile[],
   friends: Friend[],
   pointsForVictory: number | void,
 ): GameState {
@@ -226,10 +154,10 @@ export function rollDice(state: GameState): void {
   const diceResult1 = utils.randomNumber(5) + 1
   const diceResult2 = utils.randomNumber(5) + 1
 
-  const newResources: { playerId: PlayerId; resource: Resource }[] = []
+  const newResources: { playerId: PlayerId; resource: board.Resource }[] = []
   for (const tile of Object.values(state.tiles)) {
     if (
-      tileIsResource(tile.type) &&
+      board.tileIsResource(tile.type) &&
       tile.number === diceResult1 + diceResult2
     ) {
       const townsOnTile = board.getTownsOnTile(tile.position, state.towns)
@@ -273,12 +201,12 @@ export function getAllowedUiActions(
 function payResources(
   state: GameState,
   playerId: PlayerId,
-  resources: Resources,
+  resources: board.Resources,
 ) {
   const playerResources = state.players[playerId].resources
   for (const resourceType of Object.keys(resources)) {
-    playerResources[resourceType as Resource] -=
-      resources[resourceType as Resource]
+    playerResources[resourceType as board.Resource] -=
+      resources[resourceType as board.Resource]
   }
 }
 
@@ -293,7 +221,7 @@ function finishAction(state: GameState, type: GameActionType) {
       for (const town of state.towns) {
         for (const coordinate of town.position) {
           const tile = board.findTile(state.tiles, coordinate)
-          if (tile && tileIsResource(tile.type)) {
+          if (tile && board.tileIsResource(tile.type)) {
             state.players[town.owner].resources[tile.type] += 1
           }
         }

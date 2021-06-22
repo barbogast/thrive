@@ -1,4 +1,4 @@
-import { Tile } from './game'
+import { Tile } from './board'
 import { Coordinate } from './axial'
 
 export type TileMap = { [key: string]: Tile }

@@ -4,13 +4,12 @@ import { Layer } from 'react-konva'
 import Stage from '../components/Stage'
 import HexTile from '../components/HexTile'
 import BackButton from '../components/BackButton'
-import * as game from '../lib/game'
 import { Board, setLocalState, useLocalStore } from '../state/localState'
 import { useBoardId } from '../lib/routing'
 import { visualConfig } from '../lib/constants'
 import { offsetToAxial } from '../lib/axial'
 import { range } from '../lib/utils'
-import { getDimensions } from '../lib/board'
+import { getDimensions, Resource, TileType } from '../lib/board'
 
 const editModes = {
   setTileType: 'Set Tile Type',
@@ -29,7 +28,7 @@ const EditBoard: React.FC = function EditBoard() {
 
   const [editMode, setEditMode] = useState<EditMode>('setTileType')
 
-  const [selectedType, setSelectedType] = useState<game.TileType>('wood')
+  const [selectedType, setSelectedType] = useState<TileType>('wood')
 
   const [selectedNumber, setSelectedNumber] = useState<number>(8)
 
@@ -69,9 +68,9 @@ const EditBoard: React.FC = function EditBoard() {
           Selected type:
           <select
             value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value as game.Resource)}
+            onChange={(e) => setSelectedType(e.target.value as Resource)}
           >
-            {Object.keys(game.TileType).map((r, i) => (
+            {Object.keys(TileType).map((r, i) => (
               <option value={r} key={i}>
                 {r}
               </option>
