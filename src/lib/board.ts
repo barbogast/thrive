@@ -70,7 +70,7 @@ export function getSquareBoard(rows: number, columns: number): Tile[] {
 }
 
 export function getHexagonBoard(size: '3' | '5' | '9'): Tile[] {
-  const s = parseInt(size)
+  const s = parseInt(size) + 2
   const tiles = []
   const offset = (s - 1) / 2
   const outerMin = 0 - offset
@@ -82,8 +82,22 @@ export function getHexagonBoard(size: '3' | '5' | '9'): Tile[] {
     const cols = fullRange.slice(sliceStart, sliceEnd)
 
     for (const r of cols) {
-      const type = q === 0 && r === 0 ? TileType.desert : getResource()
-      const number = q === 0 && r === 0 ? undefined : utils.randomNumber(12) + 1
+      let type, number
+      if (q === 0 && r === 0) {
+        type = TileType.desert
+      } else if (
+        q === outerMin ||
+        q === outerMax ||
+        r === outerMin ||
+        r === outerMax ||
+        cols.indexOf(r) === 0 ||
+        cols.indexOf(r) === cols.length - 1
+      ) {
+        type = TileType.water
+      } else {
+        type = getResource()
+        number = utils.randomNumber(12) + 1
+      }
       tiles.push({ position: { q, r }, type, number })
     }
   }

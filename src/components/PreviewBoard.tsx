@@ -33,8 +33,8 @@ const PreviewBoard: React.FC = function PreviewBoard() {
   }
 
   const { bottom, top, left, right } = getDimensions(tiles)
-  const width = (right - left) * 30 + 50
-  const height = (bottom - top) * 30 + 50
+  const width = (right - left) * 40 + 75
+  const height = (bottom - top) * 40 + 75
 
   let horizontalCenter: number, verticalCenter: number
   if (
@@ -57,7 +57,7 @@ const PreviewBoard: React.FC = function PreviewBoard() {
     >
       <Layer>
         {tiles.map((t, i) => (
-          <HexTile key={i} tile={t} radius={12} fontSize={10} />
+          <HexTile key={i} tile={t} radius={20} fontSize={10} />
         ))}
       </Layer>
     </KonvaStage>
