@@ -97,29 +97,31 @@ const CreateGame: React.FC = function CreateGame() {
           </>
         )}
         {tempStore.boardMode === 'custom' && (
-          <ul>
-            {Object.entries(localStore.customBoards).map(([id, board], i) => (
-              <li key={i}>
-                <label>
-                  <input
-                    type="radio"
-                    name="selected-board"
-                    checked={tempStore.selectedCustomBoardId === id}
-                    onChange={() =>
-                      setTempState((draft) => {
-                        draft.selectedCustomBoardId = id
-                      })
-                    }
-                  />
-                  {board.name || 'no name'}
-                </label>{' '}
-                <a href={`edit/${id}`}>Edit</a>
-              </li>
-            ))}
-          </ul>
+          <>
+            <ul>
+              {Object.entries(localStore.customBoards).map(([id, board], i) => (
+                <li key={i}>
+                  <label>
+                    <input
+                      type="radio"
+                      name="selected-board"
+                      checked={tempStore.selectedCustomBoardId === id}
+                      onChange={() =>
+                        setTempState((draft) => {
+                          draft.selectedCustomBoardId = id
+                        })
+                      }
+                    />
+                    {board.name || 'no name'}
+                  </label>{' '}
+                  <a href={`edit/${id}`}>Edit</a>
+                </li>
+              ))}
+            </ul>
+            <button onClick={createCustomBoard}>Add new board</button>
+          </>
         )}
         <PreviewBoard />
-        <button onClick={createCustomBoard}>Create custom board</button>
         <h3>Winning</h3>
         <label>
           Points (optional)
