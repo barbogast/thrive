@@ -5,7 +5,7 @@ import * as game from '../lib/game'
 import * as setters from '../state/setters'
 import { useLocalStore } from '../state/localState'
 import { useCurrentGame } from '../state/gameState'
-import { UiActionType } from '../state/tempState'
+import { UiActionType, useTempStore } from '../state/tempState'
 
 const Controls: React.FC = function Controls() {
   const gameId = routing.useGameId()
@@ -15,6 +15,9 @@ const Controls: React.FC = function Controls() {
   const gameStore = useCurrentGame((game) => ({
     currentAction: game.sequence.scheduledActions[0],
     players: game.players,
+  }))
+  const tempStore = useTempStore((state) => ({
+    currentAction: state.currentAction,
   }))
   const allowedActions = game.getAllowedUiActions(gameStore.currentAction)
 
@@ -30,7 +33,7 @@ const Controls: React.FC = function Controls() {
           onClick={() => setters.toggleCurrentAction(UiActionType.buildRoad)}
           style={{
             boxShadow:
-              gameStore.currentAction.type === UiActionType.buildRoad
+              tempStore.currentAction.type === UiActionType.buildRoad
                 ? '0 0 0 2px black'
                 : '',
           }}
@@ -46,7 +49,7 @@ const Controls: React.FC = function Controls() {
           onClick={() => setters.toggleCurrentAction(UiActionType.buildTown)}
           style={{
             boxShadow:
-              gameStore.currentAction.type === UiActionType.buildTown
+              tempStore.currentAction.type === UiActionType.buildTown
                 ? '0 0 0 2px black'
                 : '',
           }}
