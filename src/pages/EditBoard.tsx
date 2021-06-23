@@ -137,6 +137,9 @@ const EditBoard: React.FC = function EditBoard() {
                       board.tiles.splice(i, 1)
                       break
                     }
+                    case 'addTile': {
+                      return
+                    }
                     default:
                       throw new Error('not supported')
                   }
