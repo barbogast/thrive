@@ -157,7 +157,6 @@ export function rollDice(state: Game): void {
   const diceResult1 = utils.randomNumber(5) + 1
   const diceResult2 = utils.randomNumber(5) + 1
 
-  const newResources: { playerId: PlayerId; resource: board.Resource }[] = []
   for (const tile of Object.values(state.tiles)) {
     if (
       board.tileIsResource(tile.type) &&
@@ -167,7 +166,6 @@ export function rollDice(state: Game): void {
       for (const town of townsOnTile) {
         if (town.owner) {
           state.players[town.owner].resources[tile.type] += 1
-          newResources.push({ resource: tile.type, playerId: town.owner })
         }
       }
     }
