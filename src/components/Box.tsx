@@ -1,20 +1,14 @@
-import React from 'react'
+import styled from 'styled-components'
 
 type Props = {
-  color: string
+  readonly color: string
 }
 
-const Box: React.FC<Props> = function Box({ color }) {
-  return (
-    <span
-      style={{
-        backgroundColor: color,
-        width: 10,
-        height: 10,
-        display: 'inline-block',
-      }}
-    ></span>
-  )
-}
+const Box = styled.span<Props>`
+  background-color: ${(props) => props.color};
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+`
 
 export default Box

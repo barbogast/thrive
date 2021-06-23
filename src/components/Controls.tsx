@@ -1,4 +1,5 @@
 import React from 'react'
+import styled, { css } from 'styled-components'
 
 import * as routing from '../lib/routing'
 import * as game from '../lib/game'
@@ -6,6 +7,14 @@ import * as setters from '../state/setters'
 import { useLocalStore } from '../state/localState'
 import { useCurrentGame } from '../state/gameState'
 import { UiActionType, useTempStore } from '../state/tempState'
+
+const SelectableButton = styled.button<{ selected: boolean }>`
+  ${(props) =>
+    props.selected &&
+    css`
+      box-shadow: 0 0 0 2px black;
+    `}
+`
 
 const Controls: React.FC = function Controls() {
   const gameId = routing.useGameId()
@@ -29,33 +38,23 @@ const Controls: React.FC = function Controls() {
   return (
     <div>
       {allowedActions.includes(UiActionType.buildRoad) ? (
-        <button
+        <SelectableButton
           onClick={() => setters.toggleCurrentAction(UiActionType.buildRoad)}
-          style={{
-            boxShadow:
-              tempStore.currentAction.type === UiActionType.buildRoad
-                ? '0 0 0 2px black'
-                : '',
-          }}
+          selected={tempStore.currentAction.type === UiActionType.buildRoad}
         >
           Build road
-        </button>
+        </SelectableButton>
       ) : (
         <></>
       )}
       &nbsp;&nbsp;
       {allowedActions.includes(UiActionType.buildTown) ? (
-        <button
+        <SelectableButton
           onClick={() => setters.toggleCurrentAction(UiActionType.buildTown)}
-          style={{
-            boxShadow:
-              tempStore.currentAction.type === UiActionType.buildTown
-                ? '0 0 0 2px black'
-                : '',
-          }}
+          selected={tempStore.currentAction.type === UiActionType.buildTown}
         >
           Build town
-        </button>
+        </SelectableButton>
       ) : (
         <></>
       )}
