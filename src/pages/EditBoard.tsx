@@ -121,7 +121,7 @@ const EditBoard: React.FC = function EditBoard() {
               key={i}
               tile={tile}
               radius={visualConfig().tileRadius}
-              fontSize={14}
+              fontSize={28}
               onClick={() =>
                 setBoard((board) => {
                   switch (editMode) {
