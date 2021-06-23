@@ -8,8 +8,8 @@ import { CustomBoard, setLocalState, useLocalStore } from '../state/localState'
 import { useBoardId } from '../lib/routing'
 import { visualConfig } from '../lib/constants'
 import { offsetToAxial } from '../lib/axial'
-import { range } from '../lib/utils'
-import { getDimensions, Resource, TileType } from '../lib/board'
+import { range, downloadObjectAsJson } from '../lib/utils'
+import { getDimensions, Resource, Tile, TileType } from '../lib/board'
 
 const editModes = {
   setTileType: 'Set Tile Type',
@@ -21,8 +21,36 @@ type EditMode = keyof typeof editModes
 
 const EditBoard: React.FC = function EditBoard() {
   const boardId = useBoardId()
+
   const setBoard = (callback: (board: CustomBoard) => void) =>
     setLocalState((draft) => callback(draft.customBoards[boardId]))
+
+  const importCustomBoard = () => {
+    ;(async () => {
+      if (document === null) {
+        return
+      }
+      const el = document.getElementById(
+        'board-file-upload',
+      ) as HTMLInputElement
+      if (el === null) {
+        return
+      }
+      const files = el.files
+      if (files === null) {
+        return
+      }
+
+      const content = await files[0].text()
+      const parsed: Tile[] = JSON.parse(content)
+      if (!confirm('Replace the current board with the one in the file?')) {
+        return
+      }
+      setBoard((board) => {
+        board.tiles = parsed
+      })
+    })().catch(console.error)
+  }
 
   const board = useLocalStore((state) => state.customBoards[boardId])
 
@@ -49,6 +77,14 @@ const EditBoard: React.FC = function EditBoard() {
           }
         />
       </label>
+      <br />
+      <button onClick={() => downloadObjectAsJson(board, 'board')}>
+        Export to file
+      </button>
+      <br />
+      Import from file: <input type="file" id="board-file-upload" />
+      <button onClick={importCustomBoard}>Import</button>
+      <br />
       <div>
         Edit mode:{' '}
         {Object.entries(editModes).map(([key, label], i) => (
