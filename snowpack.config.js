@@ -14,4 +14,7 @@ module.exports = {
     'konva-types': './node_modules/konva/types',
   },
   routes: [{ match: 'routes', src: '.*', dest: '/index.html' }],
+  testOptions: {
+    files: ['**/*.test.*'],
+  },
 }
