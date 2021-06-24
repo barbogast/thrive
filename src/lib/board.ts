@@ -34,7 +34,7 @@ export const TileType = {
 } as const
 export type TileType = typeof TileType[keyof typeof TileType]
 
-function getResource() {
+function getRandomResource() {
   const resources = [
     Resource.brick,
     Resource.grain,
@@ -61,7 +61,7 @@ export function getSquareBoard(rows: number, columns: number): Tile[] {
     for (let y = 0; y < rows; y++) {
       tiles.push({
         position: axial.offsetToAxial({ row: x, col: y }),
-        type: getResource(),
+        type: getRandomResource(),
         number: utils.randomNumber(12) + 1,
       })
     }
@@ -95,7 +95,7 @@ export function getHexagonBoard(size: '3' | '5' | '9'): Tile[] {
       ) {
         type = TileType.water
       } else {
-        type = getResource()
+        type = getRandomResource()
         number = utils.randomNumber(12) + 1
       }
       tiles.push({ position: { q, r }, type, number })
