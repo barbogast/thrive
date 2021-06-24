@@ -40,6 +40,7 @@
     "eslint": "eslint --ext=.tsx,.ts --cache src",
     "tsc": "tsc",
     "test": "jest",
+    "precommit": "yarn tsc && yarn test && yarn eslint",
     "build": "snowpack build"
   },
   "prettier": {
