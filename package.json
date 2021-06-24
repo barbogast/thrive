@@ -41,7 +41,8 @@
     "tsc": "tsc",
     "test": "jest",
     "precommit": "yarn tsc && yarn test && yarn eslint",
-    "build": "snowpack build"
+    "build": "snowpack build",
+    "deploy": "git checkout main && git pull && git checkout deploy && git merge main && git push"
   },
   "prettier": {
     "trailingComma": "all",
