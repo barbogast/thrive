@@ -12,9 +12,8 @@ import { range, downloadObjectAsJson } from '../lib/utils'
 import { getDimensions, Resource, Tile, TileType } from '../lib/board'
 
 const editModes = {
-  setTileType: 'Set Tile Type',
   setNumber: 'Set Number',
-  addTile: 'Add Tile',
+  setTile: 'Set Tile',
   removeTile: 'Remove Tile',
 }
 type EditMode = keyof typeof editModes
@@ -55,7 +54,7 @@ const EditBoard: React.FC = function EditBoard() {
 
   const board = useLocalStore((state) => state.customBoards[boardId])
 
-  const [editMode, setEditMode] = useState<EditMode>('setTileType')
+  const [editMode, setEditMode] = useState<EditMode>('setTile')
 
   const [selectedType, setSelectedType] = useState<TileType>('wood')
 
@@ -100,7 +99,7 @@ const EditBoard: React.FC = function EditBoard() {
           </label>
         ))}
       </div>
-      {(editMode === 'setTileType' || editMode === 'addTile') && (
+      {editMode === 'setTile' && (
         <>
           Selected type:
           <select
@@ -129,7 +128,7 @@ const EditBoard: React.FC = function EditBoard() {
       )}
       <Stage>
         <Layer>
-          {editMode === 'addTile' &&
+          {editMode === 'setTile' &&
             range(top - 1, bottom + 1).flatMap((col, i) =>
               range(left - 1, right + 1).map((row, j) => (
                 <HexTile
@@ -162,7 +161,7 @@ const EditBoard: React.FC = function EditBoard() {
               onClick={() =>
                 setBoard((board) => {
                   switch (editMode) {
-                    case 'setTileType': {
+                    case 'setTile': {
                       board.tiles[i].type = selectedType
                       break
                     }
@@ -173,9 +172,6 @@ const EditBoard: React.FC = function EditBoard() {
                     case 'removeTile': {
                       board.tiles.splice(i, 1)
                       break
-                    }
-                    case 'addTile': {
-                      return
                     }
                     default:
                       throw new Error('not supported')
