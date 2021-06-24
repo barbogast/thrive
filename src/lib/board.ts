@@ -104,14 +104,17 @@ export function getHexagonBoard(size: '3' | '5' | '9'): Tile[] {
   return tiles
 }
 
-export function getRoadPositions(tiles: tileMap.TileMap): position.Position[] {
+export function getRoadPositions(
+  tiles: tileMap.TileMap,
+  onLand: boolean,
+): position.Position[] {
   /*
     For every tile we add roads in directions 1, 2 and 3
     For the ones which lack neighours 4, 5 or 6 we add those as well.
     This should give us each road position exactly once */
   const roads: position.Position[] = []
-  for (const tile of Object.values(tiles).filter(
-    (t) => t.type !== TileType.water,
+  for (const tile of Object.values(tiles).filter((t) =>
+    onLand ? t.type !== TileType.water : t.type === TileType.water,
   )) {
     for (const direction of [0, 1, 2] as axial.Direction[]) {
       const neighborPos = axial.getNeighbor(tile.position, direction)
@@ -122,7 +125,12 @@ export function getRoadPositions(tiles: tileMap.TileMap): position.Position[] {
     for (const direction of [3, 4, 5] as axial.Direction[]) {
       const neighbourPos = axial.getNeighbor(tile.position, direction)
       const neighbourTile = tileMap.findInPos(tiles, neighbourPos)
-      if (!neighbourTile || neighbourTile.type === TileType.water) {
+
+      if (
+        !neighbourTile ||
+        (onLand && neighbourTile.type === TileType.water) ||
+        (!onLand && neighbourTile.type !== TileType.water)
+      ) {
         const road = position.createPosition([tile.position, neighbourPos])
         roads.push(road)
       }

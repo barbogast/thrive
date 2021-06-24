@@ -70,7 +70,6 @@ Missing elements from a certain(tm) board game
 
 Ideas for more features
 
-- Ships
 - Map editor
 - Record game, allow replay
 - Implement graphs: points, buildings, resources

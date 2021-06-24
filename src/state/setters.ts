@@ -148,8 +148,12 @@ export function buildTown(gameId: string, position: position.Position): void {
 }
 
 export function buildRoad(gameId: string, position: position.Position): void {
+  const type =
+    useTempStore.getState().currentAction.type === UiActionType.buildRoad
+      ? 'road'
+      : 'ship'
   setGameState((draft) => {
-    game.buildRoad(draft.games[gameId], position)
+    game.buildRoad(draft.games[gameId], position, type)
   })
   setTempState((draft) => {
     draft.currentAction = { type: UiActionType.none }

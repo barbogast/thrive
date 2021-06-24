@@ -6,6 +6,7 @@ import produce, { Draft } from 'immer'
 
 export const UiActionType = {
   buildRoad: 'buildRoad',
+  buildShip: 'buildShip',
   buildTown: 'buildTown',
   buildCity: 'buildCity',
   rollDice: 'rollDice',
@@ -20,6 +21,9 @@ export type UiAction =
     }
   | {
       type: 'buildRoad'
+    }
+  | {
+      type: 'buildShip'
     }
   | {
       type: 'buildTown'

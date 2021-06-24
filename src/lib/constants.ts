@@ -14,6 +14,13 @@ export const gameConfig = () =>
         sheep: 0,
         wood: 1,
       },
+      ship: {
+        brick: 0,
+        grain: 0,
+        ore: 0,
+        sheep: 1,
+        wood: 1,
+      },
       town: {
         brick: 1,
         grain: 1,

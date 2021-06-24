@@ -48,6 +48,17 @@ const Controls: React.FC = function Controls() {
         <></>
       )}
       &nbsp;&nbsp;
+      {allowedActions.includes(UiActionType.buildShip) ? (
+        <SelectableButton
+          onClick={() => setters.toggleCurrentAction(UiActionType.buildShip)}
+          selected={tempStore.currentAction.type === UiActionType.buildShip}
+        >
+          Build ship
+        </SelectableButton>
+      ) : (
+        <></>
+      )}
+      &nbsp;&nbsp;
       {allowedActions.includes(UiActionType.buildTown) ? (
         <SelectableButton
           onClick={() => setters.toggleCurrentAction(UiActionType.buildTown)}

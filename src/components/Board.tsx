@@ -35,6 +35,10 @@ const Board: React.FC = function Board() {
     isLocalPlayer &&
     (tempStore.uiAction.type === UiActionType.buildRoad ||
       gameStore.sequenceAction.type === 'buildRoad')
+  const buildShip =
+    isLocalPlayer &&
+    (tempStore.uiAction.type === UiActionType.buildShip ||
+      gameStore.sequenceAction.type === 'buildShip')
   const buildTown =
     isLocalPlayer &&
     (tempStore.uiAction.type === UiActionType.buildTown ||
@@ -42,13 +46,15 @@ const Board: React.FC = function Board() {
 
   const positions = useMemo(() => {
     if (buildRoad) {
-      return board.getRoadPositions(gameStore.tiles)
+      return board.getRoadPositions(gameStore.tiles, true)
+    } else if (buildShip) {
+      return board.getRoadPositions(gameStore.tiles, false)
     } else if (buildTown) {
       return board.getTownPositions(gameStore.tiles)
     } else {
       return []
     }
-  }, [gameStore.tiles, buildRoad, buildTown])
+  }, [gameStore.tiles, buildRoad, buildShip, buildTown])
 
   useEffect(() => {
     return useGameStore.subscribe((newState, oldState) => {
@@ -71,7 +77,8 @@ const Board: React.FC = function Board() {
         />
       ))}
 
-      {buildRoad && positions.map((r, i) => <Road key={i} position={r} />)}
+      {(buildRoad || buildShip) &&
+        positions.map((r, i) => <Road key={i} position={r} />)}
 
       {buildTown &&
         positions.map((r, i) => <Town key={i} position={r} type="town" />)}

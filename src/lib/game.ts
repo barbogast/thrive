@@ -19,6 +19,7 @@ export type Road = {
   id: string
   position: position.Position
   owner: PlayerId
+  type: 'road' | 'ship'
 }
 
 export type Town = {
@@ -30,6 +31,7 @@ export type Town = {
 
 export const GameActionType = {
   buildRoad: 'buildRoad',
+  buildShip: 'buildShip',
   buildTown: 'buildTown',
   buildCity: 'buildCity',
   rollDice: 'rollDice',
@@ -189,6 +191,8 @@ export function getAllowedUiActions(
   switch (currentGameAction.type) {
     case GameActionType.buildRoad:
       return ['buildRoad']
+    case GameActionType.buildShip:
+      return ['buildShip']
     case GameActionType.buildTown:
       return ['buildTown']
     case GameActionType.buildCity:
@@ -196,7 +200,7 @@ export function getAllowedUiActions(
     case GameActionType.rollDice:
       return ['rollDice']
     case GameActionType.buildBuyTrade:
-      return ['buildTown', 'buildCity', 'buildRoad', 'endTurn']
+      return ['buildTown', 'buildCity', 'buildRoad', 'buildShip', 'endTurn']
     default: {
       const exhaustiveCheck: never = currentGameAction.type
       throw new Error(`Unhandled case: ${exhaustiveCheck}`)
@@ -279,7 +283,11 @@ export function upgradeTown(state: Game, position: position.Position): void {
   town.type = 'city'
 }
 
-export function buildRoad(state: Game, position: position.Position): void {
+export function buildRoad(
+  state: Game,
+  position: position.Position,
+  type: 'road' | 'ship',
+): void {
   if (
     state.sequence.phaseType === 'normal' &&
     !board.roadPositionConnectsToExistingRoad(
@@ -302,6 +310,7 @@ export function buildRoad(state: Game, position: position.Position): void {
     id: getId('road', position),
     position,
     owner: state.sequence.scheduledActions[0].playerId,
+    type,
   })
   finishAction(state, GameActionType.buildRoad)
 }
