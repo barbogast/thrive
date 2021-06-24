@@ -1,21 +1,16 @@
 import React, { useState } from 'react'
 import { Layer } from 'react-konva'
+import styled from 'styled-components'
 
 import Stage from '../components/Stage'
-import HexTile from '../components/HexTile'
+import HexTile, { getColorForTileType } from '../components/HexTile'
 import BackButton from '../components/BackButton'
 import { CustomBoard, setLocalState, useLocalStore } from '../state/localState'
 import { useBoardId } from '../lib/routing'
 import { visualConfig } from '../lib/constants'
 import { offsetToAxial } from '../lib/axial'
 import { range, downloadObjectAsJson } from '../lib/utils'
-import {
-  getDimensions,
-  Resource,
-  Tile,
-  tileIsResource,
-  TileType,
-} from '../lib/board'
+import { getDimensions, Tile, tileIsResource, TileType } from '../lib/board'
 
 const editModes = {
   setNumber: 'Set Number',
@@ -23,6 +18,10 @@ const editModes = {
   removeTile: 'Remove Tile',
 }
 type EditMode = keyof typeof editModes
+
+const ColoredLabel = styled.label`
+  background-color: ${(props) => props.color};
+`
 
 const EditBoard: React.FC = function EditBoard() {
   const boardId = useBoardId()
@@ -108,16 +107,19 @@ const EditBoard: React.FC = function EditBoard() {
       {editMode === 'setTile' && (
         <>
           Selected type:
-          <select
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value as Resource)}
-          >
-            {Object.keys(TileType).map((r, i) => (
-              <option value={r} key={i}>
-                {r}
-              </option>
+          {(Object.keys(TileType) as TileType[])
+            .filter((key) => key !== 'empty')
+            .map((key, i) => (
+              <ColoredLabel key={i} color={getColorForTileType(key)}>
+                <input
+                  type="radio"
+                  name="tile-type"
+                  checked={selectedType === key}
+                  onChange={() => setSelectedType(key)}
+                />
+                {key}
+              </ColoredLabel>
             ))}
-          </select>
         </>
       )}
       {editMode === 'setNumber' && (
