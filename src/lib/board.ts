@@ -206,24 +206,13 @@ export function findTile(
   )
 }
 
-export function findRoad(
-  roads: game.Road[],
-  roadPosition: position.Position,
-): game.Road | void {
-  for (const road of roads) {
-    if (position.comparePositions(road.position, roadPosition)) {
-      return road
-    }
-  }
-}
-
-export function findTown(
-  towns: game.Town[],
-  townPosition: position.Position,
-): game.Town | void {
-  for (const town of towns) {
-    if (position.comparePositions(town.position, townPosition)) {
-      return town
+export function findObject<T extends { position: position.Position }>(
+  objects: T[],
+  objectPosition: position.Position,
+): T | void {
+  for (const object of objects) {
+    if (position.comparePositions(object.position, objectPosition)) {
+      return object
     }
   }
 }
@@ -240,7 +229,7 @@ export function townPositionConnectsToExistingRoad(
     position.createPosition([tileB, tileC]),
   ]
   for (const roadPosition of possibleRoads) {
-    const maybeRoad = findRoad(roads, roadPosition)
+    const maybeRoad = findObject(roads, roadPosition)
     if (maybeRoad && maybeRoad.owner === playerId) {
       return true
     }

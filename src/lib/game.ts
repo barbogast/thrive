@@ -272,7 +272,7 @@ export function buildTown(state: Game, position: position.Position): void {
 
 export function upgradeTown(state: Game, position: position.Position): void {
   const currentPlayerId = state.sequence.scheduledActions[0].playerId
-  const town = board.findTown(state.towns, position)
+  const town = board.findObject(state.towns, position)
   if (!town || town.type === 'city') {
     return
   }
