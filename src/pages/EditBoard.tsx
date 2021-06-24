@@ -9,7 +9,7 @@ import { CustomBoard, setLocalState, useLocalStore } from '../state/localState'
 import { useBoardId } from '../lib/routing'
 import { visualConfig } from '../lib/constants'
 import { offsetToAxial } from '../lib/axial'
-import { range, downloadObjectAsJson } from '../lib/utils'
+import { range, downloadObjectAsJson, getKeys, getEntries } from '../lib/utils'
 import { getDimensions, Tile, tileIsResource, TileType } from '../lib/board'
 
 const editModes = {
@@ -92,24 +92,22 @@ const EditBoard: React.FC = function EditBoard() {
       <br />
       <div>
         Edit mode:{' '}
-        {(Object.entries(editModes) as [keyof typeof editModes, string][]).map(
-          ([key, label], i) => (
-            <label key={i}>
-              <input
-                type="radio"
-                name="edit-mode"
-                checked={editMode === key}
-                onChange={() => setEditMode(key)}
-              />
-              {label}
-            </label>
-          ),
-        )}
+        {getEntries(editModes).map(([key, label], i) => (
+          <label key={i}>
+            <input
+              type="radio"
+              name="edit-mode"
+              checked={editMode === key}
+              onChange={() => setEditMode(key)}
+            />
+            {label}
+          </label>
+        ))}
       </div>
       {editMode === 'setTile' && (
         <>
           Selected type:
-          {(Object.keys(TileType) as TileType[])
+          {getKeys(TileType)
             .filter((key) => key !== 'empty')
             .map((key, i) => (
               <ColoredLabel key={i} color={getColorForTileType(key)}>

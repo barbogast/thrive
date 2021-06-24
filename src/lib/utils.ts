@@ -46,3 +46,15 @@ export function downloadObjectAsJson(
   downloadAnchorNode.click()
   downloadAnchorNode.remove()
 }
+
+// Custom function which wraps Object.keys() and fixes the types
+// See https://fettblog.eu/typescript-better-object-keys/ for details
+export function getKeys<T>(o: T): (keyof T)[] {
+  return Object.keys(o) as (keyof T)[]
+}
+
+// Custom function which wraps Object.entries() and fixes the types
+// See https://fettblog.eu/typescript-better-object-keys/ for details
+export function getEntries<K extends string, V>(o: { [s in K]: V }): [K, V][] {
+  return Object.entries(o) as [K, V][]
+}
