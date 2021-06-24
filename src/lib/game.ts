@@ -62,7 +62,7 @@ export type Game = {
 
 export function getCost(
   type: 'town' | 'city' | 'road' | 'ship',
-): board.Resources {
+): Partial<board.Resources> {
   return gameConfig().resourceCost[type]
 }
 
@@ -213,11 +213,11 @@ export function getAllowedUiActions(
 function payResources(
   state: Game,
   playerId: PlayerId,
-  resources: board.Resources,
+  resources: Partial<board.Resources>,
 ) {
   const playerResources = state.players[playerId].resources
-  for (const resourceType of utils.getKeys(resources)) {
-    playerResources[resourceType] -= resources[resourceType]
+  for (const [type, amount] of Object.entries(resources)) {
+    playerResources[type as board.Resource] -= amount
   }
 }
 
