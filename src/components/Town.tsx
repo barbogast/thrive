@@ -1,5 +1,5 @@
 import React from 'react'
-import { Circle } from 'react-konva'
+import { Group, Circle } from 'react-konva'
 
 import * as game from '../lib/game'
 import * as axial from '../lib/axial'
@@ -12,9 +12,10 @@ import { visualConfig } from '../lib/constants'
 type Props = {
   position: position.Position
   owner?: game.PlayerId | void
+  type: 'town' | 'city'
 }
 
-const Town: React.FC<Props> = function Town({ position, owner }) {
+const Town: React.FC<Props> = function Town({ position, owner, type }) {
   const gameId = routing.useGameId()
   const localStore = useCurrentGame((game) => ({
     color: owner ? game.players[owner].color : undefined,
@@ -29,15 +30,26 @@ const Town: React.FC<Props> = function Town({ position, owner }) {
         strokeWidth: 1,
       }
 
+  const group = [<Circle key="town" radius={9} {...style} />]
+  if (type === 'city') {
+    group.push(
+      <Circle
+        key="city"
+        radius={12}
+        stroke={localStore.color}
+        strokeWidth={3}
+      />,
+    )
+  }
+
   return (
-    <Circle
-      type="town"
+    <Group
       x={middle.x}
       y={middle.y}
-      radius={10}
-      onClick={owner ? undefined : () => setters.buildTown(gameId, position)}
-      {...style}
-    />
+      onClick={() => setters.buildTown(gameId, position)}
+    >
+      {group}
+    </Group>
   )
 }
 

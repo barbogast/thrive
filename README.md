@@ -64,7 +64,6 @@ Missing elements from a certain(tm) board game
 - In the initial phase the second road may only be built attached to the second town (right?)
 - Dice roll 7: bad guy which steals / blocks resources
 - Water
-- Cities
 - Give points for Longest Road
 - Extension cards
 

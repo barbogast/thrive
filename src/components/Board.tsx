@@ -73,14 +73,15 @@ const Board: React.FC = function Board() {
 
       {buildRoad && positions.map((r, i) => <Road key={i} position={r} />)}
 
-      {buildTown && positions.map((r, i) => <Town key={i} position={r} />)}
+      {buildTown &&
+        positions.map((r, i) => <Town key={i} position={r} type="town" />)}
 
       {Object.values(gameStore.roads).map((r, i) => (
         <Road key={i} position={r.position} owner={r.owner} />
       ))}
 
       {Object.values(gameStore.towns).map((t, i) => (
-        <Town key={i} position={t.position} owner={t.owner} />
+        <Town key={i} position={t.position} owner={t.owner} type={t.type} />
       ))}
     </Layer>
   )

@@ -25,11 +25,13 @@ export type Town = {
   id: string
   position: position.Position
   owner: PlayerId
+  type: 'city' | 'town'
 }
 
 export const GameActionType = {
   buildRoad: 'buildRoad',
   buildTown: 'buildTown',
+  buildCity: 'buildCity',
   rollDice: 'rollDice',
   buildBuyTrade: 'buildBuyTrade',
 } as const
@@ -56,7 +58,7 @@ export type Game = {
   }
 }
 
-export function getCost(type: 'town' | 'road'): board.Resources {
+export function getCost(type: 'town' | 'city' | 'road'): board.Resources {
   return gameConfig().resourceCost[type]
 }
 
@@ -133,7 +135,7 @@ export function initialiseGame(
 function calculatePoints(state: Game, playerId: string): number {
   return state.towns
     .filter((town) => town.owner === playerId)
-    .reduce((prev) => prev + 1, 0)
+    .reduce((prev, town) => (prev + town.type === 'town' ? 1 : 2), 0)
 }
 
 export function endTurn(state: Game): void {
@@ -165,7 +167,8 @@ export function rollDice(state: Game): void {
       const townsOnTile = board.getTownsOnTile(tile.position, state.towns)
       for (const town of townsOnTile) {
         if (town.owner) {
-          state.players[town.owner].resources[tile.type] += 1
+          state.players[town.owner].resources[tile.type] +=
+            town.type === 'town' ? 1 : 2
         }
       }
     }
@@ -188,10 +191,12 @@ export function getAllowedUiActions(
       return ['buildRoad']
     case GameActionType.buildTown:
       return ['buildTown']
+    case GameActionType.buildCity:
+      return ['buildCity']
     case GameActionType.rollDice:
       return ['rollDice']
     case GameActionType.buildBuyTrade:
-      return ['buildTown', 'buildRoad', 'endTurn']
+      return ['buildTown', 'buildCity', 'buildRoad', 'endTurn']
     default: {
       const exhaustiveCheck: never = currentGameAction.type
       throw new Error(`Unhandled case: ${exhaustiveCheck}`)
@@ -259,9 +264,20 @@ export function buildTown(state: Game, position: position.Position): void {
     id: getId('town', position),
     position,
     owner: currentPlayerId,
+    type: 'town',
   })
   state.players[currentPlayerId].points += 1
   finishAction(state, GameActionType.buildTown)
+}
+
+export function upgradeTown(state: Game, position: position.Position): void {
+  const currentPlayerId = state.sequence.scheduledActions[0].playerId
+  const town = board.findTown(state.towns, position)
+  if (!town || town.type === 'city') {
+    return
+  }
+  payResources(state, currentPlayerId, getCost('city'))
+  town.type = 'city'
 }
 
 export function buildRoad(state: Game, position: position.Position): void {

@@ -59,6 +59,17 @@ const Controls: React.FC = function Controls() {
         <></>
       )}
       &nbsp;&nbsp;
+      {allowedActions.includes(UiActionType.buildCity) ? (
+        <SelectableButton
+          onClick={() => setters.toggleCurrentAction(UiActionType.buildCity)}
+          selected={tempStore.currentAction.type === UiActionType.buildCity}
+        >
+          Build city
+        </SelectableButton>
+      ) : (
+        <></>
+      )}
+      &nbsp;&nbsp;
       {allowedActions.includes(UiActionType.endTurn) ? (
         <button onClick={() => setters.nextTurn(gameId)}>Finish turn</button>
       ) : (

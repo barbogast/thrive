@@ -136,7 +136,11 @@ export function createGame(gameId: string): void {
 
 export function buildTown(gameId: string, position: position.Position): void {
   setGameState((draft) => {
-    game.buildTown(draft.games[gameId], position)
+    if (useTempStore.getState().currentAction.type === UiActionType.buildCity) {
+      game.upgradeTown(draft.games[gameId], position)
+    } else {
+      game.buildTown(draft.games[gameId], position)
+    }
   })
   setTempState((draft) => {
     draft.currentAction = { type: UiActionType.none }
