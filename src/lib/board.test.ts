@@ -1,8 +1,8 @@
 import { Coordinate } from './axial'
-import { getHexagonBoard, Tile } from './board'
+import { getHexagonBoard, Tile, TileType } from './board'
 
-function extractPositions(tiles: Tile[]): Coordinate[] {
-  return tiles.map((t) => t.position)
+function extractLandPositions(tiles: Tile[]): Coordinate[] {
+  return tiles.filter((t) => t.type !== TileType.water).map((t) => t.position)
 }
 
 describe('getHexagonBoard()', () => {
@@ -21,7 +21,7 @@ describe('getHexagonBoard()', () => {
 
     const result = getHexagonBoard('3')
 
-    expect(extractPositions(result)).toEqual(expected)
+    expect(extractLandPositions(result)).toEqual(expected)
   })
 
   it('should generate the correct board with size 5', () => {
@@ -53,6 +53,6 @@ describe('getHexagonBoard()', () => {
 
     const result = getHexagonBoard('5')
 
-    expect(extractPositions(result)).toEqual(expected)
+    expect(extractLandPositions(result)).toEqual(expected)
   })
 })
