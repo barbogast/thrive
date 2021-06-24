@@ -92,17 +92,19 @@ const EditBoard: React.FC = function EditBoard() {
       <br />
       <div>
         Edit mode:{' '}
-        {Object.entries(editModes).map(([key, label], i) => (
-          <label key={i}>
-            <input
-              type="radio"
-              name="edit-mode"
-              checked={editMode === key}
-              onChange={() => setEditMode(key as EditMode)}
-            />
-            {label}
-          </label>
-        ))}
+        {(Object.entries(editModes) as [keyof typeof editModes, string][]).map(
+          ([key, label], i) => (
+            <label key={i}>
+              <input
+                type="radio"
+                name="edit-mode"
+                checked={editMode === key}
+                onChange={() => setEditMode(key)}
+              />
+              {label}
+            </label>
+          ),
+        )}
       </div>
       {editMode === 'setTile' && (
         <>

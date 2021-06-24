@@ -210,9 +210,8 @@ function payResources(
   resources: board.Resources,
 ) {
   const playerResources = state.players[playerId].resources
-  for (const resourceType of Object.keys(resources)) {
-    playerResources[resourceType as board.Resource] -=
-      resources[resourceType as board.Resource]
+  for (const resourceType of Object.keys(resources) as board.Resource[]) {
+    playerResources[resourceType] -= resources[resourceType]
   }
 }
 
