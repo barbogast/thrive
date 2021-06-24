@@ -9,7 +9,13 @@ import { useBoardId } from '../lib/routing'
 import { visualConfig } from '../lib/constants'
 import { offsetToAxial } from '../lib/axial'
 import { range, downloadObjectAsJson } from '../lib/utils'
-import { getDimensions, Resource, Tile, TileType } from '../lib/board'
+import {
+  getDimensions,
+  Resource,
+  Tile,
+  tileIsResource,
+  TileType,
+} from '../lib/board'
 
 const editModes = {
   setNumber: 'Set Number',
@@ -163,6 +169,9 @@ const EditBoard: React.FC = function EditBoard() {
                   switch (editMode) {
                     case 'setTile': {
                       board.tiles[i].type = selectedType
+                      if (!tileIsResource(selectedType)) {
+                        board.tiles[i].number = undefined
+                      }
                       break
                     }
                     case 'setNumber': {
