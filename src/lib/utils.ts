@@ -58,3 +58,7 @@ export function getKeys<T>(o: T): (keyof T)[] {
 export function getEntries<K extends string, V>(o: { [s in K]: V }): [K, V][] {
   return Object.entries(o) as [K, V][]
 }
+
+export function capitalizeFirstLetter(string: string): string {
+  return string.charAt(0).toUpperCase() + string.slice(1)
+}

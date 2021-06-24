@@ -9,7 +9,13 @@ import { CustomBoard, setLocalState, useLocalStore } from '../state/localState'
 import { useBoardId } from '../lib/routing'
 import { visualConfig } from '../lib/constants'
 import { offsetToAxial } from '../lib/axial'
-import { range, downloadObjectAsJson, getKeys, getEntries } from '../lib/utils'
+import {
+  range,
+  downloadObjectAsJson,
+  getKeys,
+  getEntries,
+  capitalizeFirstLetter,
+} from '../lib/utils'
 import { getDimensions, Tile, tileIsResource, TileType } from '../lib/board'
 
 const editModes = {
@@ -117,7 +123,7 @@ const EditBoard: React.FC = function EditBoard() {
                   checked={selectedType === key}
                   onChange={() => setSelectedType(key)}
                 />
-                {key}
+                {capitalizeFirstLetter(key)}
               </ColoredLabel>
             ))}
         </>
