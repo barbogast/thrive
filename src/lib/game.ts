@@ -60,7 +60,9 @@ export type Game = {
   }
 }
 
-export function getCost(type: 'town' | 'city' | 'road'): board.Resources {
+export function getCost(
+  type: 'town' | 'city' | 'road' | 'ship',
+): board.Resources {
   return gameConfig().resourceCost[type]
 }
 
@@ -303,7 +305,7 @@ export function buildRoad(
     payResources(
       state,
       state.sequence.scheduledActions[0].playerId,
-      getCost('road'),
+      getCost(type),
     )
   }
   state.roads.push({
