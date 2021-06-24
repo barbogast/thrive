@@ -26,6 +26,7 @@ const EditBoard: React.FC = function EditBoard() {
     setLocalState((draft) => callback(draft.customBoards[boardId]))
 
   const importCustomBoard = () => {
+    // eslint-disable-next-line @typescript-eslint/no-extra-semi
     ;(async () => {
       if (document === null) {
         return
